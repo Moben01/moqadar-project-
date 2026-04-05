@@ -1,0 +1,225 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="main-content pt-4" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+
+
+
+    <div class="container mb-3">
+        
+        <!-- Feedback Messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+     
+
+        <form id="editPurchaseForm" action="#" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <br>
+            <h5>بخش تفییرات خریداری</h5>
+            <hr>
+            <br>
+
+            <div class="form-row">
+                <!-- Supplier Field (with dropdown) -->
+                <div class="col-md-3 mb-3">
+                
+                    <div class="col-md-12 mb-3">
+                        <label>تهیه کننده محصول</label>
+                        <div class="input-group">
+                            {{ form.supplaier }}
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <!-- Date Field -->
+                <div class="col-md-3 mb-3">
+                    <label>تاریخ</label>
+                    <div class="input-group">
+                        {{ form.date }}
+                    </div>
+                </div>
+
+                <!-- Product Type -->
+                <div class="col-md-3 mb-3">
+                    <label>نوع محصول</label>
+                    <select id="product" name="product" class="form-control">
+                        {% for product in form.fields.product.queryset %}
+                            <option value="{{ product.id }}" data-product-type="{{ product.product_type }}"
+                                {% if product.id == form.product.value %}selected{% endif %}>
+                                {{ product.meat_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Warehouse -->
+                <div class="col-md-3 mb-3">
+                    <label>گدام مربوط</label>
+                    <div class="input-group">
+                        {{ form.warehouse }}
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="col-md-2 mb-3">
+                    <label>حالت</label>
+                    <div class="input-group">
+                        {{ form.status }}
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="col-md-2 mb-3">
+                    <label>تعداد</label>
+                    <div class="input-group">
+                        {{ form.quantity }}
+                    </div>
+                </div>
+
+                <!-- Price per Unit -->
+                <div class="col-md-3 mb-3">
+                    <label>قیمت فی واحد</label>
+                    <div class="input-group">
+                        {{ form.price_per_unit }}
+                    </div>
+                </div>
+
+                <!-- Weight -->
+                <div class="col-md-2 mb-3">
+                    <label>وزن</label>
+                    <div class="input-group">
+                        {{ form.wegiht }}
+                    </div>
+                </div>
+
+                <!-- Paid Amount -->
+                <div class="col-md-3 mb-3">
+                    <label>پول پرداختی</label>
+                    <div class="input-group">
+                        {{ form.paid_amount }}
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div class="col-md-12 mb-3">
+                    <label>توضیحات</label>
+                    <div class="input-group">
+                        {{ form.details }}
+                    </div>
+                </div>
+
+                <!-- Calculation Card -->
+                <div class="col-md-12 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">محاسبات معامله</div>
+                            <label class="radio radio-primary" style="font-size: large;">
+                                <input type="radio" name="radio" value="0">
+                                <span class="font-weight-700 text-info">پول مجموعی:</span>
+                                <span class="checkmark"></span>
+                                <span class="font-weight-700 text-info ml-2" id="totalSpan">---</span>
+                                <span class="font-weight-700 text-info ml-2">افغانی</span>
+                            </label>
+                            <label class="radio radio-primary" style="font-size: large;">
+                                <input type="radio" name="radio" value="0">
+                                <span class="font-weight-700 text-success">پول داده شده:</span>
+                                <span class="checkmark"></span>
+                                <span class="font-weight-700 text-info ml-2" id="paid_value">---</span>
+                                <span class="font-weight-700 text-info ml-2">افغانی</span>
+                            </label>
+                            <label class="radio radio-primary" style="font-size: large;">
+                                <input type="radio" name="radio" value="0">
+                                <span class="font-weight-700 text-danger">پول باقی مانده:</span>
+                                <span class="checkmark"></span>
+                                <span class="font-weight-700 text-info ml-2" id="remain_value">---</span>
+                                <span class="font-weight-700 text-info ml-2">افغانی</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <a href="{% url 'purchase:purchase' %}" class="btn btn-secondary">بستن</a>
+                <button class="btn btn-primary" type="submit">ذخیره تغییرات</button>
+            </div>
+        </form>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const quantityInput = document.getElementById('{{ form.quantity.id_for_label }}');
+                const priceInput = document.getElementById('{{ form.price_per_unit.id_for_label }}');
+                const paidInput = document.getElementById('{{ form.paid_amount.id_for_label }}');
+                const weightInput = document.getElementById('{{ form.wegiht.id_for_label }}');
+                const statusSelect = document.getElementById('{{ form.status.id_for_label }}');
+        
+                const totalSpan = document.getElementById('totalSpan');
+                const paidVal = document.getElementById('paid_value');
+                const remainVal = document.getElementById('remain_value');
+        
+                // Function to round a number to 2 decimal places
+                function roundTo(value, decimals ) {
+                    return Number(value.toFixed(decimals));
+                }
+        
+                function calculateTotal() {
+                    let price = parseFloat(priceInput.value) || 0;
+                    let paid = parseFloat(paidInput.value) || 0;
+                    let weight = parseFloat(weightInput.value) || 0;
+                    let quantity = parseFloat(quantityInput.value) || 0;
+                    let total = 0;
+        
+                    // Perform calculations based on the selected status
+                    if (statusSelect.value === 'ضرب وزن') {
+                        total = roundTo(weight * price);
+                    } else if (statusSelect.value === 'ضرب تعداد') {
+                        total = roundTo(quantity * price);
+                    }
+        
+                    // Calculate remaining amount and round all values
+                    const remain = roundTo(total - paid);
+        
+                    // Update the UI with rounded values
+                    totalSpan.textContent = roundTo(total).toLocaleString();
+                    paidVal.textContent = roundTo(paid).toLocaleString();
+                    remainVal.textContent = roundTo(remain).toLocaleString();
+                }
+        
+                // Add event listeners to trigger calculations
+                quantityInput.addEventListener('input', calculateTotal);
+                priceInput.addEventListener('input', calculateTotal);
+                paidInput.addEventListener('input', calculateTotal);
+                weightInput.addEventListener('input', calculateTotal);
+                statusSelect.addEventListener('change', calculateTotal);
+            });
+        </script>
+       
+    </div>
+
+
+
+</div>
+
+
+
+
+{% endblock %}

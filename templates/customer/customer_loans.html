@@ -1,0 +1,607 @@
+{% extends 'base.html'%}
+{% load static %}
+{% load custom_tags %}
+
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+        {% endif %}
+    </script>
+
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>معلومات کامل قرضه های {{customer.name}} ,
+
+        {% if customer.role == 'هردو' %}
+        <span style="font-size: 14px;"> مشتری و تامین کننده</span>
+        {% else %}
+        <span style="font-size: 14px;">{{customer.role }}</span>
+
+        {% endif %}
+
+
+
+    </h4>
+    <span class="text-muted fw-light"></span></h4>
+
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .printable-area,
+            .printable-area * {
+                visibility: visible;
+            }
+
+            .printable-area {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+
+            @page {
+                margin: 1cm;
+            }
+        }
+    </style>
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <div class="col-lg-12 text-right">
+                        <a class="btn btn-raised btn-raised-info m-1"
+                            href="{% url 'Customer:customer_paid_loans' customer.id %}">پرداخت ها</a>
+                        {% if total_borrow_amount > 0 %}
+                        <a class="btn btn-raised btn-raised-success m-1"
+                            href="{% url 'Customer:paind_customer_loans' customer.id %}">پرداخت قرض</a>
+                        <a class="btn btn-raised btn-raised-primary m-1"
+                            href="{% url 'Customer:paid_with_sale' customer.id %}">پرداخت قرض با فروش</a>
+                        {% endif %}
+                        <a class="btn btn-raised btn-raised-warning m-1" type="button" onclick="window.print()">پرنت</a>
+                        <a class="btn btn-info m-1" type="button" href="javascript:history.back()">بازگشت</a>
+                    </div>
+
+                    <br>
+
+                    <div class="row mt-3">
+                        <input type="text" id="tableSearch" class="form-control mb-3" placeholder="جستجو در جدول..." />
+
+                            <style>
+                                mark {
+                                    background-color: lightgreen;
+                                    color: black;
+                                    font-weight: bold;
+                                }
+                            </style>
+
+                        <div class="col-md-6">
+
+                            
+                            <div class="float-right">
+                                <span>رکورد در هر صفحه:</span>
+                                <select class="form-control d-inline-block" id="itemsPerPage" style="width: 80px;">
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="150">150</option>
+                                    <option value="200">200</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="dataTables_info" id="pageInfo">
+                                نمایش 0 تا 0 از 0 رکورد
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="printable-area">
+                        <h4 class="card-title mb-3">لیست قرضداری های {{customer.name}} </h4>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table table-nowrap mb-0" id="loanTable">
+                                <thead>
+                                    <tr>
+                                        <th>شماره</th>
+                                        <th>شماره فروش</th>
+                                        <th style="font-family: XW_Zar_Bd_0;">تاریخ</th>
+                                        <th>محصول</th>
+                                        <th>تعداد</th>
+                                        <th>وزن</th>
+                                        <th>قیمت فی واحد</th>
+                                        <th>تمام پول</th>
+                                        <th>رسید</th>
+                                        <th>باقی</th>
+                                        <th>مجموعه باقیمانده</th>
+                                        <th>توضیحات</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    {% for i in customer_loan %}
+                                    <tr class="data-row "
+                                        {% if i.sale_id.is_money_approved %}
+                                            style="background-color: #8febab;"
+                                        {% endif %}
+                                        {% if i.sale_id == None %}
+                                            style="background-color: #f0be8f;"
+                                        {% endif %}>
+
+                                        
+                                  
+                                        <td>{{i.id}}</td>
+                                        <td>{{ i.sale_id|default:i.sale_id_to_find_the_deletion_id }}</td>
+                                       
+                                        <td>{{i.date_issued}}</td>
+                                        <td>{{i.sale_id.product.meat_name}}</td>
+
+                                        {% if i.sale_id.status == 'ضرب تعداد' %}
+                                            <td style="color: blue;" >{{i.sale_id.quantity}}</td>
+                                        {% else %}
+                                            <td >{{i.sale_id.quantity}}</td>
+                                        {% endif %}
+
+                                        {% if i.sale_id.status == 'ضرب وزن' %}
+                                            <td style="color: blue;">{{i.sale_id.weight}}</td>
+                                        {% else %}
+                                            <td >{{i.sale_id.weight}}</td>
+                                        {% endif %}
+                                        
+                                        <td>{{i.sale_id.price_per_unit}}</td>
+                                        <td>{{i.sale_id.should_paid }}</td>
+
+                                        {% if i.status == 'پرداخت نه شده' %}
+                                            {% if i.sale_id == None %}
+                                                <td class="heading text-success">{{i.amount}}</td>
+                                            {% else %}
+                                                <td class="heading text-success">{{i.sale_id.paid_amount_for_every_record}}</td>
+                                            {% endif %}
+                                            <td class="heading text-danger">{{i.sale_id.borrow_amount}}</td>
+                                            <td>{{i.total_amount}}</td>
+                                            <td>{{i.sale_id.notes}} {{i.notes}}</td>
+                                            
+                                            {% if i.sale_id == null %}
+                                                <td>
+                                                    <a href="#" class="text-danger ms-2" title="Delete"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal{{ i.id }}">
+                                                    <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                                <div class="modal fade" id="deleteModal{{ i.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ i.id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-danger text-white">
+                                                                <h5 class="modal-title" id="deleteModalLabel{{ i.id }}">تایید حذف</h5>
+                                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-center">
+                                                                آیا مطمئن هستید که می‌خواهید این مورد را حذف کنید؟
+                                                            </div>
+                                                            <div class="modal-footer justify-content-center">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                                                                <a href="{% url 'Customer:delete_paid_record_od_cudtomer' i.id %}" class="btn btn-danger" id="confirmDelete{{ i.id }}">بله، حذف شود</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                            <td></td>
+                                            
+                                            {% endif %}
+
+                                        {% elif i.status == 'پرداخت شده' %}
+                                            <td class="heading text-success">{{i.amount}}</td>
+                                            <td class="heading text-danger">{{i.sale_id.borrow_amount}}</td>
+                                            <td>{{i.total_amount}}</td>
+                                            <td>{{i.notes}} {{i.sale_id.notes}}</td>
+                                            {% if i.sale_id == null %}
+                                                <td>
+                                                    <a href="#" class="text-danger ms-2" title="Delete"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal{{ i.id }}">
+                                                    <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                                <div class="modal fade" id="deleteModal{{ i.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ i.id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-danger text-white">
+                                                                <h5 class="modal-title" id="deleteModalLabel{{ i.id }}">تایید حذف</h5>
+                                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body text-center">
+                                                                آیا مطمئن هستید که می‌خواهید این مورد را حذف کنید؟
+                                                            </div>
+                                                            <div class="modal-footer justify-content-center">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                                                                <a href="{% url 'Customer:delete_paid_record_od_cudtomer' i.id %}" class="btn btn-danger" id="confirmDelete{{ i.id }}">بله، حذف شود</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                            <td></td>
+                                            
+                                            {% endif %}
+
+                                        {% endif %}
+                                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+                                    </tr>
+                                    {% endfor %}
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function () {
+                                            let total = 0;
+                                            document.querySelectorAll("td.heading.text-success").forEach(function (cell) {
+                                                let value = parseFloat(cell.textContent.trim().replace(/,/g, ""));
+                                                if (!isNaN(value)) {
+                                                    if (!cell.textContent.includes("paid_amount_for_every_record")) {
+                                                        total += value;
+                                                    }
+                                                }
+                                            });
+                                            let totalCell = document.querySelector("#totalCell");
+                                            if (totalCell) {
+                                                totalCell.textContent = total.toLocaleString();
+                                            }
+                                        });
+                                    </script>
+                                    <tr class="card-header bg-info" id="summaryRow">
+                                        <td class="text-white">مجموعه پرداخت شده</td>
+                                        <td colspan="7"></td>
+                                        <td id="totalCell" class="heading text-success"></td>
+                                        <td class="text-white">مجموعه باقی</td>
+                                        <td class="heading text-danger">{{total_borrow_amount}}</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row mt-2">
+                        <div class="col-md-12">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center" id="pagination">
+                                   
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const dataRows = Array.from(document.querySelectorAll('.data-row'));
+                            const summaryRow = document.getElementById('summaryRow');
+                            const itemsPerPageSelect = document.getElementById('itemsPerPage');
+                            const pageInfo = document.getElementById('pageInfo');
+                            const pagination = document.getElementById('pagination');
+
+                            let currentPage = 1;
+                            let itemsPerPage = parseInt(itemsPerPageSelect.value);
+                            function setupPagination() {
+                                itemsPerPage = parseInt(itemsPerPageSelect.value);
+                                currentPage = 1;
+                                renderTable();
+                                renderPagination();
+                            }
+                            function renderTable() {
+                                const startIndex = (currentPage - 1) * itemsPerPage;
+                                const endIndex = startIndex + itemsPerPage;
+                                dataRows.forEach(row => row.style.display = 'none');
+                                const visibleRows = dataRows.slice(startIndex, endIndex);
+                                visibleRows.forEach(row => row.style.display = '');
+                                summaryRow.style.display = '';
+                                pageInfo.textContent = `نمایش ${startIndex + 1} تا ${Math.min(endIndex, dataRows.length)} از ${dataRows.length} رکورد`;
+                            }
+                            function renderPagination() {
+                                const pageCount = Math.ceil(dataRows.length / itemsPerPage);
+                                pagination.innerHTML = '';
+                                if (pageCount <= 1) return;
+                                const prevLi = document.createElement('li');
+                                prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+                                prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>`;
+                                prevLi.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    if (currentPage > 1) {
+                                        currentPage--;
+                                        renderTable();
+                                        renderPagination();
+                                    }
+                                });
+                                pagination.appendChild(prevLi);
+                                const maxVisiblePages = 5;
+                                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                                let endPage = Math.min(pageCount, startPage + maxVisiblePages - 1);
+
+                                if (endPage - startPage + 1 < maxVisiblePages) {
+                                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                                }
+
+                                if (startPage > 1) {
+                                    const firstLi = document.createElement('li');
+                                    firstLi.className = 'page-item';
+                                    firstLi.innerHTML = `<a class="page-link" href="#">1</a>`;
+                                    firstLi.addEventListener('click', (e) => {
+                                        e.preventDefault();
+                                        currentPage = 1;
+                                        renderTable();
+                                        renderPagination();
+                                    });
+                                    pagination.appendChild(firstLi);
+
+                                    if (startPage > 2) {
+                                        const ellipsisLi = document.createElement('li');
+                                        ellipsisLi.className = 'page-item disabled';
+                                        ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
+                                        pagination.appendChild(ellipsisLi);
+                                    }
+                                }
+
+                                for (let i = startPage; i <= endPage; i++) {
+                                    const li = document.createElement('li');
+                                    li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                                    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                                    li.addEventListener('click', (e) => {
+                                        e.preventDefault();
+                                        currentPage = i;
+                                        renderTable();
+                                        renderPagination();
+                                    });
+                                    pagination.appendChild(li);
+                                }
+
+                                if (endPage < pageCount) {
+                                    if (endPage < pageCount - 1) {
+                                        const ellipsisLi = document.createElement('li');
+                                        ellipsisLi.className = 'page-item disabled';
+                                        ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
+                                        pagination.appendChild(ellipsisLi);
+                                    }
+
+                                    const lastLi = document.createElement('li');
+                                    lastLi.className = 'page-item';
+                                    lastLi.innerHTML = `<a class="page-link" href="#">${pageCount}</a>`;
+                                    lastLi.addEventListener('click', (e) => {
+                                        e.preventDefault();
+                                        currentPage = pageCount;
+                                        renderTable();
+                                        renderPagination();
+                                    });
+                                    pagination.appendChild(lastLi);
+                                }
+
+                                // Next button
+                                const nextLi = document.createElement('li');
+                                nextLi.className = `page-item ${currentPage === pageCount ? 'disabled' : ''}`;
+                                nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+        </a>`;
+                                nextLi.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    if (currentPage < pageCount) {
+                                        currentPage++;
+                                        renderTable();
+                                        renderPagination();
+                                    }
+                                });
+                                pagination.appendChild(nextLi);
+                            }
+
+                            // Event listener for items per page change
+                            itemsPerPageSelect.addEventListener('change', setupPagination);
+
+                            // Initialize
+                            setupPagination();
+                        });
+                    </script>
+                    
+                            <script>
+                                document.getElementById('tableSearch').addEventListener('input', function () {
+                                    const searchValue = this.value.toLowerCase();
+                                    const rows = document.querySelectorAll('#loanTable tbody .data-row');
+
+                                    rows.forEach(row => {
+                                        const rowText = row.textContent.toLowerCase();
+                                        if (rowText.includes(searchValue)) {
+                                            row.style.display = '';
+                                            // Optional: highlight the matching part
+                                            [...row.cells].forEach(cell => {
+                                                const text = cell.textContent;
+                                                const regex = new RegExp(`(${searchValue})`, 'gi');
+                                                cell.innerHTML = text.replace(regex, '<mark>$1</mark>');
+                                            });
+                                        } else {
+                                            row.style.display = 'none';
+                                        }
+                                    });
+
+                                    // If input is cleared, remove all highlights
+                                    if (searchValue === '') {
+                                        rows.forEach(row => {
+                                            [...row.cells].forEach(cell => {
+                                                cell.innerHTML = cell.textContent; // remove <mark>
+                                            });
+                                        });
+                                    }
+                                });
+                            </script>
+
+                    <style>
+                        .page-item.active .page-link {
+                            background-color: #007bff;
+                            border-color: #007bff;
+                        }
+
+                        .page-link {
+                            color: #007bff;
+                        }
+                    </style>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- end of col-->
+
+<!-- end of col-->
+</div>
+
+<!--  Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ثبت نام مشتری جدید</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <!--                 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="smartwizard">
+                            <ul>
+                                <li><a href="#step-1">مرحله اول<br /><small>ثبت معلومات شهرت شاگرد</small></a></li>
+                                <li><a href="#step-2">مرحله دوهم<br /><small>ثبت معلومات فیس شاگرد</small></a></li>
+                            </ul>
+                            <div>
+                                <div id="step-1">
+                                    <h3 class="border-bottom border-gray pb-2">Step 1 Content</h3>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                </div>
+                                <div id="step-2">
+                                    <h3 class="border-bottom border-gray pb-2">Step 2 Content</h3>
+                                    <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="modal-body">
+                <form action="#" method="post" enctype="multipart/form-data" class="needs-validation"
+                    novalidate="novalidate">
+                    {% csrf_token %}
+                    <br>
+                    <h5>شهرت</h5>
+
+                    <div class="form-row">
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">نام مشتری </label>
+                            {{my_form.name}}
+                            <div class="valid-feedback">
+                                درست میباشد
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom02"> شماره تلفن</label>
+                            {{my_form.phone}}
+                            <div class="valid-feedback">
+                                درست میباشد
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustomUsername"> آدرس مشتری</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"></div>
+                                {{my_form.address}}
+                                <div class="invalid-feedback">
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-12">
+                            <label for="validationCustomUsername">توضیحات </label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"></div>
+                                {{my_form.detail}}
+                                <div class="invalid-feedback">
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br>
+
+
+
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                        <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                    </div>
+
+
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--  Modal -->
+
+{% endblock %}

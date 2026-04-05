@@ -1,0 +1,135 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="main-content pt-4" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+    <div class="breadcrumb">
+        <h1>بخش اصلاح گدام ها</h1>
+        <!-- <ul>
+            <li><a href="href">ب</a></li>
+            <li>د عواید اصلاح کول</li>
+        </ul> -->
+    </div>
+    
+    <div class="row">
+      
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="card-title mb-3"></div>
+
+                    <form class="needs-validation"  novalidate="novalidate" action="{% url 'warehouse:edit_warehouse' id %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="col-md-3 form-group mb-3">
+                                <label for="firstName1"> اسم گدام</label>
+                                {{edit_daily_project_form.name}}
+                            </div>
+                            <div class="col-md-3 form-group mb-3">
+                                <label for="firstName1"> موقعیت گدام</label>
+                                {{edit_daily_project_form.location}}
+                            </div>
+                            <div class="col-md-2 form-group mb-3">
+                                <label for="firstName1"> تاریخ</label>
+                                {{edit_daily_project_form.reg_date}}
+                            </div>
+                            <div class="col-md-2 form-group mb-3">
+                                <label for="firstName1">ظرفیت گدام</label>
+                                <div class="input-group">
+                                    {{ edit_daily_project_form.capacity }}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">کیلو گرام</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 form-group mb-3">
+                                <label for="firstName1">ظرفیت گدام به تعداد</label>
+                                <div class="input-group">
+                                    {{ edit_daily_project_form.capacity_by_num }}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"> تعداد</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">توضیحات</label>
+                                {{edit_daily_project_form.description}}
+                            </div>
+
+
+
+
+
+
+
+
+                            
+                            
+                            
+                            
+                            
+                        </div>  
+
+                        
+                            
+                         
+                           
+              
+                          
+                       
+                        
+    
+    
+    
+                        
+                        <style>
+                            .center-align {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                text-align: center;
+                                height: 100%;
+                            }
+                        </style>
+                        
+                        
+                        
+    
+    
+                        
+                        <button class="btn btn-primary" type="submit">ذخیره کردن</button>
+                    </form>
+
+
+
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        
+    </div><!-- end of main-content -->
+</div>
+
+
+
+
+{% endblock %}

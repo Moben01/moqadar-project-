@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="main-content mt-3 pt-3" style="font-family: XW_Zar_Bd_0;">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+                {{ message }}
+            </div>
+            <script>
+                setTimeout(function () {
+                    $('.alert').fadeOut('slow');
+                }, 3000);
+            </script>
+        {% endfor %}
+    {% endif %}
+
+    <div class="container" >
+      
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card mb-4 shadow">
+                    <div class="card-body" >
+                        <div class="card-title mb-3 text-center h4">فورم اصلاح رسید و یا برداشت پول</div>
+                        <h3 class="text-center {% if is_income %}text-success{% else %}text-danger{% endif %}">
+                            {% if is_income %} رسید {% else %} برداشت {% endif %}
+                        </h3>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12 form-group mb-3">
+                                    <label for="collabSearchBox">{% if is_income %}پول دهنده{% else %}پول گیرنده{% endif %}</label>
+                                    {{ form.olabrate }}
+                                </div>
+
+                                <div class="col-md-12 form-group mb-3">
+                                    <label for="id_curr">واحد پولی</label>
+                                    {{ form.curr }}
+                                </div>
+
+                                <div class="col-md-12 form-group mb-3 exchange-rate-field"
+                                    style="{% if form.curr.value and form.curr.value != 'افغانی' %}display: block;{% else %}display: none;{% endif %}">
+                                    <label for="id_exchagne_rate">نرخ تبادله</label>
+                                    {{ form.exchagne_rate }}
+                                </div>
+
+                                <div class="col-md-12 form-group mb-3">
+                                    <label for="id_rec_date">تاریخ {% if is_income %}دریافت{% else %}پرداخت{% endif %}</label>
+                                    {{ form.rec_date }}
+                                </div>
+
+                                <div class="col-md-12 form-group mb-3">
+                                    <label for="id_income_amount">مقدار پول به {{ form.curr.value|default:"افغانی" }}</label>
+                                    {{ form.income_amount }}
+                                </div>
+
+                                <div class="col-md-12 form-group mb-3">
+                                    <label for="id_descriiption">توضیحات</label>
+                                    {{ form.descriiption }}
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+                                <a href="{% url 'Finance_and_Accounting:malle_wa_mahaseba' %}" class="btn btn-secondary">انصراف</a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const currencyField = document.querySelector("#id_curr");
+                            const exchangeRateField = document.querySelector(".exchange-rate-field");
+                            const incomeAmountLabel = document.querySelector("label[for='id_income_amount']");
+
+                            function toggleFields() {
+                                const selectedCurrency = currencyField.options[currencyField.selectedIndex]?.text.trim() || "افغانی";
+
+                                if (selectedCurrency === "افغانی") {
+                                    exchangeRateField.style.display = "none";
+                                    incomeAmountLabel.textContent = "مقدار پول به افغانی";
+                                } else {
+                                    exchangeRateField.style.display = "block";
+                                    incomeAmountLabel.textContent = `مقدار پول به ${selectedCurrency}`;
+                                }
+                            }
+
+                            toggleFields();
+                            currencyField.addEventListener("change", toggleFields);
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

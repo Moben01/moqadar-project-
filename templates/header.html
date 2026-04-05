@@ -1,0 +1,218 @@
+
+
+
+
+{% load static %}
+{% block content %}
+
+
+<div class="app-admin-wrap layout-horizontal-bar" style="font-family: XW_Zar_Bd_0;">
+    <div class="main-header text-center">
+        <div class="menu-toggle">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div style="margin: auto">
+        <h1 class="text-center" style="text-align: center !important;">
+            سکندر شیرزاد
+          </h1>
+        </div>
+    </div>
+    <div class="horizontal-bar-wrap ">
+        <div class="header-topnav">
+            <div class="container-fluid alert-success">
+                <div class="topnav rtl-ps-none" id="" data-perfect-scrollbar="" data-suppress-scroll-x="true">
+                    <ul class="menu float-left">
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Dashboard</label><a href="/"><i class="nav-icon mr-2 i-Bar-Chart"></i> داشبورد</a>
+                                </div>
+                            </div>
+                        </li>
+                        {% if perms.Finance_and_Accounting.view_total_balance %}
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">UI kits</label><a href="{% url 'Finance_and_Accounting:malle_wa_mahaseba' %}"><i class="nav-icon mr-2 i-Suitcase"></i> مالی و اداری</a>
+
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                        <!-- end ui kits-->
+                        <!-- {% if perms.Customer.view_Customer %}
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Extra UI kits</label><a href="{% url 'Customer:customer' %}"><i class="nav-icon i-Library mr-2"></i> مشتریان</a>
+                                    
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %} -->
+                        <!-- end extra uikits-->
+                        <!-- {% if perms.Supplaier.view_Supplaier %}
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Apps</label><a href="{% url 'Supplaier:supplaier' %}"><i class="nav-icon mr-2 i-Computer-Secure"></i> تامین کنندگان</a>
+                                   
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %} -->
+                        {% if perms.product_and_catagory.view_product %}
+                        <!-- end apps-->
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Forms</label><a href="{% url 'product_and_catagory:products' %}"><i class="nav-icon mr-2 i-File-Clipboard-File--Text"></i> محصولات</a>
+
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                        <!-- end Forms-->
+                        {% if perms.Order.view_order or perms.Customer.view_customer %}
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Charts</label><a href=""><i class="nav-icon mr-2 i-Bar-Chart-5"></i> مشتریان</a>
+                                  
+                                    <input id="drop-2" type="checkbox" />
+                                    <ul>
+                                        {% if perms.Customer.view_customer %}
+                                        <li class="nav-item"><a href="{% url 'Customer:customer' %}" title="charts"><i class="nav-icon mr-2 i-Error-404-Window"></i><span class="item-name"> مدیریت مشتریان</span></a></li>
+                                        {% endif %}
+                                        {% if perms.Order.view_order %}
+                                        <li class="nav-item"><a href="{% url 'Order:order' %}"><i class="nav-icon mr-2 i-Male"></i><span class="item-name">فرمایشات</span></a></li>
+                                        {% endif %}
+                                   
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        {% if perms.Order.view_sale and perms.Order.view_sale_item_part %}
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Widgets</label><a href="{% url 'Order:Direct_sale' %}"><i class="nav-icon mr-2 i-File-Horizontal-Text"></i> فروش</a>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        {% if perms.Order.view_Sale %}
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Others</label><a href="#"><i class="nav-icon mr-2 i-Double-Tap"></i>تامین کنندگان</a>
+                                    <input id="drop-2" type="checkbox" />
+                                    <ul>
+                                        <li class="nav-item"><a href="{% url 'Supplaier:supplaier' %}" title="charts"><i class="nav-icon mr-2 i-Error-404-Window"></i><span class="item-name"> مدیریت تامین کنندگان</span></a></li>
+                                        <li class="nav-item"><a href="{% url 'purchase:purchase' %}"><i class="nav-icon mr-2 i-Male"></i><span class="item-name">خریداری</span></a></li>
+                                        <!-- <li class="nav-item"><a href="{% url 'Order:order' %}"><i class="nav-icon mr-2 i-Male"></i><span class="item-name">فرمایشات</span></a></li> -->
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                        <!--end-widgets-->
+                        {% if perms.warehouse.view_warehouse_info %}
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Widgets</label><a href="{% url 'warehouse:warehouse_part' %}"><i class="nav-icon mr-2 i-File-Horizontal-Text"></i> گدام ها</a>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if perms.Purchase.view_purchase_loan %}
+                        <!-- <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Others</label><a href="#"><i class="nav-icon mr-2 i-Double-Tap"></i>بخش قرضه ها</a>
+                                    <input id="drop-2" type="checkbox" />
+                                    <ul>
+                                        {% if perms.Purchase.view_purchase_loan %}
+                                        <li class="nav-item"><a href="{% url 'Supplaier:supplaier' %}" title="charts"><i class="nav-icon mr-2 i-Error-404-Window"></i><span class="item-name"> پول های  پرداختی</span></a></li> -->
+                                        <!-- <li class="nav-item"><a href="{% url 'purchase:loan' %}" title="charts"><i class="nav-icon mr-2 i-Error-404-Window"></i><span class="item-name"> پول های  پرداختی</span></a></li> -->
+                                        <!-- {% endif %}
+                                        {% if perms.Order.view_order_loan %} -->
+                                        <!-- <li class="nav-item"><a href="{% url 'Customer:customer' %}"><i class="nav-icon mr-2 i-Male"></i><span class="item-name">پول  های دریافتی</span></a></li> -->
+                                        <!-- <li class="nav-item"><a href="{% url 'Order:order_loans' %}"><i class="nav-icon mr-2 i-Male"></i><span class="item-name">پول  های دریافتی</span></a></li> -->
+                                        <!-- {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </li> -->
+                        {% endif %}
+
+
+                        {% if perms.Order.view_order_loan %}
+                        <!-- <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Others</label><a href="#"><i class="nav-icon mr-2 i-Double-Tap"></i>راپوردهی</a>
+                                    <input id="drop-2" type="checkbox" />
+                                    <ul>
+                                        <li class="nav-item"><a href="{% url 'report:allr' %}" title="charts"><i class="nav-icon mr-2 i-Error-404-Window"></i><span class="item-name"> راپور های عمومی</span></a></li>
+                                        <li class="nav-item"><a href="{% url 'report:reports' %}"><i class="nav-icon mr-2 i-Male"></i><span class="item-name">راپور های خریداری</span></a></li>
+                                        <li class="nav-item"><a href="{% url 'report:awayaed_report' %}"><i class="nav-icon mr-2 i-Male"></i><span class="item-name">راپور های عواید</span></a></li>
+                                        <li class="nav-item"><a href="{% url 'report:sell_report' %}"><i class="nav-icon mr-2 i-Male"></i><span class="item-name">راپور های فروش</span></a></li>
+                                        <li class="nav-item"><a href="{% url 'report:masrafha' %}"><i class="nav-icon mr-2 i-Male"></i><span class="item-name">راپور های مصارف</span></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li> -->
+                        {% endif %}
+                        {% if perms.Order.view_order_loan %}
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Others</label><a href="#"><i class="nav-icon mr-2 i-Double-Tap"></i>اکونت های مدیریتی</a>
+                                    <input id="drop-2" type="checkbox" />
+                                    <ul>
+                                        <li class="nav-item"><a href="{% url 'account:emp_type' %}" title="charts"><i class="nav-icon mr-2 i-Error-404-Window"></i><span class="item-name">کارمند جدید</span></a></li>
+                                        <li class="nav-item"><a href="{% url 'account:employee_info' %}" title="charts"><i class="nav-icon mr-2 i-Error-404-Window"></i><span class="item-name">اکونت ها</span></a></li>
+                                       
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                        <!--end-pages -->
+                        {% if perms.expenses.view_FixedExpense %}
+                        <li>
+                            <div>
+                                <div>
+                                    <label class="toggle" for="drop-2">Doc</label><a href="{% url 'expenses:main_expenses' %}"><i class="nav-icon mr-2 i-Safe-Box1"></i>مصارفات</a>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <form method="post" action="{% url 'account:logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-dark m-1"><i class="nav-icon i-Find-User"></i>خارج شدن از سیستم </button>
+                        </form>
+                        </li>
+                        
+                        <!--end-doc  -->
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <br><br><br><br>
+{% endblock%}

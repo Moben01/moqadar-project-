@@ -1,0 +1,285 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "bottom-start",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+    {% endif %}
+    </script>
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span> بخش تامین کننده گان
+محصولات    </h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">لیست تمام تامین کننده گان در سیستم</h4>
+                    <div class="col-lg-12 text-right">
+                        <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                   data-target="#exampleModal">
+                   ثبت تامین کننده جدید
+
+                    </button>
+                        <a class="btn btn-secondary btn-lg m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+
+                   </a>
+                   
+
+                    </div>
+                  
+                    
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table table-nowrap mb-0" id="alternative_pagination_table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            تاریخ
+                                          </th>
+                                        <th>
+                                          اسم
+                                        </th>
+                                        <th>شماره تلفن</th>
+                                        <th>آدرس</th>
+                                        <th>توضیحات</th>
+                                        <th>حالت فعلی</th>
+                                        <th>عملیات</th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in my_data %}
+                                    <tr>
+                                       
+                                        <td>{{i.reg_date}}</td>
+                                        <td>
+                                           {{i.name}}
+                                        </td>
+                                        <td>{{i.phone}}</td>
+                                        <td>{{i.address}}</td>
+                                        <td>{{i.detail}}</td>
+                                        <td>
+                                            {% if i.total_borrow %}
+                                                <span class="badge badge-danger">{{ i.total_borrow }}</span> 
+                                            {% else %}
+                                                <span class="badge badge-success">0</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="">
+                                            <button class="btn bg-transparent _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _r_block-dot bg-dark"></span><span class="_dot _r_block-dot bg-dark"></span><span class="_dot _r_block-dot bg-dark"></span></button>
+                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(115px, 188px, 0px);"><a class="dropdown-item" href="{% url 'Supplaier:supplaer_info' i.id %}"><i class="nav-icon i-Pen-2 text-info font-weight-bold mr-2"></i>معلومات کامل</a>
+                                                <a class="dropdown-item" href="{% url 'purchase:purhase_with_item' i.id %}"><i class="nav-icon i-Pen-2 text-success font-weight-bold mr-2"></i>معاملات جنس به جنس</a>
+
+                                                <a class="dropdown-item" href="{% url 'Supplaier:edit_supplaier' i.id %}">
+                                                    <i class="nav-icon i-Pen-2 text-success font-weight-bold mr-2">
+
+                                                    </i>تغیرات
+                                                </a>
+                                            <a 
+                                            class="dropdown-item delete-button" 
+                                            href="{% url 'Supplaier:delete_supplaier' i.id %}" 
+                                            onclick="return confirmDelete(this);">
+                                            <i class="nav-icon i-Close-Window text-danger font-weight-bold mr-2"></i>
+                                            حذف تامین کننده
+                                            </a>
+
+                                            <script>
+                                            
+                                            function confirmDelete(link) {
+                                                const confirmed = confirm("آیا مطمئن هستید که می‌خواهید این تامین کننده را حذف کنید؟");
+                                                return confirmed; 
+                                            }
+                                            </script>
+
+                                            </div>
+                                        </td>
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                   
+                                    
+                                    
+                                </tbody>
+                                <tr class="card-header bg-info">
+                                    <td class="text-white">
+                                        مجموعه پرداخت شده
+                                     </td>
+                                     <td></td>
+                                    
+                               
+                                   
+                                    <td class="heading text-success">{{collect_all}}</td>
+                                    <td class="text-white">
+                                        مجموعه باقی
+                                     </td>
+                                    <td class="heading text-danger">{{total_sum}}</td>
+                                    <td></td>  
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of col-->
+
+    <!-- end of col-->
+</div>
+
+<!--  Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ثبت تهیه کننده جدید  </h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true"></span></button>
+            </div>
+            <!--                 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="smartwizard">
+                            <ul>
+                                <li><a href="#step-1">مرحله اول<br /><small>ثبت معلومات شهرت شاگرد</small></a></li>
+                                <li><a href="#step-2">مرحله دوهم<br /><small>ثبت معلومات فیس شاگرد</small></a></li>
+                            </ul>
+                            <div>
+                                <div id="step-1">
+                                    <h3 class="border-bottom border-gray pb-2">Step 1 Content</h3>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                </div>
+                                <div id="step-2">
+                                    <h3 class="border-bottom border-gray pb-2">Step 2 Content</h3>
+                                    <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="modal-body">
+                <form action="#" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="novalidate">
+                    {% csrf_token %}
+                    <br>
+                    <h5>معلومات تهیه کننده محصول را اینجا بنویسید</h5>
+
+                    <div class="form-row">
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">تاریخ</label>
+                            {{my_form.reg_date}}
+                            <div class="valid-feedback">
+                                
+
+                            </div>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                $('#datepicker11').datepicker({
+
+                                });
+                            });
+                            </script>
+
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">اسم</label>
+                            {{my_form.name}}
+                            <div class="valid-feedback">
+                                
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom02">شماره تلفن </label>
+                            {{my_form.phone}}
+                            <div class="valid-feedback">
+                               
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustomUsername"> آدرس</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"></div>
+                                {{my_form.address}}
+                                <div class="invalid-feedback">
+                                    
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-12">
+                            <label for="validationCustomUsername">توضیحات </label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"></div>
+                                {{my_form.detail}}
+                                <div class="invalid-feedback">
+                                 
+
+                                </div>
+                            </div>
+                        </div>
+                        <label class="checkbox checkbox-outline-secondary">
+                            <input type="checkbox" name="type"><span>این تامین کننده همچنان مشتری میباشد.</span><span class="checkmark"></span>
+                        </label>
+                        
+                    </div>
+                    <br>
+                 
+                 
+
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                        <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                    </div>
+
+
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--  Modal -->
+
+{% endblock %}

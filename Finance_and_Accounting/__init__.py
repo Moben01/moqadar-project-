@@ -1,0 +1,1 @@
+default_app_config = 'Finance_and_Accounting.apps.FinanceAndAccountingConfig'

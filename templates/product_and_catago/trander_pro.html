@@ -1,0 +1,185 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+
+    
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>بخش گدام ها
+
+    </h4>
+    
+   
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">اینجا شما میتوانید محصولات یک گدام را در گدام دیگر انتقال بدهید</h4>
+                    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+                    <div class="col-lg-12 text-right">
+                        <button class="btn btn-outline-success btn-lg m-1" type="button" data-toggle="modal"
+                            data-target="#exampleModal">
+                            انتقال محصولات
+                        </button>
+                       
+
+                    </div>
+                    <br>
+                   
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">تاریخ</th>
+                                    <th scope="col">از گدام</th>
+                                    <th scope="col">به گدام</th>
+                                    <th scope="col">محصول</th>
+                                    <th scope="col"> تعداد</th>
+                                    <th scope="col">وزن</th>
+
+                                    <!-- <th scope="col" style="padding-right: 65px;">عملیات</th> -->
+                                </tr>
+                            </thead>
+
+                            {% for i in find_all_records %}
+                            <tbody>
+                                <tr>
+                                    <th scope="row">{{i.id}}</th>
+                                    <th scope="row">{{i.date}}</th>
+                                    <td>{{i.source_warehouse}}</td>
+                                    <td>{{i.to_warehouse}}</td>
+                                    <td>{{i.product_send}}</td>
+                                    <td>{{i.quantity}}</td>
+                                    <td>{{i.weight}}</td>
+                                   
+                                   
+                                    
+<!-- 
+                                    <td>
+                                        <a href="{% url 'warehouse:edit_warehouse' i.id %}" class="btn btn-primary"
+                                       >
+                                            <i class="nav-icon i-Pen-2"></i> تغییرات
+                                        </a>
+                                        <a href="{% url 'warehouse:delete_warehouse' i.id %}" class="btn btn-danger"
+                                            onclick="return confirm('آیا میخواهید این ریکارد گدام را حذف کنید؟');">
+                                            حذف
+                                        </a>
+
+                                    </td> -->
+                                  
+
+                                </tr>
+
+
+                            </tbody>
+                            {% endfor %}
+
+
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of col-->
+
+        <!-- end of col-->
+    </div>
+
+    <!--  Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">گدام  را اینجا ذخیره کنید</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'warehouse:transfer_pro_to_godams' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1"> تاریخ</label>
+                                {{form.date}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1"> گدام ارسال کننده</label>
+                                {{form.source_warehouse}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1"> گدام گیرنده</label>
+                                {{form.to_warehouse}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">محصول ارسال شونده</label>
+                                {{form.product_send}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">تعداد</label>
+                                {{form.quantity}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">وزن</label>
+                                {{form.weight}}
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">بسته نمودن</button>
+                                <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                            </div>
+                        </div>
+                        <script>
+function hideSelectedOption(select1, select2) {
+    const selectedValue = select1.value;
+
+    // Show all first
+    Array.from(select2.options).forEach(opt => {
+        opt.hidden = false;
+    });
+
+    // Hide the selected warehouse in the other field
+    if (selectedValue) {
+        const toHide = select2.querySelector(`option[value="${selectedValue}"]`);
+        if (toHide) {
+            toHide.hidden = true;
+            // If the second field already selected same value, clear it
+            if (select2.value === selectedValue) {
+                select2.value = "";
+            }
+        }
+    }
+}
+
+const source = document.getElementById("source_warehouse");
+const target = document.getElementById("to_warehouse");
+
+source.addEventListener("change", () => hideSelectedOption(source, target));
+target.addEventListener("change", () => hideSelectedOption(target, source));
+                        </script>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
+    {% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+
+
+<div class="card">
+
+  </div>
+  <!-- begin::form-->
+  <form action="{% url 'income:log' %}" method="POST">
+    {% csrf_token %}
+      <div class="card-body">
+          <div class="form-row">
+              <div class="form-group col-md-6">
+                {{currency_form.Date}}
+                  <label class="ul-form__label" for="inputEmail1">Date:</label>
+                  <input class="form-control" id="inputEmail1" type="text" placeholder="Enter Date" /><small class="ul-form__text form-text" id="passwordHelpBlock">
+                      Please enter Date
+                  </small>
+              </div>
+              <div class="form-group col-md-6">
+              {{currency_form.source}}
+                  <label class="ul-form__label" for="inputEmail2">source:</label>
+                  <input class="form-control" id="inputEmail2" type="text" placeholder="Enter source " /><small class="ul-form__text form-text" id="passwordHelpBlock">
+                      Please enter source
+                  </small>
+              </div>
+          </div>
+          <div class="custom-separator"></div>
+          <div class="form-row">
+              <div class="form-group col-md-6">
+                {{currency_form.sender}}
+                  <label class="ul-form__label" for="inputEmail3">sender:</label>
+                  <div class="input-right-icon">
+                      <input class="form-control" id="inputEmail3" type="text" placeholder="Enter sender name" /><span class="span-right-input-icon"><i class="ul-form__icon i-Map-Marker"></i></span>
+                  </div><small class="ul-form__text form-text" id="passwordHelpBlock">
+                      Please sender name
+                  </small>
+              </div>
+              <div class="form-group col-md-6">
+                {{currency_form.reciver_emp}}
+                  <label class="ul-form__label" for="inputEmail3">reciver_emp:</label>
+                  <div class="input-right-icon">
+                      <input class="form-control" id="inputEmail3" type="text" placeholder="Enter your Reciver emp" /><span class="span-right-input-icon"><i class="ul-form__icon i-Map-Marker"></i></span>
+                  </div><small class="ul-form__text form-text" id="passwordHelpBlock">
+                      Please enter Reciver employ name
+                  </small>
+              </div>
+              <div class="form-group col-md-6">
+                {{currency_form.send_unit}}
+                  <label class="ul-form__label" for="inputEmail3">send unit:</label>
+                  <div class="input-right-icon">
+                      <input class="form-control" id="inputEmail3" type="text" placeholder="Enter Send unit" /><span class="span-right-input-icon"><i class="ul-form__icon i-Map-Marker"></i></span>
+                  </div><small class="ul-form__text form-text" id="passwordHelpBlock">
+                      Please enter Send unit
+                  </small>
+              </div>
+              <div class="form-group col-md-6">
+                {{currency_form.send_amount}}
+                  <label class="ul-form__label" for="inputEmail3">Send amount:</label>
+                  <div class="input-right-icon">
+                      <input class="form-control" id="inputEmail3" type="text" placeholder="Enter your Send amount" /><span class="span-right-input-icon"><i class="ul-form__icon i-Map-Marker"></i></span>
+                  </div><small class="ul-form__text form-text" id="passwordHelpBlock">
+                      Please enter Send amount
+                  </small>
+              </div>
+              <div class="form-group col-md-6">
+                {{currency_form.convrt_unit}}
+                  <label class="ul-form__label" for="inputEmail3">Convert unit:</label>
+                  <div class="input-right-icon">
+                      <input class="form-control" id="inputEmail3" type="text" placeholder="Enter Convert unit" /><span class="span-right-input-icon"><i class="ul-form__icon i-Map-Marker"></i></span>
+                  </div><small class="ul-form__text form-text" id="passwordHelpBlock">
+                      Please enter Convert unit
+                  </small>
+              </div>
+              <div class="form-group col-md-6">
+                {{currency_form.Curent_rate}}
+                  <label class="ul-form__label" for="inputEmail4">Curent rate:</label>
+                  <div class="input-right-icon">
+                      <input class="form-control" id="inputEmail4" type="text" placeholder="Enter your postcode" /><span class="span-right-input-icon"><i class="ul-form__icon i-New-Mail"></i></span>
+                  </div><small class="ul-form__text form-text" id="passwordHelpBlock">
+                      Please enter 
+                  </small>
+              </div>
+          </div>
+
+          <div class="custom-separator"></div>
+          <div class="form-row">
+              <div class="form-group col-md-6">
+
+                 
+                  </small>
+              </div>
+          </div>
+      </div>
+      <div class="card-footer">
+          <div class="mc-footer">
+              <div class="row">
+                  <div class="col-lg-12">
+                      <button class="btn btn-primary m-1" type="button">Save</button>
+                      <button class="btn btn-outline-secondary m-1" type="button">Cancel</button>
+                      <button class="btn btn-danger m-1 footer-delete-right" type="button">Delete</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </form>
+
+
+
+
+
+
+
+
+
+
+ 
+
+          
+{% endblock %}

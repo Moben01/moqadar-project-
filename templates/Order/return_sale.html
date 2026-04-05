@@ -1,0 +1,178 @@
+
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+    {% endif %}
+    </script>
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>بخش بازگشت سفارشات {{ sale.customer.name }}</h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <div class="col-lg-12 text-right">
+                        <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                   data-target="#exampleModal">
+                  ثبت
+
+                    </button>
+
+                        <a class="btn btn-info btn-lg m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+
+                   </a>
+                    </div>
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table table-nowrap mb-0">
+                                <h3>بخش برگشتی </h3>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>تاریخ</th>
+                                        <th>مقدار برگشتی</th>
+                                        
+                                        <th>مقدار هر واحد برگشتی</th>
+                                        <th>وزن یا تغداد  </th>
+                                     
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   
+                                    <tr>
+                                        <td>{{ return_instance.id }}</td>
+                                        <td>
+                                            {{ return_instance.data }}
+                                        </td>
+                                        <td>{{ return_instance.quantity }}</td>
+                                        <td>{{ return_instance.price_per }}</td>
+                                        <td>{{ return_instance.weight }}</td> 
+                                    </tr>
+                                   
+                                  
+                                </tbody>
+                            </table>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of col-->
+
+    <!-- end of col-->
+</div>
+
+<!--  Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ثبت برگشت فرمایش </h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true"></span></button>
+            </div>
+     
+
+            <div class="modal-body">
+                <form action="#" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="novalidate">
+                    {% csrf_token %}
+                    <br>
+                    <h5>برگشت حنس از {{ sale.customer.name }}
+                        
+                    </h5>
+
+                    <div class="form-row">
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">تاریخ برگشت</label>
+                            {{my_forms.data}}
+                         
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">مقدار</label>
+                            {{my_forms.quantity}}
+                         
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">قیمت قی واحد</label>
+                            {{my_forms.price_per}}
+                         
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01"> تغداد یا وزن </label>
+                            {{my_forms.weight}}
+                         
+                        </div>
+  
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                        <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  Modal -->
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,236 @@
+
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+    {% endif %}
+    </script>
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>بخش فروش</h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">در این قسمت تمام فروش را دیده میتوانید</h4>
+                    <div class="col-lg-12 text-right">
+                  
+
+
+
+
+                        <a class="btn btn-info btn-lg m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+
+                   </a>
+                   
+
+                    </div>
+                  
+                    
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table table-nowrap mb-0">
+                                <h3>همه سفارش‌ها</h3>
+                                <thead>
+                                    <tr>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>مشتری</th>
+                                            <th>محصول</th>
+                                            <th>مقدار</th>
+                                            <th>قیمت فی واحد</th>
+                                            <th>قیمت مجموعی</th>
+                                            <th>قیمت پرداخت شده</th>
+                                            <th> مقدار باقی مانده</th>
+                                            <th> بل</th>
+                                            <th> عملیات</th>
+                                            <th> معلومات اضافی</th>
+                                          
+                                        </tr>
+                                      
+                                      
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    <tr>
+                                        <td>{{ sale.id }}</td>
+                                        <td>{{ sale.id }}</td>
+                                        <td>
+                                            {{ sale.customer }}
+                                        </td>
+                                      
+                                        <td>{{ sale.product }}</td>
+                                        <td>{{ sale.quantity }}</td>
+                                        <td>{{ sale.price_per_unit }}</td>
+                                        <td>{{ sale.should_paid }}</td>
+                                        <td>{{ sale.total_amount }}</td>
+                                      
+                                        <td>{{ sale.small_amount }}</td>
+                                      
+                                       
+                                        <td>
+                                            <a href="" class="btn btn-secondary"  data-toggle="modal"
+                                            data-target="#exampleModal">
+                سفارشات                                            </a>
+                                        </td>
+                                        {% if sale.small_amount > 0 %}
+                                        <td>
+                                            <a href="" class="btn btn-secondary"  data-toggle="modal"
+                                            data-target="#masi">
+               معلومات اضافی                                           </a>
+                                        </td>
+                                       
+                                        {% else %}
+                                        <td>
+                                            ندارد
+                                        </td>
+                                        {% endif %}
+                                        
+                                    </tr>
+                                  
+                                
+                                </tbody>
+                            </table>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of col-->
+
+    <!-- end of col-->
+</div>
+
+<!--  Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ثبت فرمایش جدید</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+         
+
+
+            <div class="modal-body">
+                {% if return_details %}
+                <ul>
+                    {% for detail in return_details %}
+                    <li>
+                        <div class="form-row">
+                            <!-- Date Field -->
+                            <div class="col-md-4 mb-4">
+                                <label for="date">تاریخ</label>
+                                <p id="date">{{ detail.created_at }}</p>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                            </div>
+                    
+                            <!-- Return Quantity Field -->
+                            <div class="col-md-4 mb-4">
+                                <label for="return-quantity">مقدار برگشتی</label>
+                                <p id="return-quantity">{{ detail.rerun_of_quantity }}</p>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                            </div>
+                    
+                            <!-- Total Amount Field -->
+                            <div class="col-md-4 mb-4">
+                                <label for="total-amount">مقدار کُل برگشتی</label>
+                                <p id="total-amount">{{ detail.total_amount_of_sale }}</p>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>
+                    این محصول فروش شده هیج بازگشتی ندارد.
+                </p>
+            {% endif %}
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--  Modal -->
+
+
+<!--  Modal -->
+<div class="modal fade" id="masi" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">معلومات اضافی در باره {{ sale.customer }}</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+         
+            <div class="card card-profile-1 mb-4">
+                <div class="card-body text-center">
+                    <div class="avatar box-shadow-2 mb-3">
+                        <img src="{% static 'images/avatar_default.svg' %}" alt=""></div>
+                    <h5 class="m-0"> {{ sale.customer }} </h5>
+                    
+                    <p>
+                     این شخص که {{sale.customer}} نام دارد از محصول {{ sale.product }} به مقدار {{ sale.quantity }} به مقدار فی واحد {{ sale.price_per_unit }} برایش به فروش رسیده که مجموعه میشود {{ sale.should_paid }} اما تاحل {{ sale.total_amount }} آن را پرداخت 
+                     <br>
+                     و به مقدار  {{ sale.small_amount }} آن را تا حال پرداخت نکرده.
+                    </p>
+                    <div class="card-socials-simple mt-4">
+                        <a href="">
+                      A.B.A
+                    </a>
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!--  Modal -->
+{% endblock %}

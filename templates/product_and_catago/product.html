@@ -1,0 +1,159 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+    {% endif %}
+    </script>
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span> بخش محصولات 
+    </h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">لیست تمام محصولات در سیستم</h4>
+                    <div class="col-lg-12 text-right">
+                        <a href="{% url 'product_and_catagory:produce_and_cata' %}" class="btn btn-outline-info m-1" type="button">نوعیت محصولات</a>
+
+                        <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                            data-target="#exampleModal">
+                            محصول جدید
+
+                        </button>
+
+                    </div>
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">نوعیت محصول</th>
+                                    <th scope="col">نام </th>
+                                    <th scope="col">تاریخ </th>
+                                    
+                                    <th scope="col">توضیحات</th>
+                                   
+
+                                    <th scope="col" style="padding-right: 65px;">عملیات</th>
+                                </tr>
+                            </thead>
+
+                            {% for i in my_data %}
+                            <tbody>
+                                <tr>
+                                    <th scope="row">{{i.id}}</th>
+                                    <td>{{i.meat_catagory}}</td>
+                                    <td>{{i.meat_name}}</td>
+                                    <td>{{i.reg_date}}</td>
+                                  
+                                    <td>{{i.description}}</td>
+
+                                    <td>
+                                   
+                                        <a href="{% url 'product_and_catagory:edit_product' i.id %}" class="btn btn-primary">
+                                            <i class="nav-icon i-Pen-2"></i> تغیرات
+                                        </a>
+
+
+
+                                        <a href="{% url 'product_and_catagory:delete_product' i.id %}" class="btn btn-danger"
+                                            onclick="return confirm('آیا مطمئن هستید میخواهید محصول را حذف نماید؟');">
+                                            حذف
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+                            {% endfor %}
+
+
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of col-->
+
+        <!-- end of col-->
+    </div>
+
+    <!--  Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">نوعیت گوشت را اینجا ذخیره کنید</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'product_and_catagory:products' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">نوعیت عمومی گوشت</label>
+                                {{my_form.meat_catagory}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">نوعیت  فروش گوشت</label>
+                                {{my_form.product_type}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">اسم گوشت</label>
+                                {{my_form.meat_name}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">تاریخ </label>
+                                {{my_form.reg_date}}
+                            </div>
+                          
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">توضیحات</label>
+                                {{my_form.description}}
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">بسته نمودن</button>
+                                <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
+    {% endblock %}

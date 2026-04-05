@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+            {{ message }}
+        </div>
+        <script>
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 3000); // 3 seconds
+        </script>
+    {% endfor %}
+    {% endif %}
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>بخش مدیریت گروپ ها و کارمند ها
+    </h4>
+    <div class="app-admin-wrap layout-sidebar-vertical sidebar-full">
+      
+                <div class="separator-breadcrumb border-top"></div>
+                <!-- content goes here-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            
+                            <div class="card-body">
+                                <div class="ul-contact-list-body">
+                                    <div class="ul-contact-main-content">
+                                        <div class="ul-contact-left-side">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="ul-contact-list">
+                                                        <div class="contact-close-mobile-icon float-right mb-2"><i class="i-Close-Window text-15 font-weight-600"></i></div>
+                                                        <!-- modal-->
+                                                        <button class="btn btn-outline-secondary btn-block mb-4" type="button" data-toggle="modal" data-target="#exampleModal">اضافه کردن کارمند</button>
+                                                        <!-- end:modal-->
+                                                        <div class="list-group" id="list-tab" role="tablist"><a class="list-group-item list-group-item-action border-0 active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home"> معلومات گروپ</a>
+                                                            {% for group, count in groups_with_counts %}
+                                                            <a class="list-group-item list-group-item-action border-0" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile"> گروپ : {{ group.name }} </a>
+                                                            <a class="list-group-item list-group-item-action border-0" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">کارمند : {{ count }}  </a>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">اضافه کردن کارمند</h5>
+                                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="post"  >
+                                                            {% csrf_token %}
+                                                            <div class="form-group">
+                                                                {{ form.as_p }}
+                                                            </div>  
+                                                        
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-secondary" type="button" data-dismiss="modal">برگشت</button>
+                                                        <button class="btn btn-primary" name="action" type="submit" value="add">تایید</button>
+                                                    </div>
+                                                        </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="ul-contact-content">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="float-left"><i class="nav-icon i-Align-Justify-All text-25 ul-contact-mobile-icon"></i></div>
+                                                    <div class="tab-content ul-contact-list-table--label" id="nav-tabContent">
+                                                        <!-- all-contact-->
+                                                        <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                                                            <div class="text-left">
+                                                                <div class="table-responsive">
+                                                                    <table class="display table table-borderless ul-contact-list-table" id="contact_list_table" style="width:100%">
+                                                                        {% if selected_group %}
+                                                                        <h3 style="text-align: center;">د {{ selected_group.name }} تمام کارمندان</h3>
+                                                                        {% endif %}
+                                                                        <thead>
+                                                                            <tr class="border-bottom">
+                                                                                <th> #</th>
+                                                                                <th>کارمند گروپ</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            
+                                                                                {% for user in users_in_group %}
+                                                                                <tr>
+                                                                                    <td>{{ user.id }}</td>
+                                                                                    <td>{{ user.name }}</td>
+                                                                                    <td>
+                                                                                        <button class="btn bg-transparent _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                            <span class="_dot _r_block-dot bg-dark"></span>
+                                                                                            <span class="_dot _r_block-dot bg-dark"></span>
+                                                                                            <span class="_dot _r_block-dot bg-dark"></span>
+                                                                                        </button>
+                                                                                        <div class="dropdown-menu" x-placement="bottom-start">
+
+                                                                                            <a class="dropdown-item" href="{% url 'account:remove_user_from_group' user.id %}"> حذف کردن کارمند</a>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                {% endfor %}
+                                                                            
+                                                                        </tbody>
+                                                                        
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end of main-content -->
+        
+
+    </div>
+
+    <!-- <div class="modal fade" id="exampleModal۱" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">کارکوونکی پاکول </h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                       
+                        <p>Are you sure you want to delete "{{ object.name }}"?</p>
+                        <button type="submit">Confirm</button>
+                    </form>
+                    <!-- <form method="post" action="{% url 'account:assign_user_to_group' selected_group.id %}" >
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ form.as_p }}
+                        </div>  
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">وتل</button>
+                    <button class="btn btn-primary" type="submit">تایید</button>
+                </div>
+                    </form> -->
+            </div>
+        </div>
+    </div> -->
+
+{% endblock %}

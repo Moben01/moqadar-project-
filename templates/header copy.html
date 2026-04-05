@@ -1,0 +1,171 @@
+{% load static %}
+{% block content %}
+
+<div class="app-admin-wrap layout-sidebar-vertical sidebar-full">
+<div class="sidebar-panel bg-white" style="font-family: XW_Zar_Bd_0;">
+  <div class="gull-brand pr-3 text-center mt-4 mb-2 d-flex justify-content-center align-items-center"><a href="/">
+  </a>
+       <span class="item-name text-20 text-primary font-weight-700"><a href="/">A.B.A  </a></span>
+      <!-- <div class="sidebar-compact-switch ml-auto"><span></span></div> -->
+  </div>
+  <!--  user -->
+    <style>
+        @media print {
+    .scroll-nav {
+        display: none;
+    }
+}
+    </style>
+  <div class="scroll-nav ps ps--active-y" data-perfect-scrollbar="data-perfect-scrollbar" data-suppress-scroll-x="true" >
+      <div class="side-nav">
+          <div class="main-menu">
+              <ul class="metismenu" id="menu">
+                <li class="Ul_li--hover"><a href="/"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">داشبورد</span></a></li>
+                {% if perms.Finance_and_Accounting.view_total_balance %}
+                <li class="Ul_li--hover"><a href="{% url 'Finance_and_Accounting:malle_wa_mahaseba' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">مالی و اداری</span></a></li>
+                {% endif %}
+                {% if perms.Customer.view_Customer %}
+                <li class="Ul_li--hover"><a href="{% url 'Customer:customer' %}"><i class="i-File-Clipboard-File--Text text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">مشتریان</span></a></li>
+                {% endif %}
+                {% if perms.Supplaier.view_Supplaier %}
+                <li class="Ul_li--hover"><a href="{% url 'Supplaier:supplaier' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">تامین کنندگان</span></a></li>
+                {% endif %}
+                {% if perms.product_and_catagory.view_product %}
+                <li class="Ul_li--hover"><a href="{% url 'product_and_catagory:products' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">محصولات</span></a></li>
+                {% endif %}
+                {% if perms.Purchase.view_Parchase %}
+                <li class="Ul_li--hover"><a href="{% url 'Purchase:Purchase' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">خریداری</span></a></li>
+                {% endif %}
+                {% if perms.Order.view_Sale %}
+                <li class="Ul_li--hover"><a href="{% url 'Order:Direct_sale' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">فروش</span></a></li>
+                {% endif %}
+                {% if perms.warehouse.view_warehouse_info %}
+                <li class="Ul_li--hover"><a href="{% url 'warehouse:warehouse_part' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">گدام ها</span></a></li>
+                {% endif %}
+                {% if perms.Order.view_Order %}
+                <li class="Ul_li--hover"><a href="{% url 'Order:order' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">فرمایشات</span></a></li>
+                {% endif %}
+                {% if perms.expenses.view_FixedExpense %}
+                <li class="Ul_li--hover"><a href="{% url 'expenses:main_expenses' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">مصارفات</span></a></li>
+                {% endif %}
+                <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Suitcase text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">  بخش قرضه ها</span></a>
+                    <ul class="mm-collapse">
+                        {% if perms.Purchase.view_purchase_loan %}
+                        <li class="item-name"><a href="{% url 'Purchase:loan' %}"><i class="nav-icon i-Crop-2"></i><span class="item-name">  پول های  پرداختی</span></a></li>
+                        {% endif %}
+                        {% if perms.Order.view_order_loan %}
+                        <li class="item-name"><a href="{% url 'Order:order_loans' %}"><i class="nav-icon i-Loading-3"></i><span class="item-name">پول   های دریافتی</span></a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <!-- <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Safe-Box1 text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">راپوردهی</span></a>
+                    <ul class="mm-collapse">
+                        <li class="Ul_li--hover"><a href="{% url 'report:allr' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">راپور های عمومی</span></a></li>
+                        <li class="Ul_li--hover"><a href="{% url 'report:reports' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">راپور های خریداری</span></a></li>
+                        <li class="Ul_li--hover"><a href="{% url 'report:sell_report' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">راپور های فروش</span></a></li>
+                        <li class="Ul_li--hover"><a href="{% url 'report:awayaed_report' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">راپور های عواید</span></a></li>
+                        <li class="Ul_li--hover"><a href="{% url 'report:masrafha' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">راپور های مصارف</span></a></li>
+
+                       
+
+
+                    </ul>
+                </li> -->
+               
+
+
+
+
+
+
+
+
+               
+               
+
+               
+                  <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Safe-Box1 text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">اکونت های مدیریتی</span></a>
+                    <ul class="mm-collapse">
+                      
+                        <li class="item-name"><a href=""><i class="nav-icon i-File-Horizontal"></i><span class="item-name">اکونت ها</span></a></li>
+                        <li class="item-name"></li>
+                        <li class="nav-item"><a href="{% url 'account:create_group' %}"><i class="nav-icon i-File-Horizontal"></i><span class="item-name">گروپ ها </span></a></li>
+                        <!-- <li class="nav-item">
+                            <form action="{% url 'Home:backup' %}" method="post">
+                            {% csrf_token %}
+                                <button type="submit"><i class="nav-icon i-File-Horizontal"></i>ذخیره معلومات دیتابیس (بکاپ)</button>
+                            </form>
+                            </li> -->
+                            
+
+                    </ul>
+                </li>
+                  
+                  <li class="Ul_li--hover">
+                    
+                
+                      
+                    
+                    <!-- <a href="{% url 'account:logout' %}"><i class="i-Library text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">وتل</span>
+                    
+                    
+                    </a> -->
+                </li>
+               
+             
+
+            
+
+
+              </ul>
+              <div class="ml-4">
+              <form method="post" action="{% url 'account:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark m-1"><i class="nav-icon i-Find-User"></i>خارج شدن از سیستم </button>
+            </form>
+        </div>
+          </div>
+         
+      </div>
+      <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+          <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+      </div>
+      <div class="ps__rail-y" style="top: 0px; height: 404px; right: 0px;">
+          <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 325px;"></div>
+      </div>
+      <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+          <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+      </div>
+      <div class="ps__rail-y" style="top: 0px; height: 404px; right: 0px;">
+          <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 325px;"></div>
+      </div>
+  </div>
+  <!--  side-nav-close -->
+</div>
+
+<div class="switch-overlay"></div>
+<div class="main-content-wrap mobile-menu-content bg-off-white m-0">
+    <header class="main-header bg-white d-flex justify-content-between p-2">
+        <div class="header-toggle">
+            <div class="menu-toggle mobile-menu-icon">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <!-- <i class="i-Add-UserStar mr-3 text-20 cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Todo"></i><i class="i-Speach-Bubble-3 mr-3 text-20 cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Chat"></i><i class="i-Email mr-3 text-20 mobile-hide cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Inbox"></i><i class="i-Calendar-4 mr-3 mobile-hide text-20 cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Calendar"></i><i class="i-Checkout-Basket mobile-hide mr-3 text-20 cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Calendar"></i> -->
+        </div>
+        <div class="header-part-right">
+            <!-- Full screen toggle--><i class="i-Full-Screen header-icon d-none d-sm-inline-block" data-fullscreen=""></i>
+            <!-- Grid menu Dropdown-->
+            <!-- <div class="dropdown dropleft"><i class="i-Safe-Box text-muted header-icon" id="dropdownMenuButton" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <div class="menu-icon-grid"><a href="#"><i class="i-Shop-4"></i> Home</a><a href="#"><i class="i-Library"></i> UI Kits</a><a href="#"><i class="i-Drop"></i> Apps</a><a href="#"><i class="i-File-Clipboard-File--Text"></i> Forms</a><a href="#"><i class="i-Checked-User"></i> Sessions</a><a href="#"><i class="i-Ambulance"></i> Support</a></div>
+                </div>
+            </div> -->
+        </div>
+    </header><!-- ============ Body content start ============= -->
+
+
+
+{% endblock%}
+

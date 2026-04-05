@@ -1,0 +1,113 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+    {% endif %}
+    </script>
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>مدیریت بخش مشتریان</h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 " >لیست تمام شرکا قرضدار در سیستم</h4>
+                    <div class="col-lg-12 text-right">
+                        <a class="btn btn-info btn-lg m-1" type="button" href="{% url 'Finance_and_Accounting:loan_collaborate_partners' %}">
+                            پرنت
+                        </a>
+                        <a class="btn btn-info btn-lg m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+                        </a>
+                    </div>
+
+                    <div class="col-md-12">
+                        <table class="table report-table">
+                            <thead >
+                                <tr>
+                                    <th style="background-color: black; color: white;">#</th>
+                                    <th style="background-color: black; color: white;">نام شریک</th>
+                                    <th style="background-color: black; color: white;">مقدار پول</th>
+                                    <th style="background-color: black; color: white;">توضیحات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in loan_data %}
+                                <tr>
+                                    
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ i.name }}</td>
+                                    <td>{{ i.loan_amount }}</td>
+                                    <td></td>
+                                </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+<style>
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    .report-table th,
+    .report-table td {
+        border: 1px solid #000;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .report-table thead th {
+        font-weight: bold;
+        background-color: #f5f5f5;
+    }
+</style>
+
+
+           
+
+                  
+                    
+                    <br>
+                   
+                    <div class="row">
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+</div>
+
+
+
+{% endblock %}

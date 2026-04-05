@@ -1,0 +1,206 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>بخش گدام ها
+
+    </h4>
+    
+    <div class="row mb-4">
+        <div class="col-md-3 col-lg-3">
+            <div class="card mb-4 o-hidden">
+                <div class="card-body ul-card__widget-chart">
+                    <div class="ul-widget__chart-info">
+                        <h5 class="heading">آخرین تعداد خریده شده</h5>
+                        <div class="ul-widget__chart-number">
+                            <h2 class="t-font-boldest">{{last_record.Quantity}} </h2>
+                        </div>
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+        {% for item in inventory_data %}
+        <div class="col-md-3 col-lg-3">
+            <div class="card mb-4 o-hidden">
+                <div class="card-body ul-card__widget-chart">
+                    <div class="ul-widget__chart-info">
+                        <h5 class="heading">{{ item.product_foerignkey__meat_name }}</h5>
+                        <div class="ul-widget__chart-number">
+                            <h2 class="t-font-boldest">{{ item.total_quantity }}</h2><small class="text-muted"></small>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        
+       
+        
+        
+ 
+        
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">اینجا شما میتوانید گدام های ثبت شده را تماشا و گدام جدید ثبت نمایید</h4>
+                    <div class="col-lg-12 text-right">
+                        <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                            data-target="#exampleModal">
+                            گدام جدید
+                        </button>
+                        <a href="{% url 'warehouse:transfer_pro_to_godams' %}"><button class="btn btn-info btn-lg m-1" type="button" >
+                           انتقال محصولات از یک گدام به گدام دیگر
+                        </button></a>
+
+                    </div>
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">نام</th>
+                                    <th scope="col">موقعیت</th>
+                                    <th scope="col">تاریخ</th>
+                                    <th scope="col">ظرفیت</th>
+                                    <th scope="col">ظرفیت به تعداد</th>
+                                    <th scope="col">توضیحات</th>
+
+                                    <th scope="col" style="padding-right: 65px;">عملیات</th>
+                                </tr>
+                            </thead>
+
+                            {% for i in my_data %}
+                            <tbody>
+                                <tr>
+                                    <th scope="row">{{i.id}}</th>
+                                    <td>{{i.name}}</td>
+                                    <td>{{i.location}}</td>
+                                    <td>{{i.reg_date}}</td>
+                                    <td>{{i.capacity}}</td>
+                                    <td>{{i.capacity_by_num}}</td>
+                                   
+                                    <td>{{i.description}}</td>
+                                    
+
+                                    <td>
+                                        <a href="{% url 'warehouse:edit_warehouse' i.id %}" class="btn btn-primary"
+                                       >
+                                            <i class="nav-icon i-Pen-2"></i> تغییرات
+                                        </a>
+                                        <a href="{% url 'warehouse:delete_warehouse' i.id %}" class="btn btn-danger"
+                                            onclick="return confirm('آیا میخواهید این ریکارد گدام را حذف کنید؟');">
+                                            حذف
+                                        </a>
+
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'warehouse:ware_data' i.id %}" class="btn btn-outline-success m-1" type="button">معلومات</a>
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+                            {% endfor %}
+
+
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of col-->
+
+        <!-- end of col-->
+    </div>
+
+    <!--  Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">گدام  را اینجا ذخیره کنید</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'warehouse:warehouse_part' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1"> اسم گدام</label>
+                                {{my_form.name}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1"> موقعیت گدام</label>
+                                {{my_form.location}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1"> تاریخ</label>
+                                {{my_form.reg_date}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">ظرفیت گدام</label>
+                                <div class="input-group">
+                                    {{ my_form.capacity }}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">کیلو گرام</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">ظرفیت گدام به تعداد</label>
+                                <div class="input-group">
+                                    {{ my_form.capacity_by_num }}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"> تعداد</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">توضیحات</label>
+                                {{my_form.description}}
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">بسته نمودن</button>
+                                <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+
+    {% endblock %}

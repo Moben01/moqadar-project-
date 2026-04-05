@@ -1,0 +1,90 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="main-content pt-4" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+    <div class="breadcrumb">
+        <h1  style="margin-top: 69px;">بخش پرداخت قرض های {{customer.name}}</h1>
+        <br>
+
+    </div>
+    
+    <div class="row">
+        <h3> مجموعه تمام قرض ها:{{amount}}</h3>
+
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="card-title mb-3"></div>
+
+                    <form class="needs-validation"  novalidate="novalidate" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustom01">  تاریخ</label>
+                                {{my_form.date_day}}
+                              
+                            </div>
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                $('#datepicker15').datepicker({
+
+                                });
+                            });
+                            </script>
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustomUsername">جنس</label>
+                                <div class="input-group">
+                                    {{my_form.item}}
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustomUsername">گدام</label>
+                                <div class="input-group">
+                                    {{my_form.godam}}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="validationCustomUsername">تعداد</label>
+                                <div class="input-group">
+                                    {{my_form.number}}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="validationCustomUsername">وزن</label>
+                                <div class="input-group">
+                                    {{my_form.weighht}}
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-12">
+                                <label for="validationCustomUsername">توضیحات</label>
+                                <div class="input-group">
+                                    {{my_form.notes}}
+                                </div>
+                            </div>
+                        </div>  
+                        <button class="btn btn-primary" type="submit">ذخیره کردن</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}

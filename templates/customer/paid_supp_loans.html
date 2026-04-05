@@ -1,0 +1,143 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="main-content pt-4" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+    <div class="breadcrumb">
+        <h1>بخش پرداخت قرض های {{customer.name}}</h1>
+        <br>
+
+        <!-- <ul>
+            <li><a href="href">ب</a></li>
+            <li>د عواید اصلاح کول</li>
+        </ul> -->
+    </div>
+    
+    <div class="row">
+        <h3> مجموعه تمام قرض ها:{{amount}}</h3>
+
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="card-title mb-3"></div>
+
+                    <form class="needs-validation"  novalidate="novalidate" action="{% url 'Supplaier:paid_supp_loans' customer.id %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustom01">  تاریخ</label>
+                                {{loan_form.date_issued}}
+                                <!-- <input class="form-control" id="validationCustom01" type="text" placeholder="First name" value="Mark" required="required" /> -->
+                                <div class="valid-feedback">
+                                    درست است
+    
+                                </div>
+                            </div>
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                $('#datepicker12').datepicker({
+
+                                });
+                            });
+                            </script>
+
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustomUsername">مقدار پول پرداخت</label>
+                                <div class="input-group">
+                                    {{loan_form.amount}}
+    
+                                    <!-- <div class="input-group-prepend"><span class="input-group-text" id="inputGroupPrepend">@</span></div> -->
+                                    <!-- <input class="form-control" id="validationCustomUsername" type="text" placeholder="Username" aria-describedby="inputGroupPrepend" required="required" />
+                                    <div class="invalid-feedback">
+                                        Please choose a username.
+    
+                                    </div> -->
+                                </div>
+                                <div class="valid-feedback">
+                                    درست است
+    
+                                </div>
+                            </div>
+                         
+                            <div class="col-md-12 mb-12">
+                                <label for="validationCustomUsername">توضیحات</label>
+                                <div class="input-group">
+                                    {{loan_form.notes}}
+    
+                                    <!-- <div class="input-group-prepend"><span class="input-group-text" id="inputGroupPrepend">@</span></div> -->
+                                    <!-- <input class="form-control" id="validationCustomUsername" type="text" placeholder="Username" aria-describedby="inputGroupPrepend" required="required" />
+                                    <div class="invalid-feedback">
+                                        Please choose a username.
+    
+                                    </div> -->
+                                </div>
+                                <div class="valid-feedback">
+                                    درست است
+    
+                                </div>
+                            </div>
+                            
+                        </div>  
+
+                        
+                            
+                         
+                           
+              
+                          
+                       
+                        
+    
+    
+    
+                        
+                        <style>
+                            .center-align {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                text-align: center;
+                                height: 100%;
+                            }
+                        </style>
+                        
+                        
+                        
+    
+    
+                        
+                        <button class="btn btn-primary" type="submit">ذخیره کردن</button>
+                    </form>
+
+
+
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        
+    </div><!-- end of main-content -->
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="main-content pt-4" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+    <div class="breadcrumb">
+        <h1>بخش پرداخت قرض های {{customer.name}}</h1>
+        <br>
+
+   
+    </div>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <div class="row">
+        <h3> مجموعه تمام قرض ها:{{amount}}</h3>
+
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="card-title mb-3"></div>
+
+                    <form class="needs-validation"  novalidate="novalidate" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustom01">  تاریخ</label>
+                                {{loan_form.date_issued}}
+                                <div class="valid-feedback">
+                                    درست است
+                                </div>
+                            </div>
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                $('#datepicker14').datepicker({
+
+                                });
+                            });
+                            </script>
+
+                            <div class="col-md-4">
+                                <label for="saleSelect">فروش</label>
+                                <div class="input-group">
+                                    <select name="sale_id_for_pay" id="saleSelect" multiple class="form-control select2">
+                                        {% for obj in loan_form.fields.sale_id_for_pay.queryset %}
+                                            <option value="{{ obj.id }}" data-borrow="{{ obj.reamin_amount_according_to_sale_record }}">
+                                                فروش {{ obj.id }} - مقدار باقی: {{ obj.reamin_amount_according_to_sale_record }} افغانی
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <small class="text-muted d-block mt-1">مجموع مقدار باقی: <strong id="totalBorrow">۰</strong> افغانی</small>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="id_amount">مقدار پول پرداخت</label>
+                                <div class="input-group">
+                                    {{ loan_form.amount }}
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    const select = document.getElementById("saleSelect");
+                                    const totalBorrow = document.getElementById("totalBorrow");
+                                    const amountInput = document.getElementById("id_amount"); // assuming Django auto-generates this ID
+
+                                    function calculateTotal() {
+                                        const selectedOptions = Array.from(select.selectedOptions);
+                                        let total = 0;
+
+                                        selectedOptions.forEach(option => {
+                                            total += parseFloat(option.getAttribute("data-borrow")) || 0;
+                                        });
+
+                                        totalBorrow.innerText = total.toLocaleString('fa-AF');
+
+                                        if (selectedOptions.length > 1) {
+                                            amountInput.value = total;
+                                            amountInput.setAttribute("readonly", "readonly");
+                                        } else if (selectedOptions.length === 1) {
+                                            const singleValue = parseFloat(selectedOptions[0].getAttribute("data-borrow")) || 0;
+                                            amountInput.value = singleValue;
+                                            amountInput.removeAttribute("readonly");
+                                        } else {
+                                            amountInput.value = "";
+                                            amountInput.removeAttribute("readonly");
+                                        }
+                                    }
+
+                                    select.addEventListener("change", calculateTotal);
+                                });
+                                </script>
+                          
+                         
+                         
+                                
+                         
+                            <div class="col-md-12 mb-12">
+                                <label for="validationCustomUsername">توضیحات</label>
+                                <div class="input-group">
+                                    {{loan_form.notes}}
+                                </div>
+                            </div>  
+                        </div>  
+                        <style>
+                            .center-align {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                text-align: center;
+                                height: 100%;
+                            }
+                        </style>
+                        
+                        
+                        
+    
+    
+                        
+                        <button class="btn btn-primary" type="submit">ذخیره کردن</button>
+                    </form>
+
+
+
+                    
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            $(document).ready(function () {
+                $('.select2').select2({
+                    placeholder: "انتخاب کنید...",
+                    closeOnSelect: false,
+                    templateResult: formatOption, 
+                });
+            
+                function formatOption(state) {
+                    if (!state.id) return state.text;
+            
+                    var checkbox = $('<span><input type="checkbox" style="margin-right:5px;" />' + state.text + '</span>');
+                    return checkbox;
+                }
+            });
+        </script>
+        
+        
+        
+        
+    </div><!-- end of main-content -->
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+{% endblock %}

@@ -1,0 +1,463 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light">داشبورد /</span> مدیرت شاگردان  
+    </h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">شاگردان ثبت شده در سیستم</h4>
+                    <div class="col-lg-12 text-right">
+                        <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                            data-target="#exampleModal">
+                            شاگرد جدید 
+
+                        </button>
+                        <a class="btn btn-dark btn-lg ripple m-1" href="{% url 'money_dist:female_student_add_view'%}">
+                        شاگردان بخش اناث 
+
+                        </a>
+
+                    </div>
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="table-responsive">
+                        <table class="display table table-striped table-bordered"
+                        id="deafult_ordering_table" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">شماره</th>
+
+                                    <th scope="col">تاریخ</th>
+                                    <th scope="col">نام </th>
+                                    <th scope="col">نام پدر</th>
+                                    <th scope="col">نام پدرکلان</th>
+                                    <th scope="col">نمبر مسلسل</th>
+                                    <th scope="col">صنف</th>
+                                    <th scope="col" style="padding-right: 65px;">عملیات</th>
+                                </tr>
+                            </thead>
+                            
+
+                            <tbody>
+                                {% for i in all_students %}
+
+                                <tr>
+                                    <td>{{i.id}}</td>
+                                    <th scope="row">{{i.hdate}}</th>
+                                    <td>{{i.stu_name}}</td>
+                                    <td>{{i.stu_father_name}}</td>
+                                    <td>{{i.stu_grand_father_name}}</td>
+                                    <td>{{i.nid_num}}</td>
+                                    <td>{{i.stu_class}}</td>
+                                    
+                                   
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn bg-white _r_btn" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _r_block-dot bg-danger"></span><span class="_dot _r_block-dot bg-primary"></span><span class="_dot _r_block-dot bg-danger"></span></button>
+                                            <div class="dropdown-menu" x-placement="bottom-start"><a class="dropdown-item" href="{% url 'money_dist:student_info_mgm' i.id %}">معلومات کامل</a><a class="dropdown-item" href="{% url 'money_dist:fees_info' i.id %}">معلومات فیس</a><a class="dropdown-item" href="{% url 'money_dist:student_all_info' i.id %}">پرنت بل</a><a class="dropdown-item" href="{% url 'money_dist:edit_student_info' i.id %}">تغیرات</a><a class="dropdown-item" type="button" href="{% url 'money_dist:delete_student' i.id %}"
+                                                >حذف کردن</a>
+                                                                                        
+
+<!--  Modal -->
+<!-- <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">حذف کردن کمک</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">×</span></button>
+    </div>
+    <div class="modal-body">
+        
+        
+        <form action="{% url 'money_dist:delete_student' i.id %}" method="post">
+            {% csrf_token %}
+            <div class="row">
+               <h5>آیا مطمین هستید؟</h5>
+
+
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">لغو</button>
+                    <button class="btn btn-primary ml-2" type="submit">بلی حذف گردد</button>
+                </div>
+
+
+            </div>
+        </form>
+
+
+    </div>
+</div>
+</div>
+</div> -->
+<!--  Modal -->
+                                                <!-- <div class="dropdown-divider"></div><a class="dropdown-item" href="#">Separated link</a> -->
+                                            </div>
+                                        </div>
+               
+
+
+                                       
+
+                                        
+                                       
+
+                                    </td>
+
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+
+            
+
+
+                            
+
+
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of col-->
+
+        <!-- end of col-->
+    </div>
+
+    <!--  Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ثبت نام شاگرد جدید</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                </div>
+<!--                 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="smartwizard">
+                            <ul>
+                                <li><a href="#step-1">مرحله اول<br /><small>ثبت معلومات شهرت شاگرد</small></a></li>
+                                <li><a href="#step-2">مرحله دوهم<br /><small>ثبت معلومات فیس شاگرد</small></a></li>
+                            </ul>
+                            <div>
+                                <div id="step-1">
+                                    <h3 class="border-bottom border-gray pb-2">Step 1 Content</h3>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                </div>
+                                <div id="step-2">
+                                    <h3 class="border-bottom border-gray pb-2">Step 2 Content</h3>
+                                    <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="modal-body">
+                    <form  class="needs-validation" novalidate="novalidate" class="needs-validation" novalidate="novalidate"action="{% url 'money_dist:student_add_view' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <br>
+                        <div class="form-row">
+                            <div class="col-md-3 mb-3">
+                                <label for="validationCustom01">جنسیت</label>
+                                {{student_form.sex}}                                    
+                                <div class="valid-feedback">
+                                  
+
+                                </div>
+                            </div>
+                            </div>
+                        <h5>شهرت</h5>
+
+                            <div class="form-row">
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustom01">تاریخ</label>
+                                    {{fees_form.date}}                                    
+                                    <div class="valid-feedback">
+                                      
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustom02">نام کامل</label>
+                                    {{student_form.stu_name}}
+                                     <div class="valid-feedback">
+                                       
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustomUsername">نام پدر</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"></div>
+                                        {{student_form.stu_father_name}}
+                                        <div class="invalid-feedback">
+                                          
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustomUsername">نام پدرکلان</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"></div>
+                                        {{student_form.stu_grand_father_name}}
+                                        <div class="invalid-feedback">
+                                           
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <h5>سکونت فعلی</h5>
+
+                            <div class="form-row">
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="validationCustom03">ولایت</label>
+                                    {{student_form.curr_province}}
+                                    <div class="invalid-feedback">
+                                    
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="validationCustom04">ولسوالی</label>
+                                    {{student_form.curr_district}}
+                                    <div class="invalid-feedback">
+                                      
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="validationCustom05">قریه / ناحیه</label>
+                                    {{student_form.curr_viliage}}
+                                    <div class="invalid-feedback">
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <h5>سکونت اصلی</h5>
+                            <div class="form-row">
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="validationCustom03">ولایت</label>
+                                    {{student_form.main_province}}
+                                    <div class="invalid-feedback">
+                                      
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="validationCustom04">ولسوالی</label>
+                                    {{student_form.main_district}}
+                                    <div class="invalid-feedback">
+                                  
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="validationCustom05">قریه / ناحیه</label>
+                                    {{student_form.main_viliage}}
+                                    <div class="invalid-feedback">
+                                   
+
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <h5>معلومات دیگر</h5>
+                            <div class="form-row">
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustom03">نمبر تذکره</label>
+                                    {{student_form.nid_num}}
+                                    <div class="invalid-feedback">
+                                     
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustom04">شماره تماس</label>
+                                    {{student_form.contact}}
+                                    <div class="invalid-feedback">
+                                       
+
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label for="validationCustom05">تاریخ تولد</label>
+                                    {{student_form.date_of_birth}}
+                                    <div class="invalid-feedback">
+                                        
+
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label for="validationCustom05">عمر</label>
+                                    {{student_form.age}}
+                                    <div class="invalid-feedback">
+                                       
+
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label for="validationCustom05">صنف</label>
+                                    {{student_form.stu_class}}
+                                    <div class="invalid-feedback">
+                                      
+
+                                    </div>
+                                </div>
+                                
+                               
+                            </div>
+                        </br>
+                            <div class="form-row">
+                                <!-- <div class="custom-file">
+                                    <input class="custom-file-input" id="inputGroupFile02" type="file">{{student_form.picture}} 
+                                    <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose file</label>
+                                </div> -->
+
+
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="validationCustom05">عکس تذکره</label>
+                                    {{student_form.picture}}
+                                    <div class="invalid-feedback">
+                                      
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="valiationCustom05">عکس شاگرد</label>
+                                    {{student_form.spicture}}
+                                    <div class="invalid-feedback">
+                                      
+
+                                    </div>
+                                </div>
+                                </div>
+                            </br>
+
+                            <h5>معلومات فیس شاگرد</h5>
+                            <div class="form-row">
+                                
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustom03" class="checkbox checkbox-primary">نوعیت فیس</label>
+                                    {{fees_form.fees_type}}
+                                    <div class="invalid-feedback">
+                                       
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustom04">فیس به اساس</label>
+                                    {{fees_form.fees_time}}
+                                    <div class="invalid-feedback">
+                                       
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustom05">فیس</label>
+                                    {{fees_form.fees}}
+                                    <div class="invalid-feedback">
+                                      
+
+                                    </div>
+                                </div>
+                              
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationCustom05">اسم گیرنده فیس</label>
+                                    {{fees_form.fees_recieved_by}}
+                                    <div class="invalid-feedback">
+                                      
+
+                                    </div>
+                                </div>
+                               
+                               
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="validationCustom05">معلومات اظافی</label>
+                                    {{fees_form.comments}}
+                                    <div class="invalid-feedback">
+                                      
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            
+                       
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                                <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                            </div>
+
+
+                       
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  Modal -->
+
+    {% endblock %}

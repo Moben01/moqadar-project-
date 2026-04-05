@@ -1,0 +1,344 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+<div class="mb-4">
+    <h3 class="fw-bold text-dark mb-1">
+       
+    </h3>
+    <p class="text-muted mb-2">
+       
+    </p>
+    <hr>
+</div>
+<div class="mb-4">
+    <h3 class="fw-bold text-dark mb-1">
+       بخش تبادل اسعار
+    </h3>
+    <p class="text-muted mb-2">
+       خلاصه از تبادل پول شما در مقابل پول های دیگر
+    </p>
+    <hr>
+</div>
+<style>
+    .exchange-card {
+    border-radius: 16px;
+    padding: 20px;
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.exchange-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+}
+
+.card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.label {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.value {
+    margin: 4px 0 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.icon {
+    font-size: 36px;
+    opacity: 0.9;
+}
+</style>
+<div class="row g-3 mb-4">
+
+    <!-- Card 1 -->
+    <div class="col-md-6">
+        <div class="exchange-card " style="background-color: rgb(22, 24, 23);">
+            <div class="card-content">
+                <div>
+                    <p class="label">مقدار پول افغانی که به دالر تبدیل شده است</p>
+                    <h4 class="value" style="color: azure;">{{total}}</h4>
+                </div>
+                <div class="icon">💰</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="col-md-6">
+        <div class="exchange-card " style="background-color: rgb(240, 143, 235);">
+            <div class="card-content">
+                <div>
+                    <p class="label">مقدار پول افغانی که از فروش دالر بوجود آمده</p>
+                    <h4 class="value">{{d_total}}</h4>
+                </div>
+                <div class="icon">🔄</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="container-fluid pt-4 mt-5">
+
+    <!-- ====== TOP STAT BOXES ====== -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 text-center p-3 bg-primary text-white">
+                <h6 class="mb-1">پول افغانی</h6>
+                <h3 class="fw-bold">{{ my_data }}</h3>
+            </div>
+        </div>
+        {% for i in find_all_currency %}
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 text-center p-3 bg-success text-white">
+                <h6 class="mb-1">  پول {{i.curr_name}} </h6>
+                <h3 class="fw-bold">{{ i.balance }}</h3>
+            </div>
+        </div>
+        {% endfor %}
+
+       {% if messages %}
+              {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} text-center h3" role="alert" style="font-family: 'Vazirmatn', sans-serif;">
+                      {{ message }}
+                  </div>
+                  <script>
+                      setTimeout(function() {
+                          $('.alert').fadeOut('slow');
+                      }, 3000); // 3 seconds
+                  </script>
+              {% endfor %}
+              {% endif %}
+       
+
+        
+
+    </div>
+
+    <!-- ====== BUTTON + MODAL ====== -->
+    <div class="d-flex justify-content-end mb-3">
+         <button class="btn btn-success btn-lg m-6" type="button" data-toggle="modal" data-target="#addModal">
+            ➕ تبادله جدید
+
+    </button>
+    </div>
+   
+
+   
+
+    <!-- ====== TABLE SECTION ====== -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light fw-bold">
+            لیست تبادلات
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>واحد پولی تبدیل شده</th>
+                        <th>واحد پولی  بدست آمده</th>
+                        <th>مقدار تبدیل شده</th>
+                        <th>مقدار  بدست آمده</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for rec in all_ex_records %}
+                    {% if rec.currency_that_you_want_tochage.curr_name == 'افغانی' %}
+                    <tr style="background-color: rgb(32, 99, 131); color: aliceblue;">
+                        <td>{{ rec.id }}</td>
+                        <td>{{ rec.currency_that_you_want_tochage.curr_name }}</td>
+                        <td>{{ rec.currency_that_you_want_to_get_money.curr_name }}</td>
+                        <td>{{ rec.amount }}</td>
+                        <td>{{ rec.want_amount }}</td>
+                    </tr>
+                    {% else %}
+                    <tr style="background-color: rgb(78, 78, 78);  color: aliceblue;">
+                        <td>{{ rec.id }}</td>
+                        <td>{{ rec.currency_that_you_want_tochage.curr_name }}</td>
+                        <td>{{ rec.currency_that_you_want_to_get_money.curr_name }}</td>
+                        <td>{{ rec.amount }}</td>
+                        <td>{{ rec.want_amount }}</td>
+                    </tr>
+                    {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-muted">رکوردی وجود ندارد</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ثبت دریافت پول جدید</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'Finance_and_Accounting:exchang_money' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            
+                           
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">واحد پولی که میخواهید تبدیل کنید</label>
+                                {{ form.currency_that_you_want_tochage }}
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3 exchange-rate-field">
+                                <label for="firstName1">مقدار</label>
+                                {{ form.amount }}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">نرخ تبادله</label>
+                                {{form.exchabge_rate}}
+                            </div>
+                             <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1"> واحد پولی که میخواهید دریافت کنید</label>
+                                {{form.currency_that_you_want_to_get_money}}
+                            </div>
+                            <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const firstSelect = document.getElementById("id_currency_that_you_want_tochage");
+    const secondSelect = document.getElementById("id_currency_that_you_want_to_get_money");
+
+    firstSelect.addEventListener("change", function() {
+        const selectedValue = this.value;
+
+        // Loop through second select options
+        for (let i = 0; i < secondSelect.options.length; i++) {
+            const option = secondSelect.options[i];
+            if (option.value === selectedValue) {
+                option.disabled = true;  // disable the option if selected in first
+                if (secondSelect.value === selectedValue) {
+                    secondSelect.value = ""; // reset if it was already selected
+                }
+            } else {
+                option.disabled = false; // enable all other options
+            }
+        }
+    });
+});
+                            </script>
+
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label class="d-block fw-bold mb-2">نحوه محاسبه</label>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                        type="radio"
+                                        name="calc_type"
+                                        id="calc_multiply"
+                                        value="multiply"
+                                        checked>
+                                    <label class="form-check-label" for="calc_multiply">
+                                        ضرب ( × )
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                        type="radio"
+                                        name="calc_type"
+                                        id="calc_divide"
+                                        value="divide">
+                                    <label class="form-check-label" for="calc_divide">
+                                        تقسیم ( ÷ )
+                                    </label>
+                                </div>
+                            </div>
+
+
+
+                           
+
+
+                            <div class="col-md-12 form-group mb-3 income-amount-field">
+                                <label id="income-amount-label" for="firstName1">مقدار </label>
+                                {{ form.want_amount }}
+                            </div>
+                           
+
+                            
+                            
+                           
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">نوت</label>
+                                {{form.note}}
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">بسته نمودن</button>
+                                <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                            </div>
+                            <script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const amountInput = document.getElementById('id_amount');
+    const rateInput = document.getElementById('id_exchabge_rate');
+    const resultInput = document.getElementById('id_want_amount');
+
+    const radios = document.querySelectorAll('input[name="calc_type"]');
+
+    function calculate() {
+        const amount = parseFloat(amountInput.value);
+        const rate = parseFloat(rateInput.value);
+
+        if (isNaN(amount) || isNaN(rate) || rate === 0) {
+            resultInput.value = '';
+            return;
+        }
+
+        let result;
+        const selected = document.querySelector('input[name="calc_type"]:checked').value;
+
+        if (selected === 'multiply') {
+            result = amount * rate;
+        } else {
+            result = amount / rate;
+        }
+
+        resultInput.value = result.toFixed(2);
+    }
+
+    amountInput.addEventListener('input', calculate);
+    rateInput.addEventListener('input', calculate);
+
+    radios.forEach(radio => {
+        radio.addEventListener('change', calculate);
+    });
+});
+                            </script>
+     
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

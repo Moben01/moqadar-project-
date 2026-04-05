@@ -1,0 +1,152 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light">داشبورد /</span>مدیرت بخش حاضری شاگردان  
+    </h4>
+    <div class="row">
+        
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <div class="col-lg-12 text-right">
+                        <a class="btn btn-info btn-lg m-1" type="button" href="javascript:history.back()">
+                             بازگشت
+
+                    </a>
+
+                    </div>
+
+
+                    
+                    <form action="{% url 'money_dist:stu_analysis' %}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="novalidate">
+                        {% csrf_token %}
+                        <br>
+                        <h5>ارزیابی شاگرد</h5>
+
+                            <div class="form-row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationCustom01">نام شاگرد</label>
+                                    {{form.stud_info}}                                    
+                                    <div class="valid-feedback">
+                                    
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationCustom01">وضعیت</label>
+                                    {{form.status}}                                    
+                                    <div class="valid-feedback">
+                                       
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="validationCustom01">جزیات ارزیابی</label>
+                                    {{form.comments}}                                    
+                                    <div class="valid-feedback">
+                                       
+
+                                    </div>
+                                </div>
+                                {% for form in formset.forms %}
+                                {{ form.as_table }}
+                            {% endfor %}
+                                
+                                
+                            </div>
+                            <br>
+
+                            
+                            
+                            
+
+                       
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                                <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                            </div>
+
+
+                       
+                    </form>
+
+
+
+
+
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                
+                </div>
+            </div>
+        </div>
+        <!-- end of col-->
+
+        <!-- end of col-->
+    </div>
+
+    <!--  Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ثبت فیس جدید</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'administrations:fees_add_view' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1"> اسم صنف</label>
+                                {{fees_form.name}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">مقدار فیس</label>
+                                {{fees_form.amount}}
+                            </div>
+                           
+                           
+                          
+
+
+
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                                <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  Modal -->
+
+    {% endblock %}

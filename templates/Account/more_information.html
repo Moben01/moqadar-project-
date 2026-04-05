@@ -1,0 +1,161 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+<div class="main-content pt-4"  style="font-family: XW_Zar_Bd_0;">
+    <div class="breadcrumb">
+    
+
+
+    </div>
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+            {{ message }}
+        </div>
+        <script>
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 3000); // 3 seconds
+        </script>
+    {% endfor %}
+    {% endif %}
+    <div class="card user-profile o-hidden mb-4">
+        <div class="user-info"><img class="profile-picture avatar-lg mb-2" alt="" />
+            <h1>بخش مدیریت یک اکونت</h1>
+            <p class="m-0 text-24">اکونت {{employee_data.name}} </p>
+
+        </div>
+
+
+        <hr style="border-color: blue;">
+        <div class="card mb-4">
+            <div class="card-body p-0">
+                
+
+                <div class="d-flex border-bottom justify-content-between p-3">
+                    <div class="flex-grow-1"><span class="text-small text-muted">نام مکمل اکونت</span>
+                        <h5 class="m-0">{{employee_data.name}}</h5>
+                    </div>
+                    <div class="flex-grow-1"><span class="text-small text-muted">ایمیل آدرس</span>
+                        <h5 class="m-0">{{employee_data.email}}</h5>
+                    </div>
+                    <div class="flex-grow-1"><span class="text-small text-muted">شماره موبایل</span>
+                        <h5 class="m-0">{{employee_data.mobile}}</h5>
+                    </div>
+                </div>
+                <div class="d-flex border-bottom justify-content-between p-3">
+                    <!-- <div class="flex-grow-1"><span class="text-small text-muted">مربوط ګروپ</span>
+                        <h5 class="m-0">{{employee_data.emp_type.}}</h5>
+                    </div> -->
+                    <div class="flex-grow-1"><span class="text-small text-muted">وضعیت</span>
+                        {% if employee_data.is_active == True %}
+                        <h5 class="m-0">اکونت فعال</h5>
+                        {% else %}
+                        <h5 class="m-0"> اکونت غیر فعال</h5>
+                        {% endif %}
+
+
+
+
+                    </div>
+                    <!-- <div class="flex-grow-1"><span class="text-small text-muted">Last week</span>
+                        <h5 class="m-0">92565</h5>
+                    </div> -->
+                </div>
+                <!-- <div class="d-flex justify-content-between p-3">
+                    <div class="flex-grow-1"><span class="text-small text-muted">Pages / Visit</span>
+                        <h5 class="m-0">3165</h5>
+                    </div>
+                    <div class="flex-grow-1"><span class="text-small text-muted">New user</span>
+                        <h5 class="m-0">165</h5>
+                    </div>
+                    <div class="flex-grow-1"><span class="text-small text-muted">Last week</span>
+                        <h5 class="m-0">32165</h5>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+
+        <div class="card-body">
+
+            
+            <hr />
+            <h4>دادن صلاحیت برای اکونت {{employee_data.name}}</h4>
+
+
+            <div class="card-body">
+
+                {% if employee_data.is_active == False %}
+                <button class="btn btn-success btn-block m-1 mb-3" data-toggle="modal"
+                    data-target="#confirmationModal1{{ id }}" type="button">فعال کردن اکونت</button>
+                <!-- <button class="btn btn-danger btn-block m-1 mb-3" data-toggle="modal"
+                    data-target="#confirmationModal1{{ id }}" type="button">اکونټ پاکول</button> -->
+                {% else %}    
+
+                <button class="btn btn-danger btn-block m-1 mb-3" data-toggle="modal"
+                    data-target="#confirmationModal2{{ id }}" type="button"> غیر فعال کردن اکونت</button>
+                {% endif %}
+              <a href="{% url 'account:assign_permission_for_user' employee_data.id %}" ><button class="btn btn-warning btn-block m-1 mb-3"  type="button">دادن صلاحیت برای اکونت </a> </button>
+            </div>
+
+
+
+
+        </div>
+        <div class="modal fade" id="confirmationModal1{{ id }}" tabindex="-1" role="dialog"
+            aria-labelledby="confirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmationModalLabel">فعال کردن اکونت {{employee_data.name}} </h5>
+                           
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                  آیا میخواهید این اکونت را فعال کنید؟
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-danger m-1" type="button" data-dismiss="modal">نخیر</button>
+                        <a class="btn btn-outline-success m-1" href="{% url 'account:activate_employee' id %}">بلی </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirmationModal2{{ id }}" tabindex="-1" role="dialog"
+            aria-labelledby="confirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmationModalLabel"> غیر فعال کردن اکونت {{employee_data.name}}</h5>
+                            
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                      آیا میخواهید این اکونت را غیر فعال کنید؟
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-danger m-1" type="button" data-dismiss="modal">نخیر</button>
+                        <a class="btn btn-outline-success m-1"
+                            href="{% url 'account:diactivate_employee' id %}">بلی</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+</div>
+
+
+
+
+
+
+{% endblock %}

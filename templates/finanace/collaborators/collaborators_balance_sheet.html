@@ -1,0 +1,136 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+
+
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="col-lg-12 text-right">
+
+                    <a class="btn btn-secondary btn-lg m-1" type="button" href="javascript:history.back()">
+                        بازگشت
+
+                    </a>
+                    <a href="{% url 'Finance_and_Accounting:all_records' find_collaborator.id %}" class="btn btn-secondary btn-lg m-1">
+                        دیدن همه معاملات
+                    </a>
+
+
+                </div>
+                <div class="card-title m-0">محاسبه مالی {{find_collaborator.name_opf}} </div>
+                <p class="text-small text-muted">آخرین پول های دریافتی و پرداختی</p>
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 mb-4">
+                        <div class="p-4 rounded d-flex align-items-center bg-primary text-white"><i
+                                class="i-Money-2 text-32 mr-3"></i>
+                            <div>
+                                <h4 class="text-18 mb-1 text-white">پول های دریافتی</h4><span>مجموعه: {{all_income}} افغانی</span>
+                                   
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 mb-4">
+                        <div class="p-4 rounded d-flex align-items-center bg-danger text-white"><i
+                                class="i-Money-2 text-32 mr-3"></i>
+                            <div>
+                                <h4 class="text-18 mb-1 text-white">پول های پرداختی</h4><span>مجموعه: {{all_out_come}}
+                                    افغانی</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 mb-4">
+                        <div class="p-4 rounded d-flex align-items-center bg-dark text-white">
+                            <i class="i-Money-2 text-32 mr-3"></i>
+                            <div>
+                                <h4 class="text-20 mb-1 text-white">
+                                    جناب {{ find_collaborator.name_opf }} :
+                                    {{ total_income_str }} .
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 mb-4">
+                        <div class="p-4 rounded d-flex align-items-center bg-dark text-white"><i
+                                class="i-Money-2 text-32 mr-3"></i>
+                                    <div>
+                                        <h4 class="text-20 mb-1 text-white">    مقدار پول تبدیل شده دالر  جناب {{find_collaborator.name_opf}}  به افغانی {{mines_amount}} 
+                                            میباشد.</h4><span> </span>
+                                    </div>
+                        </div>
+                    </div>
+                 
+                    <a href="{% url 'Finance_and_Accounting:generate_pdf' find_collaborator.id %}" 
+                        class="btn bg-dark text-white btn-block m-1 mb-3 text-center">
+                            گرفتن پی دی اف (PDF)
+                    </a>
+                    <a href="{% url 'Finance_and_Accounting:find_folar_records' find_collaborator.id %}" 
+                        class="btn badge-primary text-white btn-block m-1 mb-3 text-center">
+                           تمام معاملاتی دالری  {{find_collaborator.name_opf}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5> لیست تمام پول های دریافتی و پرداختی افغانی مربوط {{find_collaborator.name_opf}} </h5>
+
+    <div class="table-responsive">
+        <table class="table" id="alternative_pagination_table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">نوعیت</th>
+                    <th scope="col">تاریخ</th>
+                    <th scope="col">توضیحات</th>
+                    <th scope="col">مبلغ  </th>
+                    <th scope="col">جمع کل</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in all_transactions %}
+                    {% if i.is_income_or_outcome == 'دریافت' %}
+                        <tr style="background-color: green;">
+                    {% else %}
+                        <tr style="background-color: red;">
+                    {% endif %}
+                            <th scope="row" style="color: white;">{{ i.id }}</th>
+                            {% if i.is_income_or_outcome == 'دریافت' %}
+                            <td><span class="badge badge-pill badge-outline-primary p-2 m-1"  style="color: white;">رسید</span></td>
+                            {% else %}
+                            <td><span class="badge badge-pill badge-outline-danger p-2 m-1" style="color: white;">برداشت</span></td>
+                            {% endif %}
+                            <td style="color: white;">{{ i.rec_date }}</td>
+                            <td style="color: white;">{{ i.descriiption }}</td>
+                            <td style="color: white;">{{ i.income_amount }} <span class="badge badge-success">{{i.curr.curr_name}}</span></td>
+                            <td style="color: white;">{{ i.total_incme_with_last_record }}</td>
+                        
+                        
+                        </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</div>
+{% endblock %}

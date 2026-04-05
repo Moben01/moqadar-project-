@@ -1,0 +1,360 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0; word-break: keep-all; " id="wrapper">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+
+    <h4 class="py-3 mb-4 new_bar" >
+        <span class="text-muted fw-light">داشبورد /</span> مدیرت معلومات شاگرد
+    </h4>
+    <div class="col-lg-12 text-right new_bar_one">
+        <!-- <div class="btn-group" role="group" aria-label="Basic example">
+            <a class="btn btn-secondary" type="button" href="{% url 'money_dist:pdf_view' %}">پرنت بل</a>
+            <a class="btn btn-secondary" type="button" href="{% url 'money_dist:pdf_download' %}">ذخیره به PDF</a>
+            <a class="btn btn-secondary" type="button" onclick="printInvoiceSingleService()">تغیرات</a>
+    </div> -->
+        
+        
+
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+
+
+            <style>
+            
+                @font-face {
+                    font-family: 'XW_Zar_Bd_0';
+                    src: url('../../../static/fonts/XW_Zar_Bd_0.woff2') format('woff2');
+                    font-weight: bold;
+                    font-style: normal;
+                }
+            
+                @media print {
+                    #main_data {
+                        direction: rtl;
+                        font-family: 'XW_Zar_Bd_0';
+                    }
+                    .center-image {
+                         display: block;
+                         text-align: center;}
+                    
+                    /* Additional print styles can be added here */
+                }
+            </style>
+            <section class="ul-product-detail__tab">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 mt-4">
+                        <div class="card mt-2 mb-4">
+                            <div class="card-body">
+                                <nav>
+                                    <div class="nav nav-tabs" id="nav-tab" role="tablist"><a class="nav-item nav-link active show" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">معلومات کامل</a><a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">بخش حاضری</a><a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">ارزیابی شاگرد</a><a class="nav-item nav-link" id="nav-brand-tab" data-toggle="tab" href="#nav-brand" role="tab" aria-controls="nav-contact" aria-selected="false">معلومات اولیا</a></div>
+                                </nav>
+                                <div class="tab-content ul-tab__content p-5" id="nav-tabContent">
+                                    <div class="tab-pane fade active show" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                                <main role="main" class="container">
+                                                    <div class="row">
+                                                        <div class="col-8">
+                                                            <div style="display: flex; justify-content: center; align-items: center;">
+                                                            <img src="{% static 'images/logo.png' %}"  style="height: 135px;"/>
+
+                                                        </div>
+                                                        <h1 class="text-center">جامعه دارالعلوم محمدیه</h1>
+
+                                                        <img src="{{students.spicture.url}}"  style="height: 135px;"/>
+
+                                                        <br>
+                            
+                            
+                                                            <hr>
+                                                            <h5 class="text-left">تاریخ: {{ students.hdate }} </h5>
+                                                            <h5 class="text-left">صنف: {{ students.stu_class }} </h5>
+                                                            <table class="table table-bordered">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th colspan="2" scope="col" class="table-active">شهرت</th>
+                                                                        <th colspan="2" scope="col" class="table-active">سکونت فعلی</th>
+                                                                        <th colspan="2" scope="col" class="table-active">سکونت اصلی</th>
+                            
+                            
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>{{company}}
+                                                                        <td scope="row">نام: </th>
+                                                                        <td> {{ students.stu_name }} </td>
+                                                                        <td>ولایت </td>
+                                                                        <td>{{ students.curr_province }}</td>
+                                                                        <td>ولایت </td>
+                                                                        <td>{{ students.main_province }}</td>
+                            
+                                                                    </tr>
+                                                                    
+                                                                    <tr>
+                                                                        <td scope="row">نام پدر: </th>
+                                                                        <td>{{ students.stu_father_name }} </td>
+                                                                        <td> ولسوالی</td>
+                                                                        <td>{{ students.curr_district }}</td>
+                                                                        <td> ولسوالی</td>
+                                                                        <td>{{ students.main_district }}</td>
+                            
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td scope="row">نام پدرکلان: </th>
+                                                                        <td>{{ students.stu_grand_father_name }}</td>
+                                                                        <td>قریه / ناحیه</td>
+                                                                        <td>{{ students.curr_viliage }} </td>
+                                                                        <td>قریه / ناحیه</td>
+                                                                        <td>{{ students.main_viliage }} </td>
+                            
+                            
+                            
+                                                                    </tr>
+                                                                    
+                                                                </tbody>
+                                                            </table>
+                                                            
+                                                           
+                                                           
+                                                        </div>
+                                                        <div class="col-4 border border-dark">
+                                                            <img src="{{students.picture.url}}" />
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                    <h5 class="text-left">معلومات عمومی </h5>
+                            
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">نمبر مسلسل</th>
+                                                                <th scope="col">{{ students.nid_num }}</th>
+                                                                <th scope="col">شماره تماس</th>
+                                                                <th scope="col">{{ students.contact }}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td scope="row">تاریخ تولد</th>
+                                                                <td>{{ students.date_of_birth }}</td>
+                                                                <td>سن</td>
+                                                                <td>{{ students.age }}</td>
+                                                            </tr>
+                                                          
+                                                            
+                                                        </tbody>
+                                                    </table>
+                            
+                                                    <h5 class="text-left">معلومات فیس تادیه شده </h5>
+                            
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">نوعیت فیس</th>
+                                                                <th scope="col">{{ student_fees.fees_type }}</th>
+                                                                <th scope="col">فیس به اساس</th>
+                                                                <th scope="col">{{ student_fees.fees_time }}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td scope="row"> مقدار فیس</th>
+                                                                <td>{{ student_fees.fees }}</td>
+                                                                <td>اسم گیرنده فیس</td>
+                                                                <td>{{ student_fees.fees_recieved_by }}</td>
+                                                            </tr>
+                                                            <tr >
+                                                                <td scope="row" >نوت</th>
+                                                                <td colspan="3">{{ student_fees.comments}}</td>
+                                                            </tr>
+                                                            
+                                                        </tbody>
+                                                    </table>
+                            
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="card bg-faded">
+                                                                <div class="card-header">
+                                                                    مهر و امضا
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col">
+                                                                        <p>تایید متعلم</p>
+                                                                        </div>
+                                                                        <div class="col">
+                                                                            <p>تایید ثبت کننده</p>
+                                                                            </div>
+                                                                    </div>
+                                                                   
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </main>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                        <div class="card-body">
+                                            <h4 class="card-title mb-3">ضوابط حاظر شاگرد {{class_info.name}}</h4>
+                                            <div class="col-lg-12 text-right">
+                                    
+                                              
+                                 
+                                  </div> 
+                                  <br>
+                                  <div class="row">
+            
+                                    {% for i in student_timesheet %}
+                                  <div class="col-lg-3 col-md-6 col-sm-6">
+                                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                        <div class="card-body text-center"><i class="i-Money-2"></i>
+                                            <div class="content">
+                                                <h5 class="text-muted mt-2 mb-0"> <a href="{% url 'money_dist:stu_mgm_all_info' i.id id %}"> ماه {{i.month}}</a></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+            
+                                
+                            </div>
+                                            
+            
+            
+            
+            
+            
+                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                                        <div class="card-body">
+                                            <h4 class="card-title mb-3"> لیست ارزیابی شاگرد {{class_info.name}}</h4>
+                                            <div class="col-lg-12 text-right">
+                                    
+                                               
+                                 
+                                  </div> 
+                                  <br>
+                                  <div class="row">
+                    
+                                    {% for i in student_analysis %}
+                                  <div class="col-lg-3 col-md-6 col-sm-6">
+                                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                        <div class="card-body text-center"><i class="i-Money-2"></i>
+                                            <div class="content">
+                                                <h5 class="text-muted mt-2 mb-0"> <a href="{% url 'money_dist:stu_ana_all_info' i.id id %}"> ماه {{i.month}}</a></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                    
+                                
+                            </div>
+                                            
+                    
+                    
+                    
+                    
+                    
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-brand" role="tabpanel" aria-labelledby="nav-contact-tab">
+                                        <div class="row">
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <div class="card text-left">
+                <div class="card-body" id="main_data" dir="rtl">
+                    
+
+                    <br>
+                    
+
+
+                    
+                    
+                   
+
+                </div>
+            </div>
+        </div>
+        <!-- end of col-->
+
+        <!-- end of col-->
+    </div>
+</div>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+<script src="https://https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+  
+    const element = document.getElementById('main_data')
+    let options = {
+        
+
+
+
+        margin:0,
+        filename : "students.pdf",
+        image: {type:'jpeg', quality:1},
+        html2canvas: {scale :6},
+        jsPDF:{unit:'cm', format:'A4', orientation:'portrait', putOnlyUsedFonts:true }
+
+    }
+    html2pdf().set(options).from(element).save()
+    </script> -->
+    
+
+
+<!-- <script>
+var fontUrl = "{% static 'fonts/custom_fonts.css' %}";
+const input = document.getElementById('main_data')
+html2canvas(input)
+    .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+
+
+
+        pdf.addImage(imgData, 'PNG', 0, 0);
+        pdf.save('download.pdf');
+        
+
+    });
+</script> -->
+
+
+
+
+{% endblock %}

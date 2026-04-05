@@ -1,0 +1,100 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="main-content pt-4" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+    <div class="breadcrumb">
+        <h1>بخش اصلاح مشتریان</h1>
+        <!-- <ul>
+            <li><a href="href">ب</a></li>
+            <li>د عواید اصلاح کول</li>
+        </ul> -->
+    </div>
+    
+    <div class="row">
+      
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="card-title mb-3"></div>
+
+                    <form class="needs-validation" novalidate="novalidate" action="{% url 'Order:edit_order' id %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <!-- Order Fields -->
+                            <div class="col-md-4 mb-4">
+                                <label for="customer">اسم مشتری</label>
+                                {{ edit_daily_project_form.customer }}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="customer">تاریخ</label>
+                                {{ edit_daily_project_form.reg_date }}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="status">حالت</label>
+                                {{ edit_daily_project_form.status }}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="total_amount">مقدار کُل</label>
+                                {{ edit_daily_project_form.total_amount }}
+                            </div>
+                    
+                            <!-- Order Item Fields -->
+                            <div class="col-md-4 mb-4">
+                                <label for="order">فرمایش</label>
+                                {{ edit_daily_project_forms.order }}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="product">محصول</label>
+                                {{ edit_daily_project_forms.product }}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="quantity">مقدار</label>
+                                {{ edit_daily_project_forms.quantity }}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="price_per_unit">مقدار فی واحد</label>
+                                {{ edit_daily_project_forms.price_per_unit }}
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="total_price">مقدار فی واحد</label>
+                                {{ edit_daily_project_forms.total_price }}
+                            </div>
+                        </div>
+                    
+                        <button class="btn btn-primary" type="submit">ذخیره کردن</button>
+                    </form>
+                    
+
+
+
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        
+    </div><!-- end of main-content -->
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,266 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="main-content pt-4" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+ 
+    <div class="row">
+      
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+
+                    <div class="card-title mb-3"></div>
+
+
+                    <form method="post" enctype="multipart/form-data" id="mainForm">
+                        {% csrf_token %}
+                        <!-- SaleForm Fields -->
+                        <h5>معلومات  فروش</h5>
+                       
+                        <div class="form-row mb-4 p-3">
+                            <div class="col-md-6 mb-2">
+                                <label for="{{ my_form.customer.id_for_label }}">مشتری</label>
+                                <select name="{{ my_form.customer.name }}" id="{{ my_form.customer.id_for_label }}" 
+                                        class="form-control">
+                                    {% for choice in my_form.customer.field.queryset %}
+                                        <option value="{{ choice.pk }}" {% if my_form.customer.value == choice.pk %}selected{% endif %}>
+                                            {{ choice }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="{{ my_form.reg_date.id_for_label }}">تاریخ</label>
+                                <input type="text" name="{{ my_form.reg_date.name }}" 
+                                    id="{{ my_form.reg_date.id_for_label }}" class="form-control"
+                                    value="{{ my_form.reg_date.value }}">
+                            </div>
+                        </div>
+
+                        
+                        <h5 class="mt-4">محصولات فروش</h5>
+                        <div id="saleItemContainer">
+                            {{ sale_item_formset.management_form }}
+                            {% for form in sale_item_formset %}
+                            <div class="form-row sale-item-form mb-4 p-3 border rounded" id="sale-item-{{ forloop.counter0 }}">
+                                {{ form.id }}
+                                <div class="col-md-4 mb-2">
+                                    <label>محصول</label>
+                                    {{ form.product }}
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label>وضعیت</label>
+                                    {{ form.status }}
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label>تعداد</label>
+                                    {{ form.quantity }}
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label>قیمت واحد</label>
+                                    {{ form.price_per_unit }}
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label>وزن</label>
+                                    {{ form.weight }}
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label>گدام</label>
+                                    {{ form.warehouse }}
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label>پول پرداختی</label>
+                                    {{ form.paid_amount_for_every_record }}
+                                </div>
+                                <div class="col-md-12 mb-2">
+                                    <label>توضیحات</label>
+                                    {{ form.notes }}
+                                </div>
+                                <div class="col-md-2 mb-2">
+                                    <label>مجموع</label>
+                                    <p class="total-display" id="total-display-{{ forloop.counter0 }}">
+                                        {{ form.instance.should_paid|default:"0" }}
+                                    </p>
+                                </div>
+                                <div class="col-md-2 mb-2">
+                                    <label>باقی</label>
+                                    <p class="remaining-display" id="remaining-display-{{ forloop.counter0 }}">
+                                        {{ form.instance.borrow_amount|default:"0" }}
+                                    </p>
+                                </div>
+                                <div class="col-md-1 mb-2">
+                                    <label>حذف</label>
+                                    {{ form.DELETE }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Button to Add New Sale Item -->
+                        <button type="button" id="addNewItem" class="btn btn-primary mt-3">اضافه کردن محصول جدید</button>
+
+                        <!-- Save Button -->
+                        <div class="modal-footer mt-4">
+                            <a href="{% url 'Order:Direct_sale' %}" class="btn btn-secondary">انصراف</a>
+                            <button class="btn btn-success" type="submit">ذخیره تغییرات</button>
+                        </div>
+                    </form>
+
+           
+
+
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        
+    </div><!-- end of main-content -->
+</div>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Calculate totals for existing items
+    function calculateExistingTotals() {
+        document.querySelectorAll('.sale-item-form').forEach(form => {
+            const statusSelect = form.querySelector('select[name*="-status"]');
+            const quantityInput = form.querySelector('input[name*="-quantity"]');
+            const priceInput = form.querySelector('input[name*="-price_per_unit"]');
+            const weightInput = form.querySelector('input[name*="-weight"]');
+            const paidInput = form.querySelector('input[name*="-paid_amount_for_every_record"]');
+            const totalDisplay = form.querySelector('.total-display');
+            const remainingDisplay = form.querySelector('.remaining-display');
+            
+            if (statusSelect && quantityInput && priceInput && weightInput && paidInput) {
+                function updateTotals() {
+                    const status = statusSelect.value;
+                    const quantity = parseFloat(quantityInput.value) || 0;
+                    const price = parseFloat(priceInput.value) || 0;
+                    const weight = parseFloat(weightInput.value) || 0;
+                    const paidAmount = parseFloat(paidInput.value) || 0;
+
+                    let total = 0;
+                    if (status === "ضرب وزن") {
+                        total = Math.round(weight * price);
+                    } else if (status === "ضرب تعداد") {
+                        total = Math.round(quantity * price);
+                    }
+                    const remaining = total - paidAmount;
+
+                    if (totalDisplay) totalDisplay.textContent = total.toFixed(2);
+                    if (remainingDisplay) remainingDisplay.textContent = remaining.toFixed(2);
+                }
+
+                statusSelect.addEventListener('change', updateTotals);
+                quantityInput.addEventListener('input', updateTotals);
+                priceInput.addEventListener('input', updateTotals);
+                weightInput.addEventListener('input', updateTotals);
+                paidInput.addEventListener('input', updateTotals);
+                
+                // Initial calculation
+                updateTotals();
+            }
+        });
+    }
+    
+    calculateExistingTotals();
+    
+    // Add new item functionality
+    document.getElementById('addNewItem').addEventListener('click', function() {
+        const saleItemContainer = document.getElementById('saleItemContainer');
+        const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+        const currentIndex = parseInt(totalForms.value);
+        
+        totalForms.value = currentIndex + 1;
+        
+        const newFormHTML = `
+        <div class="form-row sale-item-form mb-4 p-3 border rounded" id="sale-item-${currentIndex}">
+            <div class="col-md-3 mb-2">
+                <label for="id_form-${currentIndex}-product">محصول</label>
+                <select name="form-${currentIndex}-product" class="form-control" id="id_form-${currentIndex}-product">
+                    {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.meat_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 mb-2">
+                <label for="id_form-${currentIndex}-status">وضعیت</label>
+                <select name="form-${currentIndex}-status" class="form-control" id="id_form-${currentIndex}-status">
+                    <option value="ضرب وزن">ضرب وزن</option>
+                    <option value="ضرب تعداد">ضرب تعداد</option>
+                </select>
+            </div>
+            <div class="col-md-2 mb-2">
+                <label for="id_form-${currentIndex}-quantity">تعداد</label>
+                <input type="number" name="form-${currentIndex}-quantity" class="form-control" 
+                       id="id_form-${currentIndex}-quantity" placeholder="مقدار" step="any">
+            </div>
+            <div class="col-md-2 mb-2">
+                <label for="id_form-${currentIndex}-price_per_unit">قیمت واحد</label>
+                <input type="number" name="form-${currentIndex}-price_per_unit" class="form-control" 
+                       id="id_form-${currentIndex}-price_per_unit" placeholder="قیمت" step="any">
+            </div>
+            <div class="col-md-2 mb-2">
+                <label for="id_form-${currentIndex}-weight">وزن</label>
+                <input type="number" name="form-${currentIndex}-weight" class="form-control" 
+                       id="id_form-${currentIndex}-weight" placeholder="وزن" step="any">
+            </div>
+            <div class="col-md-3 mb-2">
+                <label for="id_form-${currentIndex}-warehouse">انبار</label>
+                <select name="form-${currentIndex}-warehouse" class="form-control" id="id_form-${currentIndex}-warehouse">
+                    {% for warehouse in warehouses %}
+                    <option value="{{ warehouse.id }}">{{ warehouse.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 mb-2">
+                <label for="id_form-${currentIndex}-paid_amount_for_every_record">پول پرداختی</label>
+                <input type="number" name="form-${currentIndex}-paid_amount_for_every_record" class="form-control" 
+                       id="id_form-${currentIndex}-paid_amount_for_every_record" placeholder="پول پرداختی" step="any">
+            </div>
+            <div class="col-md-3 mb-2">
+                <label for="id_form-${currentIndex}-notes">توضیحات</label>
+                <input type="text" name="form-${currentIndex}-notes" class="form-control" 
+                       id="id_form-${currentIndex}-notes" placeholder="توضیحات">
+            </div>
+            <div class="col-md-2 mb-2">
+                <label>مجموع</label>
+                <p class="total-display" id="total-display-${currentIndex}">0</p>
+            </div>
+            <div class="col-md-2 mb-2">
+                <label>باقی</label>
+                <p class="remaining-display" id="remaining-display-${currentIndex}">0</p>
+            </div>
+            <div class="col-md-1 mb-2">
+                <label>حذف</label>
+                <input type="checkbox" name="form-${currentIndex}-DELETE" id="id_form-${currentIndex}-DELETE">
+            </div>
+        </div>`;
+        
+        saleItemContainer.insertAdjacentHTML('beforeend', newFormHTML);
+        calculateExistingTotals(); // Re-bind all calculation events
+    });
+});
+</script>
+
+{% endblock %}

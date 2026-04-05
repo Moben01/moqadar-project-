@@ -1,0 +1,315 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<body class="text-left" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+
+    <div class="main-content pt-4">
+
+        <div class="row">
+
+
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="ul-widget__head v-margin">
+                            <div class="ul-widget__head-label">
+                                <h3 class="ul-widget__head-title">بخش مدیریت کارمندان </h3>
+                            </div>
+                            <div class="dropdown mb-2">
+
+                                <button class="btn btn-outline-info m-1" type="button" data-toggle="modal"
+                                    data-target="#exampleModalCenter2">کارمند جدید</button>
+                            </div>
+
+
+                        </div>
+                        <div class="ul-widget-body">
+                            <div class="ul-widget3">
+                                <div class="ul-widget6__item--table">
+                                    <table class="display table table-striped table-bordered" id="comma_decimal_table" style="width:100%">
+                                        <thead>
+                                            <tr class="ul-widget6__tr--sticky-th">
+                                                <th scope="col">#</th>
+                                                <th scope="col">نوع کارمند</th>
+                                                <th scope="col">نام مکمل</th>
+                                                <th scope="col">وظیفه</th>
+                                                <th scope="col">شماره موبایل</th>
+                                                <th scope="col">ایمیل آدرس</th>
+                                                <th scope="col">عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- start tr-->
+                                            {% for i in saved_emp%}
+                                            <tr>
+                                                <th scope="row">
+                                                    {{i.id}}
+                                                </th>
+                                                <td>
+                                                    {{i.emp_type}}
+                                                </td>
+                                              
+                                                <td>{{i.name}}</td>
+                                                <td>{{i.position}}</td>
+                                                <td>{{i.phone_number}}</td>
+                                                <td>{{i.email}}</td>
+
+                                                {% if perms.account.view_employee %}
+                                                <td>
+                                                    <button class="btn bg-white _r_btn border-0" type="button"
+                                                        data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false"><span
+                                                            class="_dot _inline-dot bg-primary"></span><span
+                                                            class="_dot _inline-dot bg-primary"></span><span
+                                                            class="_dot _inline-dot bg-primary"></span></button>
+                                                    <div class="dropdown-menu" x-placement="bottom-start"
+                                                        style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                        {% if perms.Account.add_approval_employeement_info %}
+                                                        <a class="dropdown-item ul-widget__link--font"
+                                                            href="{% url 'account:account_register' i.id %}"><i
+                                                                class="i-Bar-Chart-4"> </i>ساختن اکونت</a>
+                                                                {% endif %}
+                                                               
+                                                                <a class="dropdown-item ul-widget__link--font" href="#"><i
+                                                                class="i-Data-Save"> </i> تغیرات</a>
+                                                                
+                                                                <a class="dropdown-item ul-widget__link--font" href="#"><i
+                                                                class="i-Duplicate-Layer"></i> پاک کردن</a>    
+                                                    </div>
+                                                </td>
+                                                {% endif %}
+                                            </tr>
+
+                                            {% endfor %}
+
+
+
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if perms.Account.view_approval_employeement_info %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <br>
+
+                        <div class="ul-widget__head">
+                            <div class="ul-widget__head-label">
+                                <h3 class="ul-widget__head-title">اکونت های کارمندان</h3>
+                            </div>
+                        </div>
+                        <div class="ul-widget__body">
+                            <div class="tab-content">
+                                <div class="ul-widget6__item--table" id="__g-widget4-tab1-content">
+                                    <div class="ul-widget1">
+                                        {% for i in all_users%}
+
+                                        <div class="ul-widget4__item ul-widget4__users">
+                                            <div class="ul-widget2__info ul-widget4__users-info"><a
+                                                    class="ul-widget2__title" href="#">{{i.name}}</a><span
+                                                    class="ul-widget2__username" href="#">{{i.email}}</span></div>
+                                            <div class="ul-widget4__actions">
+                                               
+                                                    
+                                                    {% if i.is_active and i.is_staff and i.is_employee %}
+                                                        
+                                                            <button class="btn bg-white _r_btn border-0" type="button"
+                                                            data-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false"><span
+                                                                class="_dot _inline-dot bg-danger"></span><span
+                                                                class="_dot _inline-dot bg-danger"></span><span
+                                                                class="_dot _inline-dot bg-danger"></span></button>
+                                                        <div class="dropdown-menu" x-placement="bottom-start"
+                                                            style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                            
+
+                                                                <a class="dropdown-item ul-widget__link--font"
+                                                               
+                                                                class="dropdown-item ul-widget__link--font" href="{% url 'account:more_information' i.id %}"><i class="fas fa-edit"></i> 
+                                                              معلومات مکمل</a>
+                                                              {% if perms.Account.change_approval_employeement_info %}
+                                                            <a class="dropdown-item ul-widget__link--font"
+                                                                class="dropdown-item ul-widget__link--font" href="#"><i class="fas fa-edit"></i> 
+                                                                تغیرات</a>
+                                                                {% endif %}
+                                                                {% if perms.Account.delete_approval_employeement_info %}  
+                                                                <a
+                                                                class="dropdown-item ul-widget__link--font " data-toggle="modal"
+                                                                data-target="#confirmationModal{{ i.id }}" href="#"><i class="fas fa-trash-alt"></i> پاک کردن</a>
+                                                                {% endif %}
+                                                        </div>
+                                                       
+                                                    {% else %}
+                                                        
+                                                            <button class="btn bg-white _r_btn border-0" type="button"
+                                                            data-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false"><span
+                                                                class="_dot _inline-dot bg-primary"></span><span
+                                                                class="_dot _inline-dot bg-primary"></span><span
+                                                                class="_dot _inline-dot bg-primary"></span></button>
+                                                        <div class="dropdown-menu" x-placement="bottom-start"
+                                                            style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                    <a class="dropdown-item ul-widget__link--font"
+                                                                class="dropdown-item ul-widget__link--font" href="{% url 'account:more_information' i.id %}"><i class="fas fa-edit"></i> 
+                                                                مکمل معلومات</a>
+                                                            <a class="dropdown-item ul-widget__link--font"
+                                                                class="dropdown-item ul-widget__link--font" href="#"><i
+                                                                    class="fas fa-edit"> </i> تغیرات</a>
+                                                                <a class="dropdown-item ul-widget__link--font"  data-toggle="modal"
+                                                                data-target="#confirmationModal{{ i.id }}"  href="#"><i
+                                                                    class="fas fa-trash-alt"></i> پاک کردن</a>
+                                                        </div>
+                                                        
+                                                        {% endif %}
+                                                   
+                                                </div>
+                                            
+                                        </div>
+                                        <div class="modal fade" id="confirmationModal{{ i.id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="confirmationModalLabel">پاک کردن اکونت</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <h3 class="text-danger text-center">هــــشـــــدار</h3>
+                                                     <div class="text-center">حذف اکونت ممکن است تمام اطلاعات اکونت را از بین ببرد.</div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-outline-danger m-1" type="button"
+                                                            data-dismiss="modal">لغو</button>
+                                                        <a class="btn btn-outline-success m-1"
+                                                            href="{% url 'account:delete_employee' i.id %}">تایید</a>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        
+
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle-2"> انواع کارمندان</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                    <button class="btn btn-primary ml-2" type="button">ذخیره کردن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle-2">ذخیره کردن کارمند جدید</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'account:employee_info' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1"> نوع کارمند</label>
+                                {{emp_form.emp_type}}
+                            </div>
+                           
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">نام مکمل</label>
+                                {{emp_form.name}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">وظیفه</label>
+                                {{emp_form.position}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">شماره موبایل </label>
+                                {{emp_form.phone_number}}
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="firstName1">ایمیل آدرس</label>
+                                {{emp_form.email}}
+                            </div>
+
+
+                        </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                    <button class="btn btn-primary ml-2" type="submit">ذخیره کول</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+
+
+
+
+
+{% endblock %}

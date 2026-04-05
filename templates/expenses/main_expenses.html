@@ -1,0 +1,377 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<script>
+    {% if messages %}
+    {% for message in messages %}
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 9000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    Toast.fire({
+        icon: "success",
+        title: " {{ message }}"
+    });
+    {% endfor %}
+{% endif %}
+</script>
+
+
+
+
+
+
+
+<body class="text-left">
+
+    <div class="main-content pt-4">
+        <div class="main-content pt-4">
+            <div class="row mb-4">
+                
+
+            <div class="col-md-12 mb-4">
+                <div class="card text-left">
+                    <div class="card-body">
+                        
+                        <h4 class="card-title mb-3" style="font-family: 'XW_Zar_Bd_0', sans-serif;">مصارفات ثابت  </h4>
+                        
+                        <form method="GET" action="{% url 'expenses:main_expenses' %}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <select name="day" id="day" class="form-control mt-2">
+                                            <option value="" {% if selected_month == '' %}selected{% endif %}>فیلتر بر اساس زمان </option>
+                                            <option value="روزانه" {% if selected_month == 'روزانه' %}selected{% endif %}>روزانه</option>
+                                            <option value="هفتگی" {% if selected_month == 'هفتگی' %}selected{% endif %}>هفتگی</option>
+                                            <option value="ماهانه" {% if selected_month == 'ماهانه' %}selected{% endif %}>ماهانه</option>
+                                        </select>
+                                    </div>
+                                </div>               
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                       <button class="btn btn-primary btn-block m-1 mb-3" type="submit">جستجو</button>                                                         
+                                    </div>
+                                </div>
+                        </form>
+                        <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                        data-target="#exampleModal">
+                       ثبت مصرف جدید
+     
+                         </button>
+                        <a href="{% url 'expenses:generate_ecpenses_pdf' %}" class="btn btn-info btn-lg m-1">
+                       گرفتن پی دی اف (PDF)
+     
+                         </a>
+                        <p style="font-family: 'XW_Zar_Bd_0', sans-serif;"> شما تمام فروش های امروزی را در اینجا میتوانید ببینید</p>
+                        <h4 style="font-family: 'XW_Zar_Bd_0', sans-serif;">  مقدار مجموعی مصارفات پرداخت شده و نشده {{total_should_paid}} است</h4>
+                        <div class="table-responsive">
+                            <table class="display table table-striped table-bordered" id="my_paginated_table"
+                                 style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                         #
+                                        </th>
+                                        <th>
+                                          اسم
+                                        </th>
+                                        <th>مقدار</th>
+                                        <th>مقدار باقی</th>
+                                        <th>تاریخ </th>
+                                        <th>توضیحات </th>
+                                        <th>عملیات</th>
+                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in my_data %}
+                                        <tr>
+                                            <td>
+                                               {{i.id}}
+                                            </td>
+                                            <td>
+                                               {{i.name}}
+                                            </td>
+                                            <td>{{i.amount}}</td>
+                                            <td>{{i.reamin_amonts}}</td>
+                                            <td>{{i.date}}</td>
+                                            <td>{{i.description}}</td>
+                                    
+                                            <td class="">
+                                                <button class="btn bg-transparent _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <span class="_dot _r_block-dot bg-dark"></span>
+                                                    <span class="_dot _r_block-dot bg-dark"></span>
+                                                    <span class="_dot _r_block-dot bg-dark"></span>
+                                                </button>
+                                                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(115px, 188px, 0px);">
+                                                    
+                                                    
+                                                    <a class="dropdown-item" href="{% url 'expenses:give_loan' i.id %}">
+                                                        <i class="nav-icon i-Pen-2 text-success font-weight-bold mr-2"></i>
+                                                        دادن باقی پول
+                                                    </a>
+                                                
+                                                    
+                                                    <!-- <a class="dropdown-item" href="{% url 'expenses:edit_main_expenses' i.id %}">
+                                                        <i class="nav-icon i-Pen-2 text-success font-weight-bold mr-2"></i>تغیرات
+                                                    </a> -->
+                                                    
+                                                    <a 
+                                                        class="dropdown-item delete-button" 
+                                                        href="{% url 'expenses:delete_main_expenses' i.id %}" 
+                                                        onclick="return confirmDelete(this);">
+                                                        <i class="nav-icon i-Close-Window text-danger font-weight-bold mr-2"></i>
+                                                        حذف مصرف
+                                                    </a>
+                                        
+                                                    <script>
+                                                    // JavaScript function to show confirmation dialog
+                                                    function confirmDelete(link) {
+                                                        const confirmed = confirm("آیا مطمئن هستید که می‌خواهید این مشتری را حذف کنید؟");
+                                                        return confirmed; // If true, the link will proceed; if false, it will be canceled.
+                                                    }
+                                                    </script>
+                                                </div>
+                                            </td>
+                                            
+                                        </tr>
+                                        {% endfor %}
+                                        
+                                        
+                                    </tbody>
+                            </table>
+                            <div id="pagination-controls-mytable" class="d-flex flex-column flex-md-row justify-content-between align-items-center my-3">
+                                <div>
+                                    نمایش در هر صفحه:
+                                    <select id="page-size-select-mytable">
+                                        <option value="50" selected>50</option>
+                                        <option value="100">100</option>
+                                        <option value="150">150</option>
+                                        <option value="200">200</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <span id="page-info-mytable"></span>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <button id="prev-page-mytable" class="btn btn-sm btn-primary mx-1">قبلی</button>
+                                    <div id="page-numbers-mytable" class="d-flex gap-1"></div>
+                                    <button id="next-page-mytable" class="btn btn-sm btn-primary mx-1">بعدی</button>
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const table = document.getElementById('my_paginated_table');
+                                    const tbody = table.querySelector('tbody');
+                                    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                                    const pageSizeSelect = document.getElementById('page-size-select-mytable');
+                                    const pageInfo = document.getElementById('page-info-mytable');
+                                    const prevBtn = document.getElementById('prev-page-mytable');
+                                    const nextBtn = document.getElementById('next-page-mytable');
+                                    const pageNumbersContainer = document.getElementById('page-numbers-mytable');
+
+                                    let currentPage = 1;
+                                    let pageSize = parseInt(pageSizeSelect.value);
+                                    let totalRows = rows.length;
+                                    let totalPages = Math.ceil(totalRows / pageSize);
+
+                                    function renderTablePage(page, size) {
+                                        totalPages = Math.ceil(totalRows / size);
+                                        page = Math.max(1, Math.min(page, totalPages));
+
+                                        rows.forEach(row => (row.style.display = 'none'));
+
+                                        const start = (page - 1) * size;
+                                        const end = start + size;
+                                        rows.slice(start, end).forEach(row => (row.style.display = ''));
+
+                                        pageInfo.textContent = `صفحه ${page} از ${totalPages} (کل رکورد: ${totalRows})`;
+                                        prevBtn.disabled = page === 1;
+                                        nextBtn.disabled = page === totalPages;
+
+                                        currentPage = page;
+                                        renderPageButtons();
+                                    }
+
+                                    function renderPageButtons() {
+                                        pageNumbersContainer.innerHTML = '';
+                                        for (let i = 1; i <= totalPages; i++) {
+                                            const btn = document.createElement('button');
+                                            btn.textContent = i;
+                                            btn.classList.add('btn', 'btn-sm', i === currentPage ? 'btn-secondary' : 'btn-outline-secondary', 'mx-1');
+                                            btn.addEventListener('click', () => {
+                                                renderTablePage(i, pageSize);
+                                            });
+                                            pageNumbersContainer.appendChild(btn);
+                                        }
+                                    }
+
+                                    pageSizeSelect.addEventListener('change', function () {
+                                        pageSize = parseInt(this.value);
+                                        totalRows = rows.length;
+                                        totalPages = Math.ceil(totalRows / pageSize);
+                                        renderTablePage(1, pageSize);
+                                    });
+
+                                    prevBtn.addEventListener('click', function () {
+                                        if (currentPage > 1) {
+                                            renderTablePage(currentPage - 1, pageSize);
+                                        }
+                                    });
+
+                                    nextBtn.addEventListener('click', function () {
+                                        if (currentPage < totalPages) {
+                                            renderTablePage(currentPage + 1, pageSize);
+                                        }
+                                    });
+
+                                    renderTablePage(currentPage, pageSize);
+                                });
+                                </script>
+
+
+                            {% if has_expenses %}
+                            <h3>مجموع کل هزینه‌ها: {{ total_expenses }}</h3>
+                            {% else %}
+                                <p>هیچ هزینه‌ای در سیستم ثبت نشده است.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ثبت  مصرف جدید</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+    
+                <div class="modal-body">
+                    <form action="#" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="novalidate">
+                        {% csrf_token %}
+                        <br>
+                        <h5>شهرت</h5>
+                        <div class="form-row">
+                            <div class="col-md-4 mb-6">
+                                <label for="validationCustom01"> اسم گیرنده </label>
+                                {{ my_form.name }}
+                            </div>
+                            <div class="col-md-4 mb-6">
+                                <label for="validationCustom01">تاریخ مصرف </label>
+                                {{ my_form.date }}
+                            </div>
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                $('#datepicker16').datepicker({
+
+                                });
+                            });
+                            </script>
+
+                            <div class="col-md-4 mb-6">
+                                <label for="validationCustom01"> مقدار عمومی </label>
+                                <input type="number" id="total_amount" name="total_amount" class="form-control" placeholder="Enter Total Amount">
+                            </div>
+                            <div class="col-md-12 mb-6">
+                                <label for="validationCustom02"> مقدار پرداخت </label>
+                                <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter Paid Amount">
+                            </div>
+
+                            <script>
+                                document.getElementById("total_amount").addEventListener("input", function() {
+                                    document.getElementById("amount").value = this.value;
+                                });
+                            </script>
+                            
+
+                            <!-- <div class="col-md-6 mb-6">
+                                <label for="validationCustom02"> مقدار باقی </label>
+                                <input type="text" id="reamin_amonts" name="reamin_amonts" class="form-control" readonly placeholder="Remaining Amount">
+                            </div> -->
+                            <div class="col-md-12 mb-12">
+                                <label for="validationCustomUsername"> توضیحات</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.description }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <label class="radio radio-primary" style="font-size: large;">
+                                        <input type="radio" name="radio" value="0">
+                                        <span class="font-weight-700 text-info">پول مجموعی:</span>
+                                        <span class="checkmark"></span>
+                                        <span class="font-weight-700 text-info ml-2" id="totalSpan">---</span>
+                                        <span class="font-weight-700 text-info ml-2">افغانی</span>
+                                    </label>
+                                    <label class="radio radio-primary" style="font-size: large;">
+                                        <input type="radio" name="radio" value="0">
+                                        <span class="font-weight-700 text-success">پول داده شده:</span>
+                                        <span class="checkmark"></span>
+                                        <span class="font-weight-700 text-info ml-2" id="remain_value">---</span>
+                                        <span class="font-weight-700 text-info ml-2">افغانی</span>
+                                    </label>
+                                    <label class="radio radio-primary" style="font-size: large;">
+                                        <input type="radio" name="radio" value="0">
+                                        <span class="font-weight-700 text-danger">پول باقی مانده: </span>
+                                        <span class="checkmark"></span>
+                                        <span class="font-weight-700 text-info ml-2" id="paid_value">---</span>
+                                        <span class="font-weight-700 text-info ml-2">افغانی</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                            <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                        </div>
+                    </form>
+                    
+                    <script>
+                        document.addEventListener('input', function () {
+                            const totalAmount = parseFloat(document.getElementById('total_amount').value) || 0;
+                            const paidAmount = parseFloat(document.getElementById('amount').value) || 0;
+                            const remainAmount = totalAmount - paidAmount;
+                    
+                            
+                            document.getElementById('reamin_amonts').value = remainAmount.toFixed(2);
+                    
+                            document.getElementById('totalSpan').textContent = totalAmount.toFixed(2);
+                            document.getElementById('reamin_amonts').textContent = paidAmount.toFixed(2);
+                            document.getElementById('paid_value').textContent = remainAmount.toFixed(2);
+                        });
+                    </script>
+                    
+    
+    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+
+
+
+{% endblock %}

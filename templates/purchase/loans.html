@@ -1,0 +1,170 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+    {% endif %}
+    </script>
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span> مدیریت بخش قرضه ها     </h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">در این قسمت تمام قرضه های  را که باید پرداخت شود دیده میتوانید</h4>
+                    <div class="col-lg-12 text-right">
+                        <!-- <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                   data-target="#exampleModal">
+                   ثبت
+                    </button> -->
+                        <a class="btn btn-info btn-lg m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+
+                   </a>
+                   
+
+                    </div>
+                  
+                    
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table table-nowrap mb-0">
+                                <thead>
+                                    <tr>
+                                        <th> #</th>
+                                    
+                                        <th>اسم دریافت کننده</th>
+                                        <th>اسم محصول</th>
+                                        <th>مقدار پرداخت شده</th>
+                                        <th> مقدار که پرداخت شود </th>
+                                        <th> اجراعات </th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in records %}
+                                    <tr>
+                                        <td> {{i.id}}</td>
+                                        
+                                        <td>{{i.supplaier.name}}</td>
+                                        <td>{{i.product.meat_name}}</td>
+                                        <td>{{i.paid_amount}}</td>
+                                        <td>{{i.remain_amount}}</td>
+                                        <td>
+                                            <!-- Other columns -->
+                                    
+                                            <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span class="_dot _inline-dot bg-primary"></span>
+                                                <span class="_dot _inline-dot bg-primary"></span>
+                                                <span class="_dot _inline-dot bg-primary"></span>
+                                            </button>
+                                            <div class="dropdown-menu" x-placement="bottom-start">
+                                                <a class="dropdown-item ul-widget__link--font" href="#" data-toggle="modal"
+                                                    data-target="#exampleModal" data-id="{{ i.id }}">
+                                                    دادن باقی پول
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">تسلیم نمودن پول باقی مانده </h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true"></span></button>
+            </div>
+           
+            <div class="modal-body">
+                <form action="{% url 'Purchase:loan' %}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="novalidate">
+                    {% csrf_token %}
+                    <br>
+                    <h5>معلومات تان را اضافه نمایید</h5>
+                    <div class="modal-body">
+                        <input type="hidden" name="record_id" value="">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="validationCustom01">مقدار پرداخت</label>
+                            {{my_form.pay_amount}}
+                         
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="validationCustom02">اسم دهنده پول  </label>
+                            {{my_form.naem_of_giver}}
+                            
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="validationCustomUsername"> تاریخ </label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"></div>
+                                {{my_form.date_of_giving}}
+                               
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                        <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Event delegation: attach listener to the entire document
+    document.addEventListener('click', function(event) {
+        const modalTrigger = event.target.closest('[data-toggle="modal"]'); // Find the closest trigger
+        if (modalTrigger) {
+            const recordId = modalTrigger.getAttribute('data-id'); // Get the record ID
+            const modalInput = document.querySelector('#exampleModal input[name="record_id"]'); // Select hidden input in modal
+            if (modalInput) {
+                modalInput.value = recordId; // Set the record ID in the hidden input
+            }
+        }
+    });
+</script>
+
+{% endblock %}

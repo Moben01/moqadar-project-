@@ -1,0 +1,358 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+    {% endif %}
+    </script>
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>بخش فرمایشات</h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">در این قسمت تمام فرمایشات را دیده میتوانید</h4>
+                    <div class="col-lg-12 text-right">
+                        <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                   data-target="#exampleModal">
+                  ثبت
+
+                    </button>
+                        <a class="btn btn-info btn-lg m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+
+                   </a>
+                   
+
+                    </div>
+                  
+                    
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table table-nowrap mb-0">
+                                <h3>همه سفارش‌ها</h3>
+                                <thead>
+                                    <tr>
+                                        <th>شناسه</th>
+                                        <th>مشتری</th>
+                                        <th>وضعیت</th>
+                                        <th>مجموع مبلغ</th>
+                                        <th>تاریخ</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in all_order %}
+                                    <tr>
+                                        <td>{{ order.id }}</td>
+                                        <td>
+                                            <a href="{% url 'Customer:customer_order_detail' order.customer.slug %}">
+                                            {{ order.customer }}
+                                        </a>
+                                        </td>
+                                        <td>{{ order.get_status_display }}</td>
+                                        <td>{{ order.total_amount }}</td>
+                                      
+                                        <td>{{ order.created_at }}</td>
+                                        <td class="">
+                                            <button class="btn bg-transparent _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _r_block-dot bg-dark"></span><span class="_dot _r_block-dot bg-dark"></span><span class="_dot _r_block-dot bg-dark"></span></button>
+                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(115px, 188px, 0px);">
+
+                                                
+                                                <a class="dropdown-item" href="{% url 'Order:edit_order' order.id %}">
+                                                    <i class="nav-icon i-Pen-2 text-success font-weight-bold mr-2">
+
+                                                    </i>تغیرات
+                                                </a>
+                                           <!-- Dropdown Item -->
+                                            <a 
+                                            class="dropdown-item delete-button" 
+                                            href="{% url 'Order:delete_order' order.id %}" 
+                                            onclick="return confirmDelete(this);">
+                                            <i class="nav-icon i-Close-Window text-danger font-weight-bold mr-2"></i>
+                                            حذف 
+                                            </a>
+
+                                            <script>
+                                            // JavaScript function to show confirmation dialog
+                                            function confirmDelete(link) {
+                                                const confirmed = confirm("آیا مطمئن هستید که می‌خواهید این فرمایش را حذف کنید؟");
+                                                return confirmed; // If true, the link will proceed; if false, it will be canceled.
+                                            }
+                                            </script>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5">هیچ سفارشی یافت نشد.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            
+                            <!-- <h3>همه موارد سفارش</h3> -->
+                            <!-- <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>شناسه</th>
+                                        <th>سفارش</th>
+                                        <th>محصول</th>
+                                        <th>تعداد</th>
+                                        <th>قیمت واحد</th>
+                                        <th>مجموع قیمت</th>
+                                        <th>تاریخ ایجاد</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order_item in all_order_item %}
+                                    <tr>
+                                        <td>{{ order_item.id }}</td>
+                                        <td>{{ order_item.order }}</td>
+                                        <td>{{ order_item.product }}</td>
+                                        <td>{{ order_item.quantity }}</td>
+                                        <td>{{ order_item.price_per_unit }}</td>
+                                        <td>{{ order_item.total_price }}</td>
+                                        <td>{{ order_item.created_at }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="7">هیچ مورد سفارشی یافت نشد.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                             -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of col-->
+
+    <!-- end of col-->
+</div>
+
+<!--  Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ثبت فرمایش جدید</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <!--                 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="smartwizard">
+                            <ul>
+                                <li><a href="#step-1">مرحله اول<br /><small>ثبت معلومات شهرت شاگرد</small></a></li>
+                                <li><a href="#step-2">مرحله دوهم<br /><small>ثبت معلومات فیس شاگرد</small></a></li>
+                            </ul>
+                            <div>
+                                <div id="step-1">
+                                    <h3 class="border-bottom border-gray pb-2">Step 1 Content</h3>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                </div>
+                                <div id="step-2">
+                                    <h3 class="border-bottom border-gray pb-2">Step 2 Content</h3>
+                                    <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="modal-body">
+                <form action="#" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="novalidate">
+                    {% csrf_token %}
+                    <br>
+                    <h5>فرمایش
+                        
+                    </h5>
+
+                    <div class="form-row">
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">مشتری</label>
+                            {{order_form.customer}}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom02">وضعیت</label>
+                            {{order_form.status}}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom02">مقدار کُل</label>
+                            {{order_form.total_amount}}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+                      
+                      
+
+                    
+                        
+                    </div>
+                    <br>
+                 
+
+                    <h5>شهرت مشتری</h5>
+
+                    <div class="form-row">
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">محصول</label>
+                            {{ order_item_form.product }}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom02">مقدار</label>
+                            {{ order_item_form.quantity }}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom02">مقدار فی واحد</label>
+                            {{ order_item_form.price_per_unit }}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+ 
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom02">تمام پول</label>
+                            {{ order_item_form.total_price }}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom02"> تاریخ</label>
+                            {{ order_form.reg_date }}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+                        
+                      
+
+                    
+                        
+                    </div>
+                    <br>
+                 
+
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                        <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                    </div>
+
+
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--  Modal -->
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

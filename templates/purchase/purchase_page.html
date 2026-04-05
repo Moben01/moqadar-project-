@@ -1,0 +1,1073 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+        {% endif %}
+    </script>
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span> مدیریت بخش خریداری
+    </h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">لیست تمام محصولات خریداری شده در سیستم</h4>
+                    <h4 class="card-title mb-3">مقدار مجموعی خریداری {{total_should_paid}} افغانی است</h4>
+                    <div class="col-lg-12 text-right">
+                      <button class="btn btn-secondary btn-lg m-1" type="button" data-toggle="modal"
+                            data-target="#example">
+                            دیدن همه معلومات
+                        </button>
+                        <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                            data-target="#exampleModal">
+                            ثبت
+                        </button>
+                       
+                        <a class="btn btn-info btn-lg m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+
+                        </a>
+
+
+                    </div>
+
+
+                    <br>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table class="display table table-striped table-bordered dataTable"
+                                    id="zero_configuration_table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                              
+                                           
+                                            <th>
+                                                تاریخ
+                                            </th>
+                                            <th>
+                                                تهیه کننده محصول
+                                            </th>
+                                            <th>اسم محصول</th>
+                                            <th>گدام</th>
+                                            <th>تعداد</th>
+                                            <th> وزن </th>
+                                            <th>قیمت فی واحد</th>
+                                            <th>پول پرداختی</th>
+                                            
+                                            <th>قیمت مجموعی</th>
+                                            <th> توضیحات</th>
+
+                                            <th> عملیات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in my_data %}
+                                        <tr>
+                                            <td>
+                                                {{i.id}}
+                                            </td>
+                                            <td>
+                                                {{i.date}}
+                                            </td>
+                                            <td>
+                                                {{i.supplaier}}
+                                            </td>
+                                            <td>{{i.product}}</td>
+                                            <td>{{i.warehouse}}</td>
+                                            {% if i.status == 'ضرب تعداد' %}
+                                                <td style="color: blue;">{{i.quantity}}</td>
+                                            {% else %}
+                                                <td>{{i.quantity}}</td>
+                                            {% endif %}
+                                             {% if i.status == 'ضرب وزن' %}
+                                                <td style="color: blue;">{{i.wegiht}}</td>
+                                            {% else %}
+                                                <td>{{i.wegiht}}</td>
+                                            {% endif %}
+                                            <td>{{i.price_per_unit}}</td>
+                                            <td>{{ i.paid_amount }}</td>
+
+                                           
+                                            <td>{{i.total_unit}}</td>
+                                            <td>{{i.details}}</td>
+
+
+                                            <td class="">
+                                                <button class="btn bg-transparent _r_btn border-0" type="button"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false"><span
+                                                        class="_dot _r_block-dot bg-dark"></span><span
+                                                        class="_dot _r_block-dot bg-dark"></span><span
+                                                        class="_dot _r_block-dot bg-dark"></span></button>
+                                                <div class="dropdown-menu" x-placement="bottom-start"
+                                                    style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(115px, 188px, 0px);">
+
+
+                                                    <a class="dropdown-item"
+                                                        href="{% url 'purchase:edit_purchase' i.id %}">
+                                                        <i class="nav-icon i-Pen-2 text-success font-weight-bold mr-2">
+
+                                                        </i>تغیرات
+                                                    </a>
+                                                   
+                                                    <a class="dropdown-item delete-button"
+                                                        href="{% url 'purchase:delete_purchase' i.id %}"
+                                                        onclick="return confirmDelete(this);">
+                                                        <i
+                                                            class="nav-icon i-Close-Window text-danger font-weight-bold mr-2"></i>
+                                                        حذف 
+                                                    </a>
+
+                                                    <script>
+                                                        function confirmDelete(link) {
+                                                            const confirmed = confirm("آیا مطمئن هستید که می‌خواهید این ریکارد خریداری را حذف کنید؟");
+                                                            return confirmed;
+                                                        }
+                                                    </script>
+
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+
+
+                                    </tbody>
+                                </table>
+
+                                <script>
+                               
+                                    // Function to print the table
+                                    function printTable() {
+                                        const printContent = document.getElementById('zero_configuration_table').outerHTML;
+
+                                        const newWindow = window.open();
+                                        newWindow.document.write(`
+            <html dir="rtl" lang="fa">
+                <head>
+                    <title>Print Table</title>
+                    <style>
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                            text-align: right;
+                            direction: rtl;
+                        }
+                        th, td {
+                            border: 1px solid black;
+                            padding: 8px;
+                            text-align: right;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${printContent}
+                </body>
+            </html>
+        `);
+                                        newWindow.document.close();
+                                        newWindow.print();
+                                    }
+                                </script>
+
+                                <button onclick="printTable()">Print Table</button>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of col-->
+
+        <!-- end of col-->
+    </div>
+
+    <!--  Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ثبت خریداری ها</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" method="post" enctype="multipart/form-data" class="needs-validation"
+                        novalidate="novalidate">
+                        {% csrf_token %}
+
+                        <div id="newCustomerFields" style="display: none;">
+
+                            <div class="card card-body border-top-info ul-border__bottom">
+                                <h5>معلومات تامین کننده جدید</h5>
+                                <div class="form-row">
+                                    <div class="col-md-3 mb-3">
+                                        <label for="customerContact">تاریخ</label>
+                                        {{supp_form.reg_date}}
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="customerName">نام تامین کننده</label>
+                                        {{supp_form.name}}
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="customerContact">آدرس</label>
+                                        {{supp_form.address}}
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="customerContact">شماره تماس</label>
+                                        {{supp_form.phone}}
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <label for="customerContact">جزیات</label>
+                                        {{supp_form.detail}}
+                                    </div>
+                                    <label class="checkbox checkbox-outline-secondary">
+                                        <input type="checkbox" name="type"><span>این تامین کننده همچنان مشتری
+                                            میباشد.</span><span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                                    <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+
+
+
+
+                    <form id="myForm" action="#" method="post" enctype="multipart/form-data" class="needs-validation"
+                        novalidate="novalidate">
+                        {% csrf_token %}
+                        <br>
+                        <h5>معلومات خرید را اضافه نمایید</h5>
+
+                        <br>
+                        <div class="form-row">
+                            <div class="col-md-3 mb-3">
+                                <label for="validationCustom01">تهیه کننده محصول</label>
+                                <div style="display:none;">
+                                    {{ my_form.supplaier }}
+                                </div>
+                                <div class="dropdown-container" style="position: relative; width: 100%;">
+                                    <div class="custom-select form-control" onclick="toggleDropdown()">تهیه کننده را انتخاب کنید</div>
+                                    <div id="dropdown" class="dropdown-box" style="display: none; position: absolute; width: 100%; z-index: 1000; background: white; border: 1px solid #ccc; max-height: 200px; overflow-y: auto;">
+                                        <input type="text" id="searchInput" placeholder="جستجوی تهیه‌کننده..." class="form-control my-1" onkeyup="filterOptions()">
+                                        <div id="optionsContainer" class="options-list">
+                                            {% for customer in all_customers %}
+                                                <div class="option p-2 border-bottom" onclick="selectOption(this)" data-value="{{ customer.id }}">{{ customer.name }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    function toggleDropdown() {
+                                        const dropdown = document.getElementById("dropdown");
+                                        dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+                                        document.getElementById("searchInput").focus();
+                                    }
+
+                                    function filterOptions() {
+                                        const input = document.getElementById("searchInput").value.toLowerCase();
+                                        const options = document.getElementsByClassName("option");
+
+                                        for (let i = 0; i < options.length; i++) {
+                                            const txt = options[i].textContent.toLowerCase();
+                                            options[i].style.display = txt.includes(input) ? "" : "none";
+                                        }
+                                    }
+
+                                    function selectOption(element) {
+                                        const selectedName = element.textContent;
+                                        const selectedId = element.dataset.value;
+
+                                        document.querySelector(".custom-select").textContent = selectedName;
+
+                                        // Update the hidden Django field with the selected ID
+                                        document.querySelector('[name="supplaier"]').value = selectedId;
+
+                                        document.getElementById("dropdown").style.display = "none";
+                                    }
+
+                                    // Optional: Close when clicking outside
+                                    document.addEventListener("click", function (e) {
+                                        if (!document.querySelector(".dropdown-container").contains(e.target)) {
+                                            document.getElementById("dropdown").style.display = "none";
+                                        }
+                                    });
+                                    </script>
+                                <div class="valid-feedback"></div>
+
+
+                                
+                                <label class="checkbox checkbox-primary">
+                                    <input type="checkbox" id="newCustomerCheckbox">
+                                    <span>تامین کننده جدید</span>
+                                    <span class="checkmark m-1"></span>
+                                </label>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="quantity">تاریخ</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.date }}
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    $('#datepicker19').datepicker({
+    
+                                    });
+                                });
+                                </script>
+                            <div class="col-md-3 mb-3">
+                                <label for="product">نوع محصول</label>
+                                <select id="product" name="product" class="form-control">
+                                    {% for product in my_form.fields.product.queryset %}
+                                    <option value="{{ product.id }}" data-product-type="{{ product.product_type }}">
+
+                                        {{ product.meat_name }}
+
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="validationCustomUsername"> گدام مربوط</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{my_form.warehouse}}
+
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="validationCustomUsername"> حالت </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{my_form.status}}
+
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="quantity">تعداد</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.quantity }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label for="price_per_unit">قیمت فی واحد</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.price_per_unit }}
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-3">
+
+                                <label>وزن </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.wegiht }}
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-3 mb-3">
+
+                                <label for="paid_amount">پول پرداختی</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.paid_amount }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+
+                                <label for="paid_amount">توضیحات </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.details }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+
+                                <div class="input-group">
+                                    <div class="col-md-12 mb-3">
+
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="card-title">محاسبات معامله</div>
+                                                <label class="radio radio-primary" style="font-size: large;">
+                                                    <input type="radio" name="radio" value="0"><span
+                                                        class="font-weight-700 text-info">پول مجموعی:</span><span
+                                                        class="checkmark"></span><span
+                                                        class="font-weight-700 text-info ml-2 "
+                                                        id="totalSpan">---</span><span
+                                                        class="font-weight-700 text-info ml-2 ">افغانی</span>
+                                                </label>
+                                                <label class="radio radio-primary" style="font-size: large;">
+                                                    <input type="radio" name="radio" value="0"><span
+                                                        class="font-weight-700 text-success"> پول داده شده: </span><span
+                                                        class="checkmark"></span><span
+                                                        class="font-weight-700 text-info ml-2 "
+                                                        id="paid_value">---</span><span
+                                                        class="font-weight-700 text-info ml-2 ">افغانی</span>
+                                                </label>
+                                                <label class="radio radio-primary" style="font-size: large;">
+                                                    <input type="radio" name="radio" value="0"><span
+                                                        class="font-weight-700 text-danger"> پول باقی مانده
+                                                        :</span><span class="checkmark"></span><span
+                                                        class="font-weight-700 text-info ml-2 "
+                                                        id="remain_value">---</span><span
+                                                        class="font-weight-700 text-info ml-2 ">افغانی</span>
+                                                </label>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const quantityInput = document.getElementById('{{ my_form.quantity.id_for_label }}');
+                                    const priceInput = document.getElementById('{{ my_form.price_per_unit.id_for_label }}');
+                                    const paidInput = document.getElementById('{{ my_form.paid_amount.id_for_label }}');
+                                    const weightInput = document.getElementById('{{ my_form.wegiht.id_for_label }}');
+                                    const statusSelect = document.getElementById('{{ my_form.status.id_for_label }}');
+                            
+                                    const totalSpan = document.getElementById('totalSpan');
+                                    const paidVal = document.getElementById('paid_value');
+                                    const remainVal = document.getElementById('remain_value');
+                            
+                                    // Function to round a number to 2 decimal places
+                                    function roundTo(value, decimals ) {
+                                        return Number(value.toFixed(decimals));
+                                    }
+                            
+                                    function calculateTotal() {
+                                        let price = parseFloat(priceInput.value) || 0;
+                                        let paid = parseFloat(paidInput.value) || 0;
+                                        let weight = parseFloat(weightInput.value) || 0;
+                                        let quantity = parseFloat(quantityInput.value) || 0;
+                                        let total = 0;
+                            
+                                        // Perform calculations based on the selected status
+                                        if (statusSelect.value === 'ضرب وزن') {
+                                            total = roundTo(weight * price);
+                                        } else if (statusSelect.value === 'ضرب تعداد') {
+                                            total = roundTo(quantity * price);
+                                        }
+                            
+                                        // Calculate remaining amount and round all values
+                                        const remain = roundTo(total - paid);
+                            
+                                        // Update the UI with rounded values
+                                        totalSpan.textContent = roundTo(total).toLocaleString();
+                                        paidVal.textContent = roundTo(paid).toLocaleString();
+                                        remainVal.textContent = roundTo(remain).toLocaleString();
+                                    }
+                            
+                                    // Add event listeners to trigger calculations
+                                    quantityInput.addEventListener('input', calculateTotal);
+                                    priceInput.addEventListener('input', calculateTotal);
+                                    paidInput.addEventListener('input', calculateTotal);
+                                    weightInput.addEventListener('input', calculateTotal);
+                                    statusSelect.addEventListener('change', calculateTotal);
+                                });
+                            </script>
+                            
+                            
+                            
+                            
+
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const newCustomerCheckbox = document.getElementById('newCustomerCheckbox');
+                                    const newCustomerFields = document.getElementById('newCustomerFields');
+                                    const supplierField = document.querySelector('[name="supplaier"]'); // Adjust selector to match your form field's name or ID
+
+                                    // Toggle visibility of new customer fields
+                                    newCustomerCheckbox.addEventListener('change', function () {
+                                        if (newCustomerCheckbox.checked) {
+                                            newCustomerFields.style.display = 'block'; // Show fields
+                                            supplierField.removeAttribute('required'); // Make supplaier field not required
+                                        } else {
+                                            newCustomerFields.style.display = 'none'; // Hide fields
+                                            supplierField.setAttribute('required', 'required'); // Make supplaier field required
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                        <br>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+
+                            <!-- <button class="btn btn-secondary" type="button" id="submit-and-reopen"> ذخیره کردن</button> -->
+                            <button class="btn btn-secondary" type="submit"> ذخیره </button>
+                        </div>
+                    </form>
+                   
+                    
+                    <script>
+                        document.getElementById('myForm').addEventListener('submit', function (event) {
+                            // Allow form submission normally
+                            setTimeout(function () {
+                                console.log("Reloading the page...");  // Log to ensure this code is running
+                                window.location.reload();  // Reload the page after 5 seconds
+                            }, 5000);  // 5-second delay
+                        });
+                    </script>
+                    <script>
+                        document.getElementById('submit-and-reopen').addEventListener('click', function (event) {
+                            event.preventDefault();
+                            var form = document.getElementById('myForm');
+                            var formData = new FormData(form);
+                            fetch(form.action, {
+                                method: form.method,
+                                body: formData,
+                            }).then(function (response) {
+                                if (response.ok) {
+                                    $('#exampleModal').modal('hide');
+
+                                    // Show success message
+                                    var successMessage = document.createElement('div');
+                                    successMessage.innerHTML = 'ستاسو حواله په بریالیتوب سره ثبت سوه';
+                                    successMessage.style.position = 'fixed';
+                                    successMessage.style.top = '10%';
+                                    successMessage.style.left = '45%';
+                                    successMessage.style.transform = 'translateX(-50%)';
+                                    successMessage.style.backgroundColor = '#28a745';
+                                    successMessage.style.color = '#fff';
+                                    successMessage.style.padding = '10px 20px';
+                                    successMessage.style.borderRadius = '5px';
+                                    successMessage.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.1)';
+                                    successMessage.style.fontSize = '30px';
+                                    document.body.appendChild(successMessage);
+
+                                    // Remove success message after 2 seconds
+                                    setTimeout(function () {
+                                        successMessage.remove();
+                                        $('#exampleModal').modal('show');
+                                    }, 2000);
+
+                                    form.reset();
+                                } else {
+                                    console.error('Form submission failed:', response.statusText);
+                                }
+                            }).catch(function (error) {
+                                console.error('Form submission error:', error);
+                            });
+                        });
+                    </script>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const newCustomerCheckbox = document.getElementById('newCustomerCheckbox');
+                            const newCustomerFields = document.getElementById('newCustomerFields');
+
+                            // Toggle visibility of new customer fields
+                            newCustomerCheckbox.addEventListener('change', function () {
+                                if (newCustomerCheckbox.checked) {
+                                    newCustomerFields.style.display = 'block'; // Show fields
+                                } else {
+                                    newCustomerFields.style.display = 'none'; // Hide fields
+                                }
+                            });
+                        });
+                    </script>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ثبت خریداری ها</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" method="post" enctype="multipart/form-data" class="needs-validation"
+                        novalidate="novalidate">
+                        {% csrf_token %}
+
+                        <div id="newCustomerFields" style="display: none;">
+
+                            <div class="card card-body border-top-info ul-border__bottom">
+                                <h5>معلومات تامین کننده جدید</h5>
+                                <div class="form-row">
+                                    <div class="col-md-3 mb-3">
+                                        <label for="customerContact">تاریخ</label>
+                                        {{supp_form.reg_date}}
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="customerName">نام تامین کننده</label>
+                                        {{supp_form.name}}
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="customerContact">آدرس</label>
+                                        {{supp_form.address}}
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="customerContact">شماره تماس</label>
+                                        {{supp_form.phone}}
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <label for="customerContact">جزیات</label>
+                                        {{supp_form.detail}}
+                                    </div>
+                                    <label class="checkbox checkbox-outline-secondary">
+                                        <input type="checkbox" name="type"><span>این تامین کننده همچنان مشتری
+                                            میباشد.</span><span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                                    <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+
+
+
+
+                    <form id="myForm" action="#" method="post" enctype="multipart/form-data" class="needs-validation"
+                        novalidate="novalidate">
+                        {% csrf_token %}
+                        <br>
+                        <h5>معلومات خرید را اضافه نمایید</h5>
+
+                        <br>
+                        <div class="form-row">
+                            <div class="col-md-3 mb-3">
+                                <label for="validationCustom01">تهیه کننده محصول</label>
+                                <div style="display:none;">
+                                    {{ my_form.supplaier }}
+                                </div>
+                                <div class="dropdown-container" style="position: relative; width: 100%;">
+                                    <div class="custom-select form-control" onclick="toggleDropdown()">تهیه کننده را انتخاب کنید</div>
+                                    <div id="dropdown" class="dropdown-box" style="display: none; position: absolute; width: 100%; z-index: 1000; background: white; border: 1px solid #ccc; max-height: 200px; overflow-y: auto;">
+                                        <input type="text" id="searchInput" placeholder="جستجوی تهیه‌کننده..." class="form-control my-1" onkeyup="filterOptions()">
+                                        <div id="optionsContainer" class="options-list">
+                                            {% for customer in all_customers %}
+                                                <div class="option p-2 border-bottom" onclick="selectOption(this)" data-value="{{ customer.id }}">{{ customer.name }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    function toggleDropdown() {
+                                        const dropdown = document.getElementById("dropdown");
+                                        dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+                                        document.getElementById("searchInput").focus();
+                                    }
+
+                                    function filterOptions() {
+                                        const input = document.getElementById("searchInput").value.toLowerCase();
+                                        const options = document.getElementsByClassName("option");
+
+                                        for (let i = 0; i < options.length; i++) {
+                                            const txt = options[i].textContent.toLowerCase();
+                                            options[i].style.display = txt.includes(input) ? "" : "none";
+                                        }
+                                    }
+
+                                    function selectOption(element) {
+                                        const selectedName = element.textContent;
+                                        const selectedId = element.dataset.value;
+
+                                        document.querySelector(".custom-select").textContent = selectedName;
+
+                                        // Update the hidden Django field with the selected ID
+                                        document.querySelector('[name="supplaier"]').value = selectedId;
+
+                                        document.getElementById("dropdown").style.display = "none";
+                                    }
+
+                                    // Optional: Close when clicking outside
+                                    document.addEventListener("click", function (e) {
+                                        if (!document.querySelector(".dropdown-container").contains(e.target)) {
+                                            document.getElementById("dropdown").style.display = "none";
+                                        }
+                                    });
+                                    </script>
+                                <div class="valid-feedback"></div>
+
+
+                                
+                                <label class="checkbox checkbox-primary">
+                                    <input type="checkbox" id="newCustomerCheckbox">
+                                    <span>تامین کننده جدید</span>
+                                    <span class="checkmark m-1"></span>
+                                </label>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="quantity">تاریخ</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.date }}
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    $('#datepicker19').datepicker({
+    
+                                    });
+                                });
+                                </script>
+                            <div class="col-md-3 mb-3">
+                                <label for="product">نوع محصول</label>
+                                <select id="product" name="product" class="form-control">
+                                    {% for product in my_form.fields.product.queryset %}
+                                    <option value="{{ product.id }}" data-product-type="{{ product.product_type }}">
+
+                                        {{ product.meat_name }}
+
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="validationCustomUsername"> گدام مربوط</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{my_form.warehouse}}
+
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="validationCustomUsername"> حالت </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{my_form.status}}
+
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="quantity">تعداد</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.quantity }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label for="price_per_unit">قیمت فی واحد</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.price_per_unit }}
+                                </div>
+                            </div>
+                            <div class="col-md-2 mb-3">
+
+                                <label>وزن </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.wegiht }}
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-3 mb-3">
+
+                                <label for="paid_amount">پول پرداختی</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.paid_amount }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+
+                                <label for="paid_amount">توضیحات </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"></div>
+                                    {{ my_form.details }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+
+                                <div class="input-group">
+                                    <div class="col-md-12 mb-3">
+
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="card-title">محاسبات معامله</div>
+                                                <label class="radio radio-primary" style="font-size: large;">
+                                                    <input type="radio" name="radio" value="0"><span
+                                                        class="font-weight-700 text-info">پول مجموعی:</span><span
+                                                        class="checkmark"></span><span
+                                                        class="font-weight-700 text-info ml-2 "
+                                                        id="totalSpan">---</span><span
+                                                        class="font-weight-700 text-info ml-2 ">افغانی</span>
+                                                </label>
+                                                <label class="radio radio-primary" style="font-size: large;">
+                                                    <input type="radio" name="radio" value="0"><span
+                                                        class="font-weight-700 text-success"> پول داده شده: </span><span
+                                                        class="checkmark"></span><span
+                                                        class="font-weight-700 text-info ml-2 "
+                                                        id="paid_value">---</span><span
+                                                        class="font-weight-700 text-info ml-2 ">افغانی</span>
+                                                </label>
+                                                <label class="radio radio-primary" style="font-size: large;">
+                                                    <input type="radio" name="radio" value="0"><span
+                                                        class="font-weight-700 text-danger"> پول باقی مانده
+                                                        :</span><span class="checkmark"></span><span
+                                                        class="font-weight-700 text-info ml-2 "
+                                                        id="remain_value">---</span><span
+                                                        class="font-weight-700 text-info ml-2 ">افغانی</span>
+                                                </label>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const quantityInput = document.getElementById('{{ my_form.quantity.id_for_label }}');
+                                    const priceInput = document.getElementById('{{ my_form.price_per_unit.id_for_label }}');
+                                    const paidInput = document.getElementById('{{ my_form.paid_amount.id_for_label }}');
+                                    const weightInput = document.getElementById('{{ my_form.wegiht.id_for_label }}');
+                                    const statusSelect = document.getElementById('{{ my_form.status.id_for_label }}');
+                            
+                                    const totalSpan = document.getElementById('totalSpan');
+                                    const paidVal = document.getElementById('paid_value');
+                                    const remainVal = document.getElementById('remain_value');
+                            
+                                    // Function to round a number to 2 decimal places
+                                    function roundTo(value, decimals ) {
+                                        return Number(value.toFixed(decimals));
+                                    }
+                            
+                                    function calculateTotal() {
+                                        let price = parseFloat(priceInput.value) || 0;
+                                        let paid = parseFloat(paidInput.value) || 0;
+                                        let weight = parseFloat(weightInput.value) || 0;
+                                        let quantity = parseFloat(quantityInput.value) || 0;
+                                        let total = 0;
+                            
+                                        // Perform calculations based on the selected status
+                                        if (statusSelect.value === 'ضرب وزن') {
+                                            total = roundTo(weight * price);
+                                        } else if (statusSelect.value === 'ضرب تعداد') {
+                                            total = roundTo(quantity * price);
+                                        }
+                            
+                                        // Calculate remaining amount and round all values
+                                        const remain = roundTo(total - paid);
+                            
+                                        // Update the UI with rounded values
+                                        totalSpan.textContent = roundTo(total).toLocaleString();
+                                        paidVal.textContent = roundTo(paid).toLocaleString();
+                                        remainVal.textContent = roundTo(remain).toLocaleString();
+                                    }
+                            
+                                    // Add event listeners to trigger calculations
+                                    quantityInput.addEventListener('input', calculateTotal);
+                                    priceInput.addEventListener('input', calculateTotal);
+                                    paidInput.addEventListener('input', calculateTotal);
+                                    weightInput.addEventListener('input', calculateTotal);
+                                    statusSelect.addEventListener('change', calculateTotal);
+                                });
+                            </script>
+                            
+                            
+                            
+                            
+
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const newCustomerCheckbox = document.getElementById('newCustomerCheckbox');
+                                    const newCustomerFields = document.getElementById('newCustomerFields');
+                                    const supplierField = document.querySelector('[name="supplaier"]'); // Adjust selector to match your form field's name or ID
+
+                                    // Toggle visibility of new customer fields
+                                    newCustomerCheckbox.addEventListener('change', function () {
+                                        if (newCustomerCheckbox.checked) {
+                                            newCustomerFields.style.display = 'block'; // Show fields
+                                            supplierField.removeAttribute('required'); // Make supplaier field not required
+                                        } else {
+                                            newCustomerFields.style.display = 'none'; // Hide fields
+                                            supplierField.setAttribute('required', 'required'); // Make supplaier field required
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                        <br>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+
+                            <!-- <button class="btn btn-secondary" type="button" id="submit-and-reopen"> ذخیره کردن</button> -->
+                            <button class="btn btn-secondary" type="submit"> ذخیره </button>
+                        </div>
+                    </form>
+                   
+                    
+                    <script>
+                        document.getElementById('myForm').addEventListener('submit', function (event) {
+                            // Allow form submission normally
+                            setTimeout(function () {
+                                console.log("Reloading the page...");  // Log to ensure this code is running
+                                window.location.reload();  // Reload the page after 5 seconds
+                            }, 5000);  // 5-second delay
+                        });
+                    </script>
+                    <script>
+                        document.getElementById('submit-and-reopen').addEventListener('click', function (event) {
+                            event.preventDefault();
+                            var form = document.getElementById('myForm');
+                            var formData = new FormData(form);
+                            fetch(form.action, {
+                                method: form.method,
+                                body: formData,
+                            }).then(function (response) {
+                                if (response.ok) {
+                                    $('#exampleModal').modal('hide');
+
+                                    // Show success message
+                                    var successMessage = document.createElement('div');
+                                    successMessage.innerHTML = 'ستاسو حواله په بریالیتوب سره ثبت سوه';
+                                    successMessage.style.position = 'fixed';
+                                    successMessage.style.top = '10%';
+                                    successMessage.style.left = '45%';
+                                    successMessage.style.transform = 'translateX(-50%)';
+                                    successMessage.style.backgroundColor = '#28a745';
+                                    successMessage.style.color = '#fff';
+                                    successMessage.style.padding = '10px 20px';
+                                    successMessage.style.borderRadius = '5px';
+                                    successMessage.style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.1)';
+                                    successMessage.style.fontSize = '30px';
+                                    document.body.appendChild(successMessage);
+
+                                    // Remove success message after 2 seconds
+                                    setTimeout(function () {
+                                        successMessage.remove();
+                                        $('#exampleModal').modal('show');
+                                    }, 2000);
+
+                                    form.reset();
+                                } else {
+                                    console.error('Form submission failed:', response.statusText);
+                                }
+                            }).catch(function (error) {
+                                console.error('Form submission error:', error);
+                            });
+                        });
+                    </script>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const newCustomerCheckbox = document.getElementById('newCustomerCheckbox');
+                            const newCustomerFields = document.getElementById('newCustomerFields');
+
+                            // Toggle visibility of new customer fields
+                            newCustomerCheckbox.addEventListener('change', function () {
+                                if (newCustomerCheckbox.checked) {
+                                    newCustomerFields.style.display = 'block'; // Show fields
+                                } else {
+                                    newCustomerFields.style.display = 'none'; // Hide fields
+                                }
+                            });
+                        });
+                    </script>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">دیدن همه محصولات</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th style="background-color: yellow;">محصول</th>
+                                <th style="background-color: yellow;">تعداد خریده شده</th>
+                                <th style="background-color: yellow;">وزن خریده شده</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in summary %}
+                            <tr>
+                                <td>{{ item.product__meat_name }}</td>
+                                <td>{{ item.total_quantity }}</td>
+                                <td>{{ item.total_weight }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3">No data available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                   
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  Modal -->
+
+    {% endblock %}

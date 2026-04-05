@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fa">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Report</title>
+
+    <style>
+    body {
+        font-family: Arial, Tahoma, sans-serif;
+        direction: rtl;
+        margin: 20px;
+        color: #000;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    th, td {
+        border: 1.5px solid #000;
+        padding: 8px;
+        text-align: center;
+    }
+
+    th {
+        font-weight: bold;
+        background-color: #000;
+        color: #fff;
+    }
+
+    @media print {
+        body {
+            margin: 10mm;
+        }
+
+        button {
+            display: none !important;
+        }
+
+        table {
+            page-break-inside: avoid;
+        }
+
+        /* 🔥 FORCE BROWSER TO PRINT COLORS & BORDERS */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+    <button onclick="window.print()">🖨 Print</button>
+  
+ 
+
+    <h2>گزارش قرض مشتریان</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th >#</th>
+                <th >نام مشتری</th>
+                <th >مقدار پول</th>
+                <th >توضیحات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in loan_data %}
+            <tr>
+
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.name }}</td>
+                <td>{{ i.loan_amount }}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    <script>
+    window.onload = function () {
+        setTimeout(function () {
+            window.print();
+        }, 1500);   // 1500 ms = 1.5 seconds
+    };
+</script>
+
+</body>
+
+</html>

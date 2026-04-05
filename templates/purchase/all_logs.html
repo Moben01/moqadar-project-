@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jalali_filters %}
+{% block content %}
+
+
+<h2>📋 System Logs</h2>
+<table border="1" style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>📅 Date</th>
+            <th>👤 User</th>
+            <th>🧾 Action</th>
+            <th>📦 Object</th>
+            <th>📝 Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.action_time|to_jalali }}</td>
+            <td>{{ log.user }}</td>
+            <td>
+                {% if log.action_flag == 1 %}🟢 اضافه‌کردن
+                {% elif log.action_flag == 2 %}🟡 ویرایش
+                {% elif log.action_flag == 3 %}🔴 حذف
+                {% else %}❓ نامشخص
+                {% endif %}
+            </td>
+            <td>{{ log.content_type }}: {{ log.object_repr }}</td>
+            <td>{{ log.change_message }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

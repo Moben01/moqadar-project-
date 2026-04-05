@@ -1,0 +1,46 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light">داشبورد /</span>د گروپونه برخه
+    </h4>
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+            {{ message }}
+        </div>
+        <script>
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 3000); // 3 seconds
+        </script>
+    {% endfor %}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">بخش مدیریت گروپ ها</h4>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">تایید   </button>
+                </form>
+                <script>
+                    document.getElementById('id_app').addEventListener('change', function() {
+                        this.form.submit();
+                    });
+                </script>
+            </div>
+        </div>
+       
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,361 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+    {% endif %}
+    </script>
+
+
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>معلومات کامل {{customer.name}} ,
+
+        {% if customer.role == 'هردو' %}
+        <span style="font-size: 14px;"> مشتری و تامین کننده</span>
+        {% else %}
+        <span style="font-size: 14px;">{{customer.role }}</span>
+
+        {% endif %}
+
+    
+    
+    </h4>
+        <span class="text-muted fw-light"></span></h4>
+
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">معلومات معاملات {{customer.name}} </h4>
+                    <div class="col-lg-12 text-right">
+                        <div class="btn-group show">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">تنظیمات</button>
+                            <div class="dropdown-menu" x-placement="top-start" style="position: absolute; transform: translate3d(0px, -172px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                
+                                {% if customer.role == 'مشتری' %}
+                                <a class="dropdown-item" href="#">اضافه کردن به عنوان تامین کننده</a>
+                                {% endif %}
+
+                                
+                                <a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a>
+                                <div class="dropdown-divider"></div><a class="dropdown-item" href="#">Separated link</a>
+                            </div>
+                        </div>
+                      
+                        <a class="btn btn-info m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+
+                   </a>
+                   
+                
+                   
+
+                    </div>
+                    <div class="row">
+                        <!-- ICON BG-->
+                        
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                <div class="card-body text-center"><i class="i-Add-User"></i>
+                                    <div class="content">
+                                        <p class="text-muted mt-2 mb-0">قرض ها</p>
+                                        <p class="text-primary text-24 line-height-1 mb-2">{{total_reamin}}</p>
+                                        
+                                    </div>
+                                </div>
+                                <a class="btn btn-outline-primary m-1" href="{% url 'Customer:customer_loans' customer.id  %}">معلومات کامل</a>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                <div class="card-body text-center"><i class="i-Financial"></i>
+                                    <div class="content">
+                                        <p class="text-muted mt-2 mb-0">پول داده شده </p>
+                                        <p class="text-primary text-24 line-height-1 mb-2">{{given_money}}</p>
+                                    </div>
+
+                                </div>
+                        
+                                <button class="btn btn-outline-primary m-1" type="button">معلومات کامل</button>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                <div class="card-body text-center"><i class="i-Checkout-Basket"></i>
+                                    <div class="content">
+                                        <p class="text-muted mt-2 mb-0">آخرین خرید</p>
+                                        <p class="text-primary text-24 line-height-1 mb-2">{{last_record.product.meat_name}}</p>
+                                    </div>
+
+                                </div>
+                                <button class="btn btn-outline-primary m-1" type="button">معلومات کامل</button>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                <div class="card-body text-center"><i class="i-Money-2"></i>
+                                    <div class="content">
+                                        <p class="text-muted mt-2 mb-0">مجموعه پول</p>
+                                        <p class="text-primary text-24 line-height-1 mb-2">{{total_paid}}</p>
+                                    </div>
+
+                                </div>
+                                <button class="btn btn-outline-primary m-1" type="button">معلومات کامل</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table custom-table table-nowrap mb-0">
+                            <h4 class="card-title mb-3">محصولات فروخته شده </h4>
+
+                            <thead >
+                                <tr style="color: rgb(0, 0, 0);">
+                                    <th >#</th> 
+                                    <th >اسم محصول</th> 
+                                    <th>تعداد</th>
+                                    <th>وزن </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    {% for t in product_sold %}
+                                    <tr style="background-color: rgb(250, 246, 25);">
+                                        <td style="color: rgb(0, 0, 0);">{{ t.P_id }}</td>
+                                        <td style="color: rgb(0, 0, 0);">{{ t.p_name }}</td>
+                                        <td style="color: rgb(0, 0, 0);">{{ t.sold_q }} </td>
+                                        <td style="color: rgb(0, 0, 0);">{{ t.sold_w }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4">هیچ داده موجود نیست.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+                    
+                  
+                    
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table table-nowrap mb-0">
+                                <h4 class="card-title mb-3">آخرین معاملات انجام شده با {{customer.name}} </h4>
+
+                                <thead>
+                                    <tr>
+                                        <th>شماره</th>
+
+                                        <th style="font-family: XW_Zar_Bd_0;">
+                                          نام مشتری
+                                        </th>
+                                        <th> محصول</th>
+                                        <th>مقدار</th>
+                                        <th>مقدار فی واحد</th>
+                                        <th>مقدار  مجموعی</th>
+                                        <th>مقدار  پرداخت شده</th>
+                                        <th>عملیات</th>
+
+
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in filer_records %}
+                                    <tr>
+                                        <td>
+                                            {{i.id}}
+                                         </td>
+                                        <td>
+                                           {{i.sell_forei.customer.name}}
+                                        </td>
+                                        <td>{{i.product.meat_name}}</td>
+                                        <td>{{i.quantity}}</td>
+                                        <td>{{i.price_per_unit}}</td>
+                                        <td>{{i.should_paid}}</td>
+                                        <td>{{i.paid_amount_for_every_record}}</td>
+                                        <td class="">
+                                            <button class="btn bg-transparent _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _r_block-dot bg-dark"></span><span class="_dot _r_block-dot bg-dark"></span><span class="_dot _r_block-dot bg-dark"></span></button>
+                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(115px, 188px, 0px);"><a class="dropdown-item" href="{% url 'Customer:customer_full_info' i.id %}"><i class="nav-icon i-Pen-2 text-info font-weight-bold mr-2"></i>معلومات کامل</a><a class="dropdown-item" href="#"></div>
+                                        </td>
+
+                                        
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of col-->
+
+    <!-- end of col-->
+</div>
+
+<!--  Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ثبت نام مشتری جدید</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <!--                 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="smartwizard">
+                            <ul>
+                                <li><a href="#step-1">مرحله اول<br /><small>ثبت معلومات شهرت شاگرد</small></a></li>
+                                <li><a href="#step-2">مرحله دوهم<br /><small>ثبت معلومات فیس شاگرد</small></a></li>
+                            </ul>
+                            <div>
+                                <div id="step-1">
+                                    <h3 class="border-bottom border-gray pb-2">Step 1 Content</h3>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                </div>
+                                <div id="step-2">
+                                    <h3 class="border-bottom border-gray pb-2">Step 2 Content</h3>
+                                    <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="modal-body">
+                <form action="#" method="post" enctype="multipart/form-data" class="needs-validation" novalidate="novalidate">
+                    {% csrf_token %}
+                    <br>
+                    <h5>شهرت</h5>
+
+                    <div class="form-row">
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">نام مشتری </label>
+                            {{my_form.name}}
+                            <div class="valid-feedback">
+                              درست میباشد
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom02"> شماره تلفن</label>
+                            {{my_form.phone}}
+                            <div class="valid-feedback">
+                                درست میباشد
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustomUsername"> آدرس مشتری</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"></div>
+                                {{my_form.address}}
+                                <div class="invalid-feedback">
+                        
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-12">
+                            <label for="validationCustomUsername">توضیحات </label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"></div>
+                                {{my_form.detail}}
+                                <div class="invalid-feedback">
+                                    
+
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <br>
+                 
+                 
+
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                        <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                    </div>
+
+
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--  Modal -->
+
+{% endblock %}

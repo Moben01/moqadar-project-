@@ -1,0 +1,542 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+        {% endif %}
+    </script>
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>بخش فروشات
+    </h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">تمام فروشات اجرا شده در سیستم</h4>
+                    <h4 class="card-title mb-3">مقدار مجموعه فروشات {{total_should_paid}} افغانی است</h4>
+                    <div class="col-lg-12 text-right">
+                    <button class="btn btn-secondary btn-lg m-1" type="button" data-toggle="modal"
+                            data-target="#example">
+                            دیدن همه معلومات
+
+                        </button>
+
+
+                        <a href="{% url 'Order:generate_sale_item_pdf' %}" class="btn btn-info btn-lg m-1" >
+                            گرفتن پی دی اف (PDF)
+                        </a>
+                        <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                            data-target="#exampleModal">
+                            ثبت
+
+                        </button>
+                        
+
+
+
+
+                        <a class="btn btn-info btn-lg m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+
+                        </a>
+
+
+                    </div>
+
+
+                    <br>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped custom-table table-nowrap mb-0"
+                                id="zero_configuration_table">
+
+
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>تاریخ</th>
+                                            <th>مشتری</th>
+                                            <th>محصول</th>
+                                            <th>تعداد</th>
+                                            <th>وزن</th>
+                                            <th>قیمت</th>
+                                            <th>مجموعه</th>
+                                            <th>پرداخت شده</th>
+                                            <th> مقدار باقی مانده</th>
+                                            <th> توضیحات</th>
+                                            <th> بل</th>
+                                            <th> عملیات</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in my_date %}
+                                        <tr {% if order.is_money_approved %}style="background-color: #5bf09b;"{% endif %}>
+                                            <td>{{ order.id }}</td>
+                                            <td>{{ order.sell_forei.reg_date }}</td>
+                                            <td>
+                                                {{ order.sell_forei.customer.name }}
+                                            </td>
+                                            <td>{{ order.product }}</td>
+                                            {% if order.status == 'ضرب تعداد' %}
+                                                <td style="color: blue;">{{ order.quantity }}</td>
+                                            {% else %}
+                                                <td>{{ order.quantity }}</td>
+                                            {% endif %}
+                                            {% if order.status == 'ضرب وزن' %}
+                                                <td style="color: blue;">{{ order.weight }}</td>
+                                            {% else %}
+                                                <td >{{ order.weight }}</td>
+                                            {% endif %}
+                                            <td>{{ order.price_per_unit }}</td>
+                                            <td>{{ order.should_paid }}</td>
+                                            <td>{{ order.paid_amount_for_every_record }}</td>
+
+                                            <td>{{ order.borrow_amount }}</td>
+                                            <td>{{ order.notes }}</td>
+                                            <td>
+                                                <a href="{% url 'Order:bill_details' order.id %}"
+                                                    class="btn btn-secondary">
+                                                    بل
+                                                </a>
+                                            </td>
+
+                                            <td class="">
+                                                <button class="btn bg-transparent _r_btn border-0" type="button"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false"><span
+                                                        class="_dot _r_block-dot bg-dark"></span><span
+                                                        class="_dot _r_block-dot bg-dark"></span><span
+                                                        class="_dot _r_block-dot bg-dark"></span></button>
+                                                <div class="dropdown-menu" x-placement="bottom-start"
+                                                    style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(115px, 188px, 0px);">
+
+<!--                                                     
+                                                    <a class="dropdown-item"
+                                                        href="{% url 'Order:return_order' order.id %}">
+                                                        <i class="nav-icon i-Pen-2 text-success font-weight-bold mr-2">
+
+                                                        </i>بازگشت محصول
+                                                    </a> -->
+
+                                                    <a class="dropdown-item"
+                                                        href="{% url 'Order:edit_Direct_sale' order.sell_forei_id %}">
+                                                        <i class="nav-icon i-Pen-2 text-success font-weight-bold mr-2">
+
+                                                        </i>تغیرات
+                                                    </a>
+                                                  
+                                                    <a class="dropdown-item delete-button"
+                                                        href="{% url 'Order:delete_sale' order.id %}"
+                                                        onclick="return confirmDelete(this);">
+                                                        <i
+                                                            class="nav-icon i-Close-Window text-danger font-weight-bold mr-2"></i>
+                                                        حذف 
+                                                    </a>
+
+                                                    <script>
+                                                        // JavaScript function to show confirmation dialog
+                                                        function confirmDelete(link) {
+                                                            const confirmed = confirm("آیا مطمئن هستید که می‌خواهید این ریکارد فروش را حذف کنید؟");
+                                                            return confirmed; // If true, the link will proceed; if false, it will be canceled.
+                                                        }
+                                                    </script>
+
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+
+
+                                    </tbody>
+                                </table>
+
+
+                                <script>
+                               
+                                    function printTable() {
+                                        const printContent = document.getElementById('zero_configuration_table').outerHTML;
+
+                                        const newWindow = window.open();
+                                        newWindow.document.write(`
+                                        <html dir="rtl" lang="fa">
+                                            <head>
+                                                <title>Print Table</title>
+                                                <style>
+                                                    table {
+                                                        border-collapse: collapse;
+                                                        width: 100%;
+                                                        text-align: right;
+                                                        direction: rtl;
+                                                    }
+                                                    th, td {
+                                                        border: 1px solid black;
+                                                        padding: 8px;
+                                                        text-align: right;
+                                                    }
+                                                    th {
+                                                        background-color: #f2f2f2;
+                                                    }
+                                                </style>
+                                            </head>
+                                            <body>
+                                                ${printContent}
+                                            </body>
+                                        </html>
+                                    `);
+                                        newWindow.document.close();
+                                        newWindow.print();
+                                    }
+                                </script>
+
+                                <button onclick="printTable()">Print Table</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">ثبت فروش جدید</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" method="post" enctype="multipart/form-data" id="mainForm">
+                        {% csrf_token %}
+                       
+                        <h5>معلومات فروش خود را بنویسید</h5>
+                        <style>
+                            .custom-select {
+                                border: 1px solid #ccc;
+                                padding: 10px;
+                                background: white;
+                                cursor: pointer;
+                            }
+                            .dropdown-box {
+                                position: absolute;
+                                background: white;
+                                border: 1px solid #ccc;
+                                width: 100%;
+                                z-index: 999;
+                                max-height: 300px;
+                                overflow-y: auto;
+                            }
+                            .options-list .option {
+                                padding: 8px;
+                                cursor: pointer;
+                            }
+                            .options-list .option:hover {
+                                background-color: #f0f0f0;
+                            }
+                        </style>
+                        <div class="form-row">
+                            <div class="dropdown-container" style="position: relative; width: 100%;">
+                                <div class="custom-select" onclick="toggleDropdown()">مشتری را انتخاب کنید</div>
+                                <div id="dropdown" class="dropdown-box" style="display: none;">
+                                    <input type="text" id="searchInput" placeholder="جستجوی مشتری..." class="form-control" onkeyup="filterOptions()">
+                                    <div id="optionsContainer" class="options-list">
+                                        {% for customer in customer_list %}
+                                            <div class="option" onclick="selectOption(this)" data-value="{{ customer.id }}">{{ customer.name }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <input type="hidden" name="customer" id="selectedCustomer">
+                            </div>
+                            <script>
+                                function toggleDropdown() {
+                                    document.getElementById("dropdown").style.display =
+                                        document.getElementById("dropdown").style.display === "none" ? "block" : "none";
+                                    document.getElementById("searchInput").focus();
+                                }
+
+                                function filterOptions() {
+                                    const input = document.getElementById("searchInput").value.toLowerCase();
+                                    const options = document.getElementsByClassName("option");
+
+                                    for (let i = 0; i < options.length; i++) {
+                                        const txt = options[i].textContent.toLowerCase();
+                                        options[i].style.display = txt.includes(input) ? "" : "none";
+                                    }
+                                }
+
+                                function selectOption(element) {
+                                    document.querySelector(".custom-select").textContent = element.textContent;
+                                    document.getElementById("selectedCustomer").value = element.dataset.value;
+                                    document.getElementById("dropdown").style.display = "none";
+                                }
+
+                                // Optional: Close dropdown when clicking outside
+                                document.addEventListener("click", function (e) {
+                                    if (!document.querySelector(".dropdown-container").contains(e.target)) {
+                                        document.getElementById("dropdown").style.display = "none";
+                                    }
+                                });
+                            </script>
+
+                            <div class="col-md-12 mb-4">
+                                <label for="validationCustom01">تاریخ</label>
+                                {{ my_form.reg_date }}
+                            </div>
+                             <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    $('#datepicker19').datepicker({
+    
+                                    });
+                                });
+                                </script>
+                        </div>
+
+                        <div id="saleItemContainer">
+                            {% for form in sale_item_formset %}
+                            <div class="form-row sale-item-form">
+                                <div class="col-md-6 mb-4">
+                                    <label for="id_form-{{ forloop.counter0 }}-item_name">نام آیتم</label>
+                                    {{ form.item_name }}
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label for="id_form-{{ forloop.counter0 }}-quantity">تعداد</label>
+                                    {{ form.quantity }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Hidden Management Form Fields -->
+                        {{ sale_item_formset.management_form }}
+
+                        <!-- Button to Add New Sale Item -->
+                        <button type="button" id="addNewItem" class="btn btn-primary">اضافه کردن محصول جدید</button>
+
+                        <!-- Save Button -->
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                            <button class="btn btn-success" type="submit">ذخیره کردن</button>
+                        </div>
+                    </form>
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        const productOptions = [
+            {% for product in products %}
+        { value: "{{ product.id }}", text: "{{ product.meat_name }}" },
+        {% endfor %}
+    ];
+
+        const warehouseOptions = [
+            {% for warehouse in warehouses %}
+        { value: "{{ warehouse.id }}", text: "{{ warehouse.name }}" },
+        {% endfor %}
+    ];
+
+
+    </script>
+
+
+    <script>
+        document.getElementById('addNewItem').addEventListener('click', function () {
+            const saleItemContainer = document.getElementById('saleItemContainer');
+            const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+            const currentIndex = parseInt(totalForms.value);
+
+            totalForms.value = currentIndex + 1;
+
+            const newFormHTML = `
+            <div class="form-row sale-item-form" id="sale-item-${currentIndex}">
+                <div class="col-md-3 mb-4">
+                    <label for="id_form-${currentIndex}-product">محصول</label>
+                    <select name="form-${currentIndex}-product" class="form-control" id="id_form-${currentIndex}-product">
+                    </select>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="id_form-${currentIndex}-status">وضعیت</label>
+                    <select name="form-${currentIndex}-status" class="form-control status-select" id="id_form-${currentIndex}-status">
+                        <option value="ضرب وزن">ضرب وزن</option>
+                        <option value="ضرب تعداد">ضرب تعداد</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <label for="id_form-${currentIndex}-quantity">تعداد</label>
+                    <input type="number" name="form-${currentIndex}-quantity" class="form-control quantity-input"
+                           id="id_form-${currentIndex}-quantity" placeholder="مقدار" step="any" data-index="${currentIndex}">
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="id_form-${currentIndex}-price_per_unit">قیمت در هر واحد</label>
+                    <input type="number" name="form-${currentIndex}-price_per_unit" class="form-control price-input"
+                           id="id_form-${currentIndex}-price_per_unit" placeholder="قیمت" step="any" data-index="${currentIndex}">
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label for="id_form-${currentIndex}-weight">وزن</label>
+                    <input type="number" name="form-${currentIndex}-weight" class="form-control weight-input" id="id_form-${currentIndex}-weight" placeholder="وزن" step="any">
+                </div>
+                <div class="col-md-6 mb-4">
+                    <label for="id_form-${currentIndex}-warehouse">انبار</label>
+                    <select name="form-${currentIndex}-warehouse" class="form-control" id="id_form-${currentIndex}-warehouse">
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label for="id_form-${currentIndex}-paid_amount_for_every_record">پول پرداختی</label>
+                    <input type="number" name="form-${currentIndex}-paid_amount_for_every_record" class="form-control" id="id_form-${currentIndex}-paid_amount_for_every_record" placeholder="پول پرداختی" step="any">
+                </div>
+                 <div class="col-md-12 mb-4">
+                    <label for="id_form-${currentIndex}-paid_amount_for_every_record">توضیحات</label>
+                    <input type="text" name="form-${currentIndex}-notes" class="form-control" id="id_form-${currentIndex}-notes" placeholder="توضیحات" step="any">
+                </div>
+
+               
+                <div class="col-md-2 mb-4">
+                    <label>مجموع :- </label>
+                    <p class="total-display" id="total-display-${currentIndex}">0</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <label> باقی :-</label>
+                    <p class="remaining-display" id="remaining-display-${currentIndex}">0</p>
+                </div>
+            </div>
+        `;
+
+            saleItemContainer.insertAdjacentHTML('beforeend', newFormHTML);
+
+            const productSelect = document.getElementById(`id_form-${currentIndex}-product`);
+            const warehouseSelect = document.getElementById(`id_form-${currentIndex}-warehouse`);
+            productOptions.forEach(option => {
+                productSelect.add(new Option(option.text, option.value));
+            });
+            warehouseOptions.forEach(option => {
+                warehouseSelect.add(new Option(option.text, option.value));
+            });
+
+            const statusSelect = document.getElementById(`id_form-${currentIndex}-status`);
+            const quantityInput = document.getElementById(`id_form-${currentIndex}-quantity`);
+            const priceInput = document.getElementById(`id_form-${currentIndex}-price_per_unit`);
+            const weightInput = document.getElementById(`id_form-${currentIndex}-weight`);
+            const paidInput = document.getElementById(`id_form-${currentIndex}-paid_amount_for_every_record`);
+            const totalDisplay = document.getElementById(`total-display-${currentIndex}`);
+            const remainingDisplay = document.getElementById(`remaining-display-${currentIndex}`);
+
+            function calculateTotals() {
+                const status = statusSelect.value;
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                const weight = parseFloat(weightInput.value) || 0;
+                const paidAmount = parseFloat(paidInput.value) || 0;
+
+                let total = 0;
+
+                if (status === "ضرب وزن") {
+                    total = Math.round(weight * price);
+                } else if (status === "ضرب تعداد") {
+                    total = Math.round(quantity * price);
+                }
+                const remaining = total - paidAmount;
+
+                totalDisplay.textContent = total.toFixed(2);
+                remainingDisplay.textContent = remaining.toFixed(2);
+            }
+
+            quantityInput.addEventListener('input', calculateTotals);
+            priceInput.addEventListener('input', calculateTotals);
+            weightInput.addEventListener('input', calculateTotals);
+            paidInput.addEventListener('input', calculateTotals);
+            statusSelect.addEventListener('change', calculateTotals);
+        });
+    </script>
+
+  <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">دیدن همه محصولات</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true"></span></button>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th style="background-color: yellow;">محصول</th>
+                                <th style="background-color: yellow;">تعداد فروخته شده</th>
+                                <th style="background-color: yellow;">وزن فروخته شده</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in summary %}
+                            <tr>
+                                <td>{{ item.product__meat_name }}</td>
+                                <td>{{ item.total_quantity }}</td>
+                                <td>{{ item.total_weight }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3">No data available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                   
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}
+
+
+
+
+
+
+

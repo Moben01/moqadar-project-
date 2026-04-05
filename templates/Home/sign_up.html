@@ -1,0 +1,85 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+<div class="auth-layout-wrap" style="background-image: url(../../dist-assets/images/photo-wide-4.jpg)">
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+            {{ message }}
+        </div>
+        <script>
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 3000); // 3 seconds
+        </script>
+    {% endfor %}
+    {% endif %}
+    <div class="auth-content">
+        <div class="card o-hidden">
+            <div class="row">
+                <div class="col-md-6 text-center" style="background-size: cover;background-image: url(../../dist-assets/images/photo-long-3.jpg)">
+                  
+                </div>
+                <div class="col-md-12" style="font-family: XW_Zar_Bd_0;">
+                    <div class="p-4">
+                        <h1 class="mb-3 text-18">کارکونکی ته نوی اکونټ جوړول.</h1>
+                        <form action="{% url 'account:account_register' id %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="email" style="float: right;"> مکمل نوم</label>
+                                {{ registerForm.name}}
+                            </div>
+                            <div class="form-group">
+                                <label for="email" style="float: right;"> ایمیل آدرس</label>
+                                {{ registerForm.email}}
+                            </div>
+                       
+                            <div class="form-group">
+                                <label for="email" style="float: right;"> پسورد</label>
+                                {{ registerForm.password}}
+                            </div>
+                            <div class="form-group">
+                                <label for="email" style="float: right;">د پسورد تکرار </label>
+                                {{ registerForm.password2}}
+                            </div>
+                            <!-- <div class="form-group">
+                                <label for="email" style="float: right;">مربوط ګروپ</label>
+                                {{ registerForm.group }}
+                            </div> -->
+                            
+                            <button class="btn btn-primary btn-block btn-rounded mt-3">اکونټ جوړول</button>
+                          
+                            <br>
+                            {% if form.errors %}
+                         
+                            <div class="alert alert-danger alert-card" role="alert">
+                                <strong class="text-capitalize">مشکل مخته راغلی</strong>
+                                <ul class="mb-0">
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <li>{{ error|escape }}</li>
+                                            <button class="close" type="button" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        {% endfor %}
+
+                                    {% endfor %}
+                                    
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error|escape }}</li>
+                                    {% endfor %}
+                                </ul>
+                               
+                            </div>
+                        {% endif %}
+                        
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

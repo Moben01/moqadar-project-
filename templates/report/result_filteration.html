@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>گزارش حساب</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    tr:hover {
+      background-color: #e2e8f0; /* Tailwind's Gray-200 color */
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+  <div class="container mx-auto p-4 animate-fade-in">
+    <!-- Filter Form -->
+    <!-- No filter form provided in your example -->
+
+    <!-- Report Section -->
+    <div class="mt-8 bg-white p-6 rounded shadow-md animate-fade-in">
+      <!-- Report Header -->
+      <div class="text-center mb-6">
+        <h4 class="text-lg font-bold">نتایج فیلتر</h4>
+        <p>شرکت سید مصطفی هاشمی لمیتد</p>
+        <p>از تاریخ: {{ start_date }} تا تاریخ: {{ end_date }}</p>
+      </div>
+
+      <!-- Report Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 text-sm animate-fade-in">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border border-gray-300 px-4 py-2">تاریخ سند</th>
+              <th class="border border-gray-300 px-4 py-2">شرح</th>
+              <th class="border border-gray-300 px-4 py-2">مقدار</th>
+              <th class="border border-gray-300 px-4 py-2">فی</th>
+              <th class="border border-gray-300 px-4 py-2">مبلغ</th>
+              <th class="border border-gray-300 px-4 py-2">بدهکار</th>
+              <th class="border border-gray-300 px-4 py-2">بستانکار</th>
+              <th class="border border-gray-300 px-4 py-2">مانده</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in one_month %}
+            <tr class="odd:bg-white even:bg-gray-100 transition duration-300 ease-in-out hover:bg-gray-200">
+              <td class="border border-gray-300 px-4 py-2">{{ i.reg_date }}</td>
+              <td class="border border-gray-300 px-4 py-2">محصول {{ i.product }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.quantity }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.price_per_unit }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.should_paid }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.borrow_amount }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.total_amount }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.borrow_amount }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr class="bg-gray-200">
+              <td colspan="7" class="border border-gray-300 px-4 py-2 text-end font-bold">جمع کل:</td>
+              <td class="border border-gray-300 px-4 py-2 text-red-500 font-bold">{{ total_quantity }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

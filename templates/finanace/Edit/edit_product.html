@@ -1,0 +1,203 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="main-content pt-4" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+    <div class="breadcrumb">
+        <h1>بخش اصلاح محصولات</h1>
+        <!-- <ul>
+            <li><a href="href">ب</a></li>
+            <li>د عواید اصلاح کول</li>
+        </ul> -->
+    </div>
+    
+    <div class="row">
+      
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="card-title mb-3"></div>
+
+                    <form class="needs-validation"  novalidate="novalidate" action="{% url 'product_and_catagory:edit_product' id %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="col-md-6 mb-6">
+                                <label for="validationCustom01">  نوعیت عمومی گوشت</label>
+                                {{edit_daily_project_form.meat_catagory}}
+                                <!-- <input class="form-control" id="validationCustom01" type="text" placeholder="First name" value="Mark" required="required" /> -->
+                                <div class="valid-feedback">
+                                    درست است
+    
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-6">
+                                <label for="validationCustomUsername">اسم گوشت</label>
+                                <div class="input-group">
+                                    {{edit_daily_project_form.meat_name}}
+    
+                                    <!-- <div class="input-group-prepend"><span class="input-group-text" id="inputGroupPrepend">@</span></div> -->
+                                    <!-- <input class="form-control" id="validationCustomUsername" type="text" placeholder="Username" aria-describedby="inputGroupPrepend" required="required" />
+                                    <div class="invalid-feedback">
+                                        Please choose a username.
+    
+                                    </div> -->
+                                </div>
+                                <div class="valid-feedback">
+                                    درست است
+    
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-12">
+                                <label for="validationCustom02"> توضیحات</label>
+                                {{edit_daily_project_form.description}}
+                                <!-- <input class="form-control" id="validationCustom02" type="text" placeholder="Last name" value="Otto" required="required" /> -->
+                                <div class="valid-feedback">
+                                    انتخاب شد
+    
+                                </div>
+                            </div>
+                            
+    
+                        </div>  
+                        <div class="form-row">
+    
+                    
+    
+        
+                            
+                        </div>
+                        <div class="form-row">
+                            
+                            <div class="col-md-4 mb-3" style="display: none;" id="goodsField" >
+                                <label for="validationCustom04">نام جنس</label>
+                                {{edit_daily_project_form.goods_name}}
+                                <!-- <input class="form-control" id="validationCustom04" type="text" placeholder="State" required="required" /> -->
+                                <!-- <div class="invalid-feedback">
+                                    Please provide a valid state.
+    
+                                </div> -->
+                            </div>
+                           
+                            <div class="col-md-4 mb-3" style="display: none;" id="good_ammount">
+                                <label for="validationCustom03">مقدار</label>
+                                {{edit_daily_project_form.quantity}}
+                                <!-- <input class="form-control" id="validationCustom03" type="text" placeholder="City" required="required" /> -->
+                                <div class="invalid-feedback">
+                                    
+    
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3" style="display: none;" id="goods_unit">
+                                <label for="validationCustom03">واحد</label>
+                                {{edit_daily_project_form.unit}}
+                                <!-- <input class="form-control" id="validationCustom03" type="text" placeholder="City" required="required" /> -->
+                                <div class="invalid-feedback">
+                                  
+    
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3"style="display: none;" id="details">
+                                <label for="validationCustom03">جزیات</label>
+                                {{edit_daily_project_form.details}}
+                                <!-- <input class="form-control" id="validationCustom03" type="text" placeholder="City" required="required" /> -->
+                                <div class="invalid-feedback">
+                                    
+    
+                                </div>
+                            </div>
+                          
+                        </div>
+                        
+    
+    
+    
+                        
+                        <style>
+                            .center-align {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                text-align: center;
+                                height: 100%;
+                            }
+                        </style>
+                        
+                        
+                        
+    
+    
+                        
+                        <button class="btn btn-primary" type="submit">ذخیره کردن</button>
+                    </form>
+
+
+
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        
+    </div><!-- end of main-content -->
+</div>
+
+
+
+
+<script>
+    const donationTypeField = document.getElementById("id_donation_type");
+    const amountField = document.getElementById("amountField");
+    const goodsField = document.getElementById("goodsField");
+    const goodsAmmount = document.getElementById("good_ammount");
+    const goodsUnit = document.getElementById("goods_unit");
+    const details = document.getElementById("details");
+
+
+
+    donationTypeField.addEventListener("change", function() {
+        if (donationTypeField.value === "پیسه نغد") {
+            amountField.style.display = "block";
+            goodsField.style.display = "none";
+            goodsAmmount.style.display = "none";
+            goodsUnit.style.display = "none";
+            details.style.display = "block";
+
+        } else if (donationTypeField.value === "جنس") {
+            amountField.style.display = "none";
+            goodsField.style.display = "block";
+            goodsAmmount.style.display = "block";
+            goodsUnit.style.display = "block";
+            details.style.display = "block";
+
+        } else {
+            amountField.style.display = "none";
+            goodsField.style.display = "none";
+            goodsUnit.style.display = "none";
+            goodsAmmount.style.display = "none";
+            details.style.display = "none";
+
+
+
+        }
+    });
+</script>
+
+
+{% endblock %}

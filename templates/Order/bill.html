@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Layout</title>
+    <style>
+        /* General Reset */
+        body, h5, table {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Container Styles */
+        .main-content {
+            padding: 20px;
+            margin: 0 80px;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        /* Card Styles */
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+
+        .card-header .container {
+            padding: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .table thead {
+            background-color: #f8f9fa;
+        }
+
+        /* Alert Styles */
+        .alert {
+            background-color: #cce5ff;
+            color: #004085;
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .alert h4 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        /* Text Alignment */
+        .text-end {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Footer */
+        .footer p {
+            font-size: 14px;
+        }
+
+        /* Dropdown Styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            top: 100%;
+            right: 0;
+            z-index: 10;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Icons */
+        .fa-eye-slash {
+            cursor: pointer;
+        }
+
+        .ml-auto {
+            margin-left: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                margin: 0 20px;
+            }
+
+            .table th, .table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card o-hidden mb-4 border-dark">
+                
+                    <div class="card-header">
+                            <div class="col-6 text-end">
+                                <h5>تاریخ:  {{ record.sell_forei.reg_date }}</h5>
+                            </div>
+                    
+                        <div style="text-align: center;">
+                            <h3> سکندر شیرزاد</h3>
+                            <h4>   بل فروش</h4>
+                            <h4> ساعت: <span id="clock"></span></h4>
+                        </div>
+                        <div class="col-6 card-title m-0">
+                                <h5>اسم مشتری:  {{ record.sell_forei.customer.name }}</h5>
+                            </div>
+                        
+                    </div>
+                    <script>
+                        function updateClock() {
+                            let now = new Date();
+                            let hours = now.getHours();
+                            let minutes = now.getMinutes();
+                            let seconds = now.getSeconds();
+                            let ampm = hours >= 12 ? 'PM' : 'AM';
+                    
+                            hours = hours % 12 || 12; // Convert to 12-hour format
+                            minutes = minutes < 10 ? '0' + minutes : minutes;
+                            seconds = seconds < 10 ? '0' + seconds : seconds;
+                    
+                            let timeString = hours + ":" + minutes + ":" + seconds + " " + ampm;
+                            document.getElementById('clock').innerText = timeString;
+                        }
+                    
+                        setInterval(updateClock, 1000); // Update every second
+                        updateClock(); // Initial call to prevent delay
+                    </script>
+                    <div class="card-header">
+                            <div class="col-6 text-end">
+                                <h5></h5>
+                            </div>
+                            {% if record.status == 'ضرب وزن' %}
+                                <div class="col-6 card-title m-0">
+                                    <h5>جنس مذکور به کیلوگرام فروخته شده است</h5>
+                                </div>
+                            {% else %}
+                                <div class="col-6 card-title m-0">
+                                    <h5>جنس مذکور به تعداد فروخته شده است</h5>
+                                </div>
+                            {% endif %}
+                            
+                    </div>
+                
+                    <div class="card-body">
+                        <div style="overflow-x: auto;">
+                            <table class="table" style="min-width: 800px;">
+                                <thead>
+                                    <tr>
+                                        <th>پول باقی</th>
+                                        <th>پول پرداخت شده </th>
+                                        <th>پول پرداختی </th>
+                                        <th>قیمت فی واحد</th>
+                                        <th>مقدار</th>
+                                        <th>اسم جنس</th>
+                                        <th>شماره</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for customer in recent_records %}
+                                    <tr>
+                                        <td>{{ customer.borrow_amount }}</td>
+                                        <td>{{ customer.paid_amount_for_every_record }}</td>
+                                        <td>{{ customer.should_paid }}</td>
+                                        <td>{{ customer.price_per_unit }}</td>
+                                        {% if customer.status == 'ضرب وزن' %}
+                                            <td>{{ customer.weight }} کیلوگرام </td>
+                                        {% else %}
+                                            <td>{{ customer.quantity }} دانه </td>
+                                        {% endif %}
+                                        <td>{{ customer.product.meat_name }}</td>
+                                        <td>{{ customer.id }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr><td colspan="7"></td></tr>
+                                    <tr>
+                                        <td>{{ total_sum }}</td>
+                                        <td colspan="6">مجموع پول پرداختی</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ total_min }}</td>
+                                        <td colspan="6">مجموع پول باقی</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <p>نوت: جنس فروخته شده واپس نمی‌شود</p>
+                            </div>
+                            <div class="col-6 text-end">
+                                <p>امضاء: ___________________</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<div class="container py-5">
+    <div class="alert alert-info text-center" id="printAlert">
+        <h4 class="display-6">
+        را وارد کنید  Ctrl + p برای پرنت و دانلود این بِل لطفا 
+        </h4>
+    </div>
+    <i id="iconToggle" class="fas fa-eye-slash" style="cursor: pointer;" title="Hide Alert"></i>
+</div>
+
+<script>
+    document.getElementById('iconToggle').addEventListener('click', function () {
+        const alertDiv = document.getElementById('printAlert');
+        const icon = document.getElementById('iconToggle');
+    
+        // Hide the alert and the icon
+        alertDiv.style.display = 'none';
+        icon.style.display = 'none';
+    });
+</script>
+
+</body>
+</html>

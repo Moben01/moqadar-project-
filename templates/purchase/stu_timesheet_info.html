@@ -1,0 +1,429 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light">داشبورد /</span> مدیرت شاگردان
+    </h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">شاگردان ثبت شده در سیستم</h4>
+                    <div class="col-lg-12 text-right">
+                        <!-- <button class="btn btn-info btn-lg m-1" type="button" data-toggle="modal"
+                            data-target="#exampleModal">
+                            شاگرد جدید
+
+                        </button> -->
+
+                    </div>
+                    <br>
+                    <!-- <p>ستا سو ثبت سوی اسعار</p> -->
+                    <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped custom-table table-nowrap mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>نام</th>
+                                        <th>نام پدر</th>
+                                        <th>1</th>
+                                        <th>2</th>
+                                        <th>3</th>
+                                        <th>4</th>
+                                        <th>5</th>
+                                        <th>6</th>
+                                        <th>7</th>
+                                        <th>8</th>
+                                        <th>9</th>
+                                        <th>10</th>
+                                        <th>11</th>
+                                        <th>12</th>
+                                        <th>13</th>
+                                        <th>14</th>
+                                        <th>15</th>
+                                        <th>16</th>
+                                        <th>17</th>
+                                        <th>18</th>
+                                        <th>19</th>
+                                        <th>20</th>
+                                        <th>21</th>
+                                        <th>22</th>
+                                        <th>23</th>
+                                        <th>24</th>
+                                        <th>25</th>
+                                        <th>26</th>
+                                        <th>27</th>
+                                        <th>28</th>
+                                        <th>29</th>
+                                        <th>30</th>
+                                        <th>31</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in all_stu_timesheet%}
+                                    <tr>
+                                        <td>
+                                           {{i.stud_info.stu_name}}
+                                        </td>
+                                        <td>{{i.stud_info.stu_father_name}}</td>
+                                        <td>{{i.day_1}}</td>
+                                        <td>{{i.day_2}}</td>
+                                        <td>{{i.day_3}}</td>
+                                        <td>{{i.day_4}}</td>
+                                        <td>{{i.day_5}}</td>
+                                        <td>{{i.day_6}}</td>
+                                        <td>{{i.day_7}}</td>
+                                        <td>{{i.day_8}}</td>
+                                        <td>{{i.day_9}}</td>
+                                        <td>{{i.day_10}}</td>
+                                        <td>{{i.day_11}}</td>
+                                        <td>{{i.day_12}}</td>
+                                        <td>{{i.day_13}}</td>
+                                        <td>{{i.day_14}}</td>
+                                        <td>{{i.day_15}}</td>
+                                        <td>{{i.day_16}}</td>
+                                        <td>{{i.day_17}}</td>
+                                        <td>{{i.day_18}}</td>
+                                        <td>{{i.day_19}}</td>
+                                        <td>{{i.day_20}}</td>
+                                        <td>{{i.day_21}}</td>
+                                        <td>{{i.day_22}}</td>
+                                        <td>{{i.day_23}}</td>
+                                        <td>{{i.day_24}}</td>
+                                        <td>{{i.day_25}}</td>
+                                        <td>{{i.day_26}}</td>
+                                        <td>{{i.day_27}}</td>
+                                        <td>{{i.day_28}}</td>
+                                        <td>{{i.day_29}}</td>
+                                        <td>{{i.day_30}}</td>
+                                        <td>{{i.day_31}}</td>
+
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of col-->
+
+    <!-- end of col-->
+</div>
+
+<!--  Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ثبت نام شاگرد جدید</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <!--                 
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="smartwizard">
+                            <ul>
+                                <li><a href="#step-1">مرحله اول<br /><small>ثبت معلومات شهرت شاگرد</small></a></li>
+                                <li><a href="#step-2">مرحله دوهم<br /><small>ثبت معلومات فیس شاگرد</small></a></li>
+                            </ul>
+                            <div>
+                                <div id="step-1">
+                                    <h3 class="border-bottom border-gray pb-2">Step 1 Content</h3>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                </div>
+                                <div id="step-2">
+                                    <h3 class="border-bottom border-gray pb-2">Step 2 Content</h3>
+                                    <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="modal-body">
+                <form action="{% url 'money_dist:student_add_view' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <br>
+                    <h5>شهرت</h5>
+
+                    <div class="form-row">
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustom01">تاریخ</label>
+                            {{fees_form.date}}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustom02">نام کامل</label>
+                            {{student_form.stu_name}}
+                            <div class="valid-feedback">
+                                Looks good!
+
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustomUsername">نام پدر</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"></div>
+                                {{student_form.stu_father_name}}
+                                <div class="invalid-feedback">
+                                    Please choose a username.
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustomUsername">نام پدرکلان</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend"></div>
+                                {{student_form.stu_grand_father_name}}
+                                <div class="invalid-feedback">
+                                    Please choose a username.
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5>سکونت فعلی</h5>
+
+                    <div class="form-row">
+
+                        <div class="col-md-4 mb-3">
+                            <label for="validationCustom03">ولایت</label>
+                            {{student_form.curr_province}}
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="validationCustom04">ولسوالی</label>
+                            {{student_form.curr_district}}
+                            <div class="invalid-feedback">
+                                Please provide a valid state.
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="validationCustom05">قریه / ناحیه</label>
+                            {{student_form.curr_viliage}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5>سکونت اصلی</h5>
+                    <div class="form-row">
+
+                        <div class="col-md-4 mb-3">
+                            <label for="validationCustom03">ولایت</label>
+                            {{student_form.main_province}}
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="validationCustom04">ولسوالی</label>
+                            {{student_form.main_district}}
+                            <div class="invalid-feedback">
+                                Please provide a valid state.
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="validationCustom05">قریه / ناحیه</label>
+                            {{student_form.main_viliage}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5>معلومات دیگر</h5>
+                    <div class="form-row">
+
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustom03">نمبر مسلسل</label>
+                            {{student_form.nid_num}}
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustom04">شماره تماس</label>
+                            {{student_form.contact}}
+                            <div class="invalid-feedback">
+                                Please provide a valid state.
+
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="validationCustom05">تاریخ تولد</label>
+                            {{student_form.date_of_birth}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="validationCustom05">عمر</label>
+                            {{student_form.age}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="validationCustom05">صنف</label>
+                            {{student_form.stu_class}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    </br>
+                    <div class="form-row">
+                        <!-- <div class="custom-file">
+                                    <input class="custom-file-input" id="inputGroupFile02" type="file">{{student_form.picture}} 
+                                    <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose file</label>
+                                </div> -->
+
+
+
+                        <div class="col-md-4 mb-3">
+                            <label for="validationCustom05">عکس تذکره</label>
+                            {{student_form.picture}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="valiationCustom05">عکس شاگرد</label>
+                            {{student_form.spicture}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+                    </div>
+                    </br>
+
+                    <h5>معلومات فیس شاگرد</h5>
+                    <div class="form-row">
+
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustom03" class="checkbox checkbox-primary">نوعیت فیس</label>
+                            {{fees_form.fees_type}}
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustom04">فیس به اساس</label>
+                            {{fees_form.fees_time}}
+                            <div class="invalid-feedback">
+                                Please provide a valid state.
+
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustom05">فیس</label>
+                            {{fees_form.fees}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label for="validationCustom05">اسم گیرنده فیس</label>
+                            {{fees_form.fees_recieved_by}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-3">
+                            <label for="validationCustom05">معلومات اظافی</label>
+                            {{fees_form.comments}}
+                            <div class="invalid-feedback">
+                                Please provide a valid zip.
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                        <button class="btn btn-primary ml-2" type="submit">ذخیره کردن</button>
+                    </div>
+
+
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--  Modal -->
+
+{% endblock %}

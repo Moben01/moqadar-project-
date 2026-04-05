@@ -1,0 +1,156 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="main-content pt-4" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+    <div class="breadcrumb">
+        <h1>بخش اصلاح تامین کننده</h1>
+        <!-- <ul>
+            <li><a href="href">ب</a></li>
+            <li>د عواید اصلاح کول</li>
+        </ul> -->
+    </div>
+    
+    <div class="row">
+      
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="card-title mb-3"></div>
+
+                    <form class="needs-validation"  novalidate="novalidate" action="{% url 'Supplaier:edit_supplaier' id %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustom01">  اسم مشتری</label>
+                                {{edit_daily_project_form.name}}
+                                <!-- <input class="form-control" id="validationCustom01" type="text" placeholder="First name" value="Mark" required="required" /> -->
+                                <div class="valid-feedback">
+                                    درست است
+    
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustomUsername">شماره تلفن</label>
+                                <div class="input-group">
+                                    {{edit_daily_project_form.phone}}
+    
+                                    <!-- <div class="input-group-prepend"><span class="input-group-text" id="inputGroupPrepend">@</span></div> -->
+                                    <!-- <input class="form-control" id="validationCustomUsername" type="text" placeholder="Username" aria-describedby="inputGroupPrepend" required="required" />
+                                    <div class="invalid-feedback">
+                                        Please choose a username.
+    
+                                    </div> -->
+                                </div>
+                                <div class="valid-feedback">
+                                    درست است
+    
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustom02"> آدرس</label>
+                                {{edit_daily_project_form.address}}
+                                <!-- <input class="form-control" id="validationCustom02" type="text" placeholder="Last name" value="Otto" required="required" /> -->
+                                <div class="valid-feedback">
+                                    انتخاب شد
+    
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="validationCustom02"> تاریخ</label>
+                                {{edit_daily_project_form.reg_date}}
+                                <!-- <input class="form-control" id="validationCustom02" type="text" placeholder="Last name" value="Otto" required="required" /> -->
+                                <div class="valid-feedback">
+                                    انتخاب شد
+    
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-12">
+                                <label for="validationCustomUsername">توضیحات</label>
+                                <div class="input-group">
+                                    {{edit_daily_project_form.detail}}
+    
+                                    <!-- <div class="input-group-prepend"><span class="input-group-text" id="inputGroupPrepend">@</span></div> -->
+                                    <!-- <input class="form-control" id="validationCustomUsername" type="text" placeholder="Username" aria-describedby="inputGroupPrepend" required="required" />
+                                    <div class="invalid-feedback">
+                                        Please choose a username.
+    
+                                    </div> -->
+                                </div>
+                                <div class="valid-feedback">
+                                    درست است
+    
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="type">نوع:</label>
+                                <input type="checkbox" id="type" name="type" {{ initial_checkbox_value }}>
+                                <span>آیا مشتری هم است؟</span>
+                            </div>
+                        
+    
+                        </div>  
+
+                        
+                            
+                         
+                           
+              
+                          
+                       
+                        
+    
+    
+    
+                        
+                        <style>
+                            .center-align {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                text-align: center;
+                                height: 100%;
+                            }
+                        </style>
+                        
+                        
+                        
+    
+    
+                        
+                        <button class="btn btn-primary" type="submit">ذخیره کردن</button>
+                    </form>
+
+
+
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        
+    </div><!-- end of main-content -->
+</div>
+
+
+
+
+{% endblock %}

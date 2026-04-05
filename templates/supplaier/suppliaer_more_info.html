@@ -1,0 +1,177 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0;">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% if messages %}
+        {% for message in messages %}
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 9000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: " {{ message }}"
+        });
+        {% endfor %}
+    {% endif %}
+    </script>
+
+
+
+
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light"></span>معلومات کامل {{all_data.name}} </h4>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <div class="card text-left">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">معلومات معاملات {{all_data.name}} </h4>
+                    <div class="col-lg-12 text-right">
+                      
+                        <a class="btn btn-info btn-lg m-1" type="button" href="javascript:history.back()">
+                            بازگشت
+
+                   </a>
+                   
+
+                    </div>
+                    <div class="row">
+                        <!-- ICON BG-->
+                        
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                <div class="card-body text-center"><i class="i-Add-User"></i>
+                                    <div class="content">
+
+                                        <p class="text-muted mt-2 mb-0"> پول داده شده</p>
+                                        <p class="text-primary text-24 line-height-1 mb-2">{{total_paid_amount}}</p>
+
+                                        
+                                    </div>
+                                </div>
+                                <a class="btn btn-outline-primary m-1" href="{% url 'Supplaier:supp_loans' all_data.id  %}">معلومات کامل</a>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                <div class="card-body text-center"><i class="i-Financial"></i>
+                                    <div class="content">
+                                        <p class="text-muted mt-2 mb-0">قرضه ها </p>
+                                        <p class="text-primary text-24 line-height-1 mb-2">{{total_reamin}}</p>
+                                    </div>
+
+                                </div>
+                                <button class="btn btn-outline-primary m-1" type="button">معلومات کامل</button>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                <div class="card-body text-center"><i class="i-Checkout-Basket"></i>
+                                    <div class="content">
+                                        <p class="text-muted mt-2 mb-0">آخرین خرید </p>
+                                        <p class="text-primary text-24 line-height-1 mb-2">{{last_record.product.meat_name}}</p>
+                                    </div>
+
+                                </div>
+                                <button class="btn btn-outline-primary m-1" type="button">معلومات کامل</button>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                <div class="card-body text-center"><i class="i-Money-2"></i>
+                                    <div class="content">
+                                        <p class="text-muted mt-2 mb-0">مجموعه پول</p>
+                                        <p class="text-primary text-24 line-height-1 mb-2">{{sum_of_all}}</p>
+                                    </div>
+
+                                </div>
+                                <h5 class="btn btn-outline-primary m-1" >معلومات کامل</h5>
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped custom-table table-nowrap mb-0">
+                                    <h4 class="card-title mb-3">آخرین معاملات انجام شده با {{all_data.name}} </h4>
+    
+                                    <thead>
+                                        <tr>
+                                            <th>شماره</th>
+    
+                                            <th style="font-family: XW_Zar_Bd_0;">
+                                              نام مشتری
+                                            </th>
+                                            <th> محصول</th>
+                                            <th>مقدار</th>
+                                            <th>مقدار فی واحد</th>
+                                            <th>مقدار  مجموعی</th>
+                                            <th>عملیات</th>
+    
+    
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for i in all_records %}
+                                        <tr>
+                                            <td>
+                                                {{i.id}}
+                                             </td>
+                                            <td>
+                                               {{i.supplaier.name}}
+                                            </td>
+                                            <td>{{i.product.meat_name}}</td>
+                                            <td>{{i.quantity}}</td>
+                                            <td>{{i.price_per_unit}}</td>
+                                            <td>{{i.total_unit}}</td>
+                                            <td class="">
+                                                <button class="btn bg-transparent _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _r_block-dot bg-dark"></span><span class="_dot _r_block-dot bg-dark"></span><span class="_dot _r_block-dot bg-dark"></span></button>
+                                                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(115px, 188px, 0px);"><a class="dropdown-item" href="{% url 'Customer:customer_full_info' i.id %}"><i class="nav-icon i-Pen-2 text-info font-weight-bold mr-2"></i>معلومات کامل</a><a class="dropdown-item" href="#"><i class="nav-icon i-Pen-2 text-success font-weight-bold mr-2"></i>تغیرات</a><a class="dropdown-item" href="#"><i class="nav-icon i-Close-Window text-danger font-weight-bold mr-2"></i>حذف مشتری</a></div>
+                                            </td>
+    
+                                            
+                                            
+                                        </tr>
+                                        {% endfor %}
+                                        
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                  
+                
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of col-->
+
+    <!-- end of col-->
+</div>
+
+
+{% endblock %}

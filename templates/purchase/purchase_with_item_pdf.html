@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@page {
+    size: A4;
+    margin: 20px;
+}
+
+body {
+    font-family: Tahoma, DejaVu Sans, sans-serif;
+    font-size: 12px;
+    direction: rtl;
+    text-align: right;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 6px;
+    text-align: center;
+}
+
+th {
+    background: #eee;
+}
+
+.success {
+    background-color: #c8f7c5;
+}
+
+.danger {
+    background-color: #f7c5c5;
+}
+</style>
+</head>
+
+<body>
+
+<h3 style="text-align:center;">{{ customer_name }}</h3>
+<div style="margin-top: 30px;">
+<table>
+<thead style="display: table-header-group;">
+<tr>
+    {% for header in table_headers %}
+    <th>{{ header }}</th>
+    {% endfor %}
+</tr>
+</thead>
+
+<tbody>
+{% for i in deals %}
+<tr class="{% if i.is_receive %}success{% else %}danger{% endif %}">
+    <td>{{ i.id }}</td>
+    <td>{{ i.date_day }}</td>
+    <td>{{ i.item }}</td>
+    <td>{{ i.number }}</td>
+    <td>{{ i.weighht }}</td>
+    <td>{{ i.notes }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+</body>
+</html>

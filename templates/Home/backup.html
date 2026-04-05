@@ -1,0 +1,125 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+
+
+<body class="text-left" style="font-family: XW_Zar_Bd_0;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} text-center h3" role="alert">
+        {{ message }}
+    </div>
+    <script>
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 3000); // 3 seconds
+    </script>
+    {% endfor %}
+    {% endif %}
+
+    <div class="main-content pt-4">
+
+        <div class="row">
+
+
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="ul-widget__head v-margin">
+                            <div class="ul-widget__head-label">
+                                <h3 class="ul-widget__head-title">بخش بکاپ و ریستور </h3>
+                            </div>
+
+                            <div class="col-lg-6 col-md-12">
+                                <div class="row">
+                                            <div class="card-body">
+                                                <div class="card-title m-0">Network Stats</div>
+                                                <p class="text-small text-muted">Lorem ipsum dolor sit amet consectetur.</p>
+                                                <div class="row">
+                                                    <form id="backup-form" method="post">
+                                                        {% csrf_token %}
+                                                     
+                                                    <div class="col-lg-6 col-md-12 mb-4">
+                                                        <div class="p-4 rounded d-flex align-items-center bg-primary text-white"><i class="i-Data-Backup text-32 mr-3"></i>
+                                                            <div>
+                                                                <h4 class="text-18 mb-1 text-white">Backups</h4><span>Total: 32</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit">Create Backup</button>
+                                                </form>
+                                                <p id="backup-result"></p>
+                                                    <div class="col-lg-6 col-md-12 mb-4">
+                                                        <div class="p-4 rounded d-flex align-items-center bg-primary text-white"><i class="i-Big-Data text-32 mr-3"></i>
+                                                            <div>
+                                                                <h4 class="text-18 mb-1 text-white">Databases</h4><span>Total: 302</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-12 mb-4">
+                                                        <div class="p-4 border border-light rounded d-flex align-items-center"><i class="i-Data-Cloud text-32 mr-3"></i>
+                                                            <div>
+                                                                <h4 class="text-18 mb-1">Space used</h4><span>Total: 160GB</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-12 mb-4">
+                                                        <div class="p-4 border border-light rounded d-flex align-items-center"><i class="i-Data-Download text-32 mr-3"></i>
+                                                            <div>
+                                                                <h4 class="text-18 mb-1">Downloaded</h4><span>Total: 30GB</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                      
+                                   
+                                 
+                                 
+                               
+                                </div>
+                            </div>
+                            <script>
+                                document.getElementById("backup-form").onsubmit = async function (event) {
+                                    event.preventDefault();
+                                    const response = await fetch("{% url 'Home:database_backup' %}", { method: "POST", headers: { "X-CSRFToken": "{{ csrf_token }}" } });
+                                    const result = await response.json();
+                                    document.getElementById("backup-result").textContent = result.message || result.error;
+                                };
+                        
+                                document.getElementById("restore-form").onsubmit = async function (event) {
+                                    event.preventDefault();
+                                    const backupFile = document.getElementById("backup-file").value;
+                                    const formData = new FormData();
+                                    formData.append("backup_file", backupFile);
+                        
+                                    const response = await fetch("{% url 'Home:database_restore' %}", { method: "POST", body: formData, headers: { "X-CSRFToken": "{{ csrf_token }}" } });
+                                    const result = await response.json();
+                                    document.getElementById("restore-result").textContent = result.message || result.error;
+                                };
+                            </script>
+
+
+                        </div>
+                      
+                    </div>
+                </div>
+            </div>
+      
+
+        </div>
+
+    </div>
+
+</body>
+
+
+
+
+
+
+
+
+{% endblock %}

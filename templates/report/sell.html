@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<body class="text-left" style="font-family: 'XW_Zar_Bd_0'">
+
+    <div class="main-content pt-4">
+        <div class="main-content pt-4">
+            <div class="row mb-4">
+               
+            
+
+
+            <div class="col-md-12 mb-4">
+                <div class="card text-left">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3" style="font-family: 'XW_Zar_Bd_0', sans-serif;" >راپور روزانه تمام فروش ها</h4>
+                        <form method="GET" action="{% url 'report:sell_report' %}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <select name="day" id="day" class="form-control mt-2">
+                                            <option value="" {% if selected_month == '' %}selected{% endif %}>فیلتر بر اساس زمان </option>
+                                            <option value="روزانه" {% if selected_month == 'روزانه' %}selected{% endif %}>روزانه</option>
+                                            <option value="هفتگی" {% if selected_month == 'هفتگی' %}selected{% endif %}>هفتگی</option>
+                                            <option value="ماهانه" {% if selected_month == 'ماهانه' %}selected{% endif %}>ماهانه</option>
+                                        </select>
+                                    </div>
+                                </div>               
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                       <button class="btn btn-primary btn-block m-1 mb-3" style="font-family: 'XW_Zar_Bd_0', sans-serif;" type="submit">جستجو</button>                                                         
+                                    </div>
+                                </div>
+                        </form>
+                        <p style="font-family: 'XW_Zar_Bd_0', sans-serif;"> شما تمام فروش های امروزی را در اینجا میتوانید ببینید</p>
+                        <button class="btn btn-success mb-3" onclick="printFilteredRecords()" style="font-family: 'XW_Zar_Bd_0', sans-serif;">
+                            پرینت 
+                        </button>
+                        <div class="table-responsive">
+                            <table class="display table table-striped table-bordered"
+                                id="scroll_vertical_dynamic_height_table" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم مشتری</th>
+                                        <th>نام محصول</th>
+                                        <th>مقدار</th>
+                                        <th>مقدار کلی</th>
+                                        <th>تاریخ</th>
+                                        <th>مقدار فی واحد</th>
+                                        <th>دیدن تمام ریکاردها</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                               
+                                        {% for sell in sells %}
+                                        <tr>
+                                            <td>{{ sell.id }}</td>
+                                            <td>{{ sell.customer.name }}</td>
+                                            <td>{{ sell.product.meat_name }}</td>
+                                            <td>{{ sell.quantity }}</td>
+                                            <td>{{ sell.total_amount }}</td>
+                                            <td>{{ sell.reg_date }}</td>
+                                            <td>{{ sell.price_per_unit }}</td>
+                                            <td>
+                                                <a href="{% url 'report:sell_1_month' sell.customer.slug %}" class="btn btn-secondary">
+                                                    لیست
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                   
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="font-family: 'XW_Zar_Bd_0', sans-serif; margin-top: 20px; text-align: right;">
+                        <strong>مجموعه مجموع پول پرداخت شده:</strong> {{ total_sales }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            function printFilteredRecords() {
+                // Get the content of the filtered table
+                var content = document.querySelector('.table-responsive').outerHTML;
+        
+                // Open a new window
+                var printWindow = window.open('', '_blank');
+        
+                // Write the content and styles to the new window
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="fa">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>پرینت رکوردها</title>
+                        <style>
+                            body {
+                                font-family: 'XW_Zar_Bd_0', sans-serif;
+                                text-align: center;
+                                direction: rtl;
+                                margin: 20px;
+                            }
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 20px;
+                            }
+                            th, td {
+                                border: 1px solid black;
+                                padding: 8px;
+                                text-align: center;
+                            }
+                            th {
+                                background-color: #f2f2f2;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h3>راپور روزانه تمام خرید ها</h3>
+                        ${content}
+                    </body>
+                    </html>
+                `);
+        
+                // Wait for the new window to load and then trigger print
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            }
+        </script>
+        
+
+
+
+{% endblock %}

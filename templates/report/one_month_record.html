@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>گزارش حساب</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+  <div class="container mx-auto p-4">
+    <!-- Filter Form -->
+    <h5 class="text-lg font-bold mb-3">فیلتر نتایج</h5>
+    <form method="POST" action="{% url 'report:sell_1_month' customer.slug %}" class="bg-white p-4 rounded shadow-md">
+      {% csrf_token %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">تاریخ شروع</label>
+          <input type="date" name="start_date" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">تاریخ پایان</label>
+          <input type="date" name="end_date" class="w-full p-2 border rounded">
+        </div>
+      </div>
+      <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">اعمال فیلتر</button>
+    </form>
+
+    <!-- Report Section -->
+    <div class="mt-8 bg-white p-6 rounded shadow-md">
+      <!-- Report Header -->
+      <div class="text-center mb-6">
+        <h4 class="text-lg font-bold">گردش حساب</h4>
+        <p>شرکت سید مصطفی هاشمی لمیتد</p>
+        <p>نام شخص: شرکت گوشت تازه | شماره تماس: ...</p>
+        <p>از تاریخ: {{ first_data.reg_date }} تا تاریخ: {{ today_shamsi.0 }}/{{ today_shamsi.1 }}/{{ today_shamsi.2 }}</p>
+      </div>
+
+      <!-- Report Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 text-sm">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border border-gray-300 px-4 py-2">تاریخ سند</th>
+              <th class="border border-gray-300 px-4 py-2">شرح</th>
+              <th class="border border-gray-300 px-4 py-2">مقدار</th>
+              <th class="border border-gray-300 px-4 py-2">فی</th>
+              <th class="border border-gray-300 px-4 py-2">مبلغ</th>
+              <th class="border border-gray-300 px-4 py-2">بدهکار</th>
+              <th class="border border-gray-300 px-4 py-2">بستانکار</th>
+              <th class="border border-gray-300 px-4 py-2">مانده</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in one_month %}
+            <tr class="odd:bg-white even:bg-gray-100">
+              <td class="border border-gray-300 px-4 py-2">{{ i.reg_date }}</td>
+              <td class="border border-gray-300 px-4 py-2">محصول {{ i.product }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.quantity }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.price_per_unit }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.should_paid }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.borrow_amount }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.total_amount }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ i.borrow_amount }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr class="bg-gray-200">
+              <td colspan="7" class="border border-gray-300 px-4 py-2 text-end font-bold">جمع کل:</td>
+              <td class="border border-gray-300 px-4 py-2 text-red-500 font-bold">{{ total_quantity }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

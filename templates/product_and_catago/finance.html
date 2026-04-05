@@ -1,0 +1,509 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: XW_Zar_Bd_0; word-break: keep-all; " id="wrapper">
+
+
+    <h4 class="py-3 mb-4 new_bar" >
+        <span class="text-muted fw-light">داشبورد /</span> بخش مالی جامعه دارالعلوم محمدیه
+    </h4>
+    <!-- <div class="col-lg-12 text-right new_bar_one">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a class="btn btn-secondary" type="button" href="{% url 'money_dist:pdf_view' %}">پرنت بل</a>
+            <a class="btn btn-secondary" type="button" href="{% url 'money_dist:pdf_download' %}">ذخیره به PDF</a>
+            <a class="btn btn-secondary" type="button" onclick="printInvoiceSingleService()">..</a>
+        </div>
+        
+        
+
+    </div> -->
+    <br>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+
+
+            <style>
+            
+                @font-face {
+                    font-family: 'XW_Zar_Bd_0';
+                    src: url('../../../static/fonts/XW_Zar_Bd_0.woff2') format('woff2');
+                    font-weight: bold;
+                    font-style: normal;
+                }
+            
+                @media print {
+                    #main_data {
+                        direction: rtl;
+                        font-family: 'XW_Zar_Bd_0';
+                    }
+                    .center-image {
+                         display: block;
+                         text-align: center;}
+                    
+                    /* Additional print styles can be added here */
+                }
+            </style>
+
+
+            <div class="card text-left">
+                <div class="card-body" id="main_data" dir="rtl">
+                    
+
+                    <br>
+
+
+                    
+                    <main role="main" class="container">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="p-4 rounded d-flex align-items-center bg-primary text-white"><i class="i-Data-Backup text-32 mr-3"></i>
+                                    <div>
+                                        <h4 class="text-18 mb-1 text-white">مجموعه تمام عواید مدرسه </h4><span><h2 class="text-white">{{total_income}}  افغانی</h2></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="p-4 rounded d-flex align-items-center bg-warning text-white"><i class="i-Big-Data text-32 mr-3"></i>
+                                    <div>
+                                        <h4 class="text-18 mb-1 text-white">مجموعه تمام مصارف مدرسه </h4><span><h2 class="text-white">{{grand_expences}} افغانی </h2></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <!-- ICON BG-->
+                           
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                    <div class="card-body text-center"><i class="i-Financial"></i>
+                                        <div class="content">
+                                            <p class="text-muted mt-2 mb-0">فیس شاگرد ها</p>
+                                            <p class="text-primary text-24 line-height-1 mb-2">{{total_student_fees}} اف</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                    <div class="card-body text-center"><i class="i-Checkout-Basket"></i>
+                                        <div class="content">
+                                            <p class="text-muted mt-2 mb-0">کمک ها</p>
+                                            <p class="text-primary text-24 line-height-1 mb-2">{{total_donations}} اف</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                    <div class="card-body text-center"><i class="i-Money-2"></i>
+                                        <div class="content">
+                                            <p class="text-muted mt-2 mb-0">مصارف</p>
+                                            <p class="text-primary text-24 line-height-1 mb-2">{{total_expences}} اف</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                                    <div class="card-body text-center"><i class="i-Add-User"></i>
+                                        <div class="content">
+                                            <p class="text-muted mt-2 mb-0">اضافه کاری</p>
+                                            <p class="text-primary text-24 line-height-1 mb-2">{{total_overtime}}  اف</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <!-- begin exclusive datatable plugin-->
+                            <div class="col-lg-6 col-xl-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="ul-widget__head v-margin">
+                                            <div class="ul-widget__head-label">
+                                                <h3 class="ul-widget__head-title">مجموعه یی تمام عواید از فیس شاگردان {{total_student_fees}} افغانی میباشد.</h3>
+                                            </div>
+                                            <!-- <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span></button>
+                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a>
+                                                <div class="dropdown-divider"></div><a class="dropdown-item" href="#">Separated link</a>
+                                            </div> -->
+                                        </div>
+                                        <div class="ul-widget-body">
+                                            <div class="ul-widget3">
+                                                <div class="ul-widget6__item--table">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr class="ul-widget6__tr--sticky-th">
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">نام</th>
+                                                                <th scope="col">نام پدر</th>
+                                                                <th scope="col">صنف</th>
+                                                                <th scope="col">فیس</th>
+                                                                <!-- <th scope="col">اعمال</th> -->
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- start tr-->
+                                                            {% for i in all_student %}
+                                                            <tr>
+                                                                <td>{{i.id}}</td>
+                                                                <td>{{i.stud_info.stu_name}}</td>
+                                                                <td>{{i.stud_info.stu_father_name}}</td>
+                                                                <td>{{i.stud_info.stu_class.name}}</td>
+                                                                <td>{{i.fees}}</td>
+                                                                <!-- <td>
+                                                                    <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span></button>
+                                                                    <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Bar-Chart-4"> </i> Export</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Data-Save"> </i> Save</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Duplicate-Layer"></i> Import</a>
+                                                                        <div class="dropdown-divider"></div><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Folder-Download"></i> Update</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Gears-2"></i> Customize</a>
+                                                                    </div>
+                                                                </td> -->
+                                                            </tr>
+                                                            {% endfor %}
+                                                          
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination">
+                                                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-xl-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="ul-widget__head v-margin">
+                                            <div class="ul-widget__head-label">
+                                                <h3 class="ul-widget__head-title">لیست تمام مصارف</h3>
+                                            </div>
+                                            <!-- <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span></button>
+                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a>
+                                                <div class="dropdown-divider"></div><a class="dropdown-item" href="#">Separated link</a>
+                                            </div> -->
+                                        </div>
+                                        <div class="ul-widget-body">
+                                            <div class="ul-widget3">
+                                                <div class="ul-widget6__item--table">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr class="ul-widget6__tr--sticky-th">
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">تاریخ</th>
+                                                                <th scope="col">نام</th>
+                                                                <th scope="col">مقدار</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- start tr-->
+                                                            {% for i in all_expances %}
+                                                            <tr>
+                                                                
+                                                                <td>{{i.id}}</td>
+                                                                <td>{{i.date}}</td>
+
+                                                                <td>{{i.name}}</td>
+                                                                <td>{{i.amount}}</td>
+
+                                                                
+                                                            </tr>
+                                                            {% endfor %}
+                                                          
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination">
+                                                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end::exclusive datatable plugin-->
+                            <!-- begin::latest log-->
+                            
+                            <!-- end::latest log-->
+                        </div>
+                        <div class="row mt-4">
+                            <!-- begin exclusive datatable plugin-->
+                            <div class="col-lg-6 col-xl-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="ul-widget__head v-margin">
+                                            <div class="ul-widget__head-label">
+                                                <h3 class="ul-widget__head-title">مجموعه یی تمام کمک های مالی {{total_donations}} افغانی میباشد.</h3>
+                                            </div>
+                                            <!-- <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span></button>
+                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a>
+                                                <div class="dropdown-divider"></div><a class="dropdown-item" href="#">Separated link</a>
+                                            </div> -->
+                                        </div>
+                                        <div class="ul-widget-body">
+                                            <div class="ul-widget3">
+                                                <div class="ul-widget6__item--table">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr class="ul-widget6__tr--sticky-th">
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">تاریخ</th>
+                                                                <th scope="col">منبع</th>
+                                                                <th scope="col">مقدار</th>
+                                                                <!-- <th scope="col">اعمال</th> -->
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- start tr-->
+                                                            {% for i in all_donations %}
+                                                            {% if i.donation_type == 'پیسه نغد' %}
+                                                            <tr>
+                                                                <td>{{i.id}}</td>
+                                                                <td>{{i.date}}</td>
+                                                                <td>{{i.source}}</td>
+                                                                <td>{{i.send_amount}}</td>
+                                                                
+                                                                <!-- <td>
+                                                                    <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span></button>
+                                                                    <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Bar-Chart-4"> </i> Export</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Data-Save"> </i> Save</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Duplicate-Layer"></i> Import</a>
+                                                                        <div class="dropdown-divider"></div><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Folder-Download"></i> Update</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Gears-2"></i> Customize</a>
+                                                                    </div>
+                                                                </td> -->
+                                                            </tr>
+                                                            {% endif %}
+                                                            {% endfor %}
+                                                          
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination">
+                                                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-xl-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="ul-widget__head v-margin">
+                                            <div class="ul-widget__head-label">
+                                                <h3 class="ul-widget__head-title">لیست کمک های غیر مالی برای مدرسه</h3>
+                                            </div>
+                                            <!-- <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span></button>
+                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a>
+                                                <div class="dropdown-divider"></div><a class="dropdown-item" href="#">Separated link</a>
+                                            </div> -->
+                                        </div>
+                                        <div class="ul-widget-body">
+                                            <div class="ul-widget3">
+                                                <div class="ul-widget6__item--table">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr class="ul-widget6__tr--sticky-th">
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">تاریخ</th>
+                                                                <th scope="col">منبع</th>
+                                                                <th scope="col">نام جنس</th>
+                                                                <th scope="col">مقدار</th>
+                                                                <!-- <th scope="col">اعمال</th> -->
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- start tr-->
+                                                            {% for i in all_donations %}
+                                                            {% if i.donation_type == 'جنس' %}
+                                                            <tr>
+                                                                <td>{{i.id}}</td>
+                                                                <td>{{i.date}}</td>
+                                                                <td>{{i.source}}</td>
+                                                                <td>{{i.goods_name}}</td>
+                                                                <td>{{i.quantity}}</td>
+                                                                
+                                                                <!-- <td>
+                                                                    <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span></button>
+                                                                    <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Bar-Chart-4"> </i> Export</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Data-Save"> </i> Save</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Duplicate-Layer"></i> Import</a>
+                                                                        <div class="dropdown-divider"></div><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Folder-Download"></i> Update</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Gears-2"></i> Customize</a>
+                                                                    </div>
+                                                                </td> -->
+                                                            </tr>
+                                                            {% endif %}
+                                                            {% endfor %}
+                                                          
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination">
+                                                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- end::exclusive datatable plugin-->
+                            <!-- begin::latest log-->
+                            
+                            <!-- end::latest log-->
+                        </div>
+                        <div class="row mt-4">
+                            <!-- begin exclusive datatable plugin-->
+                            <div class="col-lg-6 col-xl-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="ul-widget__head v-margin">
+                                            <div class="ul-widget__head-label">
+                                                <h3 class="ul-widget__head-title">مجموعه یی تمام اضافه کاری های اساتید {{total_overtime}} افغانی میباشد.</h3>
+                                            </div>
+                                            <!-- <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span></button>
+                                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item" href="#">Action</a><a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a>
+                                                <div class="dropdown-divider"></div><a class="dropdown-item" href="#">Separated link</a>
+                                            </div> -->
+                                        </div>
+                                        <div class="ul-widget-body">
+                                            <div class="ul-widget3">
+                                                <div class="ul-widget6__item--table">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr class="ul-widget6__tr--sticky-th">
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">تاریخ</th>
+                                                                <th scope="col">منبع</th>
+                                                                <th scope="col">مقدار</th>
+                                                                <th scope="col">مجموعه</th>
+                                                                <!-- <th scope="col">اعمال</th> -->
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- start tr-->
+                                                            {% for i in all_overtime %}
+                                                            
+                                                            <tr>
+                                                                <td>{{i.id}}</td>
+                                                                <td>{{i.teacher_info}}</td>
+                                                                <td>{{i.overtime_rate}}</td>
+                                                                <td>{{i.hrs}}</td>
+                                                                <td>{{i.amount}}</td>
+                                                                
+                                                                <!-- <td>
+                                                                    <button class="btn bg-white _r_btn border-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span><span class="_dot _inline-dot bg-primary"></span></button>
+                                                                    <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;"><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Bar-Chart-4"> </i> Export</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Data-Save"> </i> Save</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Duplicate-Layer"></i> Import</a>
+                                                                        <div class="dropdown-divider"></div><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Folder-Download"></i> Update</a><a class="dropdown-item ul-widget__link--font" href="#"><i class="i-Gears-2"></i> Customize</a>
+                                                                    </div>
+                                                                </td> -->
+                                                            </tr>
+                                                         
+                                                            {% endfor %}
+                                                          
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination">
+                                                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                                        
+                            <!-- end::exclusive datatable plugin-->
+                            <!-- begin::latest log-->
+                            
+                            <!-- end::latest log-->
+                        </div>
+                        
+                        
+
+                        
+
+                        
+                        
+                    </main>
+                   
+
+                </div>
+            </div>
+        </div>
+        <!-- end of col-->
+
+        <!-- end of col-->
+    </div>
+</div>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+<script src="https://https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+  
+    const element = document.getElementById('main_data')
+    let options = {
+        
+
+
+
+        margin:0,
+        filename : "students.pdf",
+        image: {type:'jpeg', quality:1},
+        html2canvas: {scale :6},
+        jsPDF:{unit:'cm', format:'A4', orientation:'portrait', putOnlyUsedFonts:true }
+
+    }
+    html2pdf().set(options).from(element).save()
+    </script> -->
+    
+
+
+<!-- <script>
+var fontUrl = "{% static 'fonts/custom_fonts.css' %}";
+const input = document.getElementById('main_data')
+html2canvas(input)
+    .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+
+
+
+        pdf.addImage(imgData, 'PNG', 0, 0);
+        pdf.save('download.pdf');
+        
+
+    });
+</script> -->
+
+{% endblock %}
