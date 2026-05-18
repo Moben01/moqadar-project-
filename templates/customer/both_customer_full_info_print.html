@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load custom_tags %}
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -151,6 +152,7 @@
                         <th>مجموعه</th>
                         <th>پرداخت</th>
                         <th>باقی</th>
+                        <th>مجموعه باقیمانده</th>
                         <th>بیلانس فعلی خرید</th>
                         <th>بیلانس فعلی فروش</th>
                         <th>شماره خرید</th>
@@ -211,6 +213,7 @@
                         <td>{{ row.total_amount|floatformat:2 }}</td>
                         <td>{{ row.paid_amount|floatformat:2 }}</td>
                         <td>{{ row.remain_amount|floatformat:2 }}</td>
+                        <td>{{ row.current_supplier_balance|balance_difference:row.current_customer_balance|floatformat:2 }}</td>
                         <td>{{ row.current_supplier_balance|floatformat:2 }}</td>
                         <td>{{ row.current_customer_balance|floatformat:2 }}</td>
 

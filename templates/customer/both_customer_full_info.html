@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block content %}
 
 
@@ -196,9 +197,11 @@
                                 <th>محصول</th>
                                 <th>تعداد</th>
                                 <th>وزن</th>
+                                <th>قیمت</th>
                                 <th>مجموعه</th>
                                 <th>پرداخت</th>
                                 <th>باقی</th>
+                                <th >مجموعه باقیمانده</th>
                                 <!-- <th>بیلانس قبلی خرید</th> -->
                                 <!-- <th>بیلانس قبلی فروش</th> -->
                                 <th>بیلانس فعلی خرید</th>
@@ -213,13 +216,13 @@
                             {% for row in ledger_rows %}
                             <tr
                                 {% if row.entry_type == 'purchase' %}
-                                    class="table-warning"
-                                <!-- {% elif row.entry_type == 'sale' %}
-                                    class="table-primary" -->
+                                    style="background-color: rgb(107, 180, 240);"
+                                {% elif row.entry_type == 'sale' %}
+                                    style="background-color: rgb(175, 238, 59);"
                                 {% elif row.entry_type == 'pay_to_partner' %}
-                                    class="table-warning"
-                                <!-- {% elif row.entry_type == 'receive_from_partner' %}
-                                    style="background-color: green;" -->
+                                    style="background-color: rgb(175, 238, 59);"
+                                {% elif row.entry_type == 'receive_from_partner' %}
+                                    style="background-color:  rgb(107, 180, 240);"
                                 {% endif %}
                                 >
                                 <td>{{ row.id }}</td>
@@ -276,10 +279,26 @@
                                 {% else %}
                                     <td>-</td>
                                 {% endif %}
+
+                                {% if row.entry_type == 'purchase' %}
+                                    <td>{{ row.purchase.price_per_unit }}</td>
+                                {% elif row.entry_type == 'sale' %}
+                                    <td>{{ row.sale.price_per_unit }}</td>
+                                {% else %}
+                                    <td>-</td>
+                                {% endif %}
                                 
                                 <td>{{ row.total_amount|floatformat:2 }}</td>
                                 <td>{{ row.paid_amount|floatformat:2 }}</td>
                                 <td>{{ row.remain_amount|floatformat:2 }}</td>
+                                {% if net_status == 'او قرضدار ما است' %}
+                                    <td style="background-color: #fd150d; color: white;">{{ row.current_supplier_balance|balance_difference:row.current_customer_balance|floatformat:2 }}</td>
+                                {% elif net_status == 'ما قرضدار او هستیم' %}
+                                    <td style="background-color: #0dfd5d; color: white;">{{ row.current_supplier_balance|balance_difference:row.current_customer_balance|floatformat:2 }}</td>
+                                {% else %}
+                                    <td >{{ row.current_supplier_balance|balance_difference:row.current_customer_balance|floatformat:2 }}</td>
+                                {% endif %}
+
                                 <!-- <td>{{ row.previous_supplier_balance|floatformat:2 }}</td> -->
                                 <!-- <td>{{ row.previous_customer_balance|floatformat:2 }}</td> -->
                                 <td>{{ row.current_supplier_balance|floatformat:2 }}</td>
