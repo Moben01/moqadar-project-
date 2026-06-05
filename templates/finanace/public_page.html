@@ -206,6 +206,7 @@
     .btn-table-1 { background: #73f07e; }
     .btn-table-2 { background: #7ec5f8; }
     .btn-table-3 { background: #ffa91f; }
+    .btn-table-4 { background: #b197fc; }
 
     @media (max-width: 768px) {
         #table-nav {
@@ -233,6 +234,11 @@
     <button type="button" class="circle-btn btn-table-2" onclick="scrollToTable('table-three')">
         <span class="icon">👥</span>
         <span class="text">خرید</span>
+    </button>
+
+    <button type="button" class="circle-btn btn-table-4" onclick="scrollToTable('table-four')">
+        <span class="icon">*</span>
+        <span class="text">هردو</span>
     </button>
 
     <button type="button" class="circle-btn btn-table-3" onclick="scrollToTable('table-two')">
@@ -307,6 +313,7 @@
     .btn-table-1 { background: #73f07e; }
     .btn-table-2 { background: #7ec5f8; }
     .btn-table-3 { background: #ffa91f; }
+    .btn-table-4 { background: #b197fc; }
 
     @media (max-width: 768px) {
         #table-nav {
@@ -334,6 +341,11 @@
     <button type="button" class="circle-btn btn-table-2" onclick="scrollToTable('table-three')">
         <span class="icon">👥</span>
         <span class="text">خرید</span>
+    </button>
+
+    <button type="button" class="circle-btn btn-table-4" onclick="scrollToTable('table-four')">
+        <span class="icon">*</span>
+        <span class="text">هردو</span>
     </button>
 
     <button type="button" class="circle-btn btn-table-3" onclick="scrollToTable('table-two')">
@@ -595,7 +607,7 @@
                                             {% endif %}
                                         </tr>
                                     {% endfor %} 
-                                        {% for loan in bot_ledger_entry %}
+                                        {% for loan in empty_customer_both_ledger_entry %}
                                         <tr>
                                             <td>{{ loan.id }}</td>
                                             <td>
@@ -788,6 +800,120 @@
       
 
 
+
+        <div class="col-md-12 mb-4" id="table-four">
+            <div class="card text-left">
+                <div class="card-body" style="background-color: rgb(235, 228, 255);">
+                    <h4 class="card-title mb-3">لیست معاملات تمام مشتریان که تامین کننده هم هستند</h4>
+                    <p>در این بخش معاملات مشتریانی نمایش داده میشود که هم مشتری و هم تامین کننده هستند.</p>
+                    <div class="table-responsive">
+                        <input type="text" id="bothCustomerSearchInput" placeholder="جستجوی مشتری و تامین کننده..." class="form-control mb-3">
+
+                        <table class="display table table-striped table-bordered" id="both_customer_table" style="width:100%">
+                            <thead style="color: blue;">
+                                <tr>
+                                    <th>شماره</th>
+                                    <th>اسم مشتری</th>
+                                    <th>توضیحات</th>
+                                    <th>تاریخ</th>
+                                    <th>محصول</th>
+                                    <th>تعداد</th>
+                                    <th>وزن</th>
+                                    <th>قیمت فی واحد</th>
+                                    <th>تمام پول</th>
+                                    <th>رسید</th>
+                                    <th>باقی</th>
+                                    <th>مجموعه باقی مانده</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for loan in both_customer_loans %}
+                                <tr>
+                                    <td>{{ loan.id }}</td>
+                                    <td>
+                                        <a href="{% url 'Customer:customer_loans' loan.customer.id %}" class="text-decoration-none text-primary">
+                                            {{ loan.customer.name }}
+                                        </a>
+                                    </td>
+                                    {% if loan.status == 'پرداخت نه شده' %}
+                                        <td>{{ loan.sale_id.notes }}</td>
+                                    {% elif loan.status == 'پرداخت شده' %}
+                                        <td>{{ loan.notes }} {{ loan.sale_id.notes }}</td>
+                                    {% endif %}
+                                    <td>{{ loan.date_issued }}</td>
+                                    <td>{{ loan.sale_id.product.meat_name }}</td>
+                                    <td>{{ loan.sale_id.quantity }}</td>
+                                    <td>{{ loan.sale_id.weight }}</td>
+                                    <td>{{ loan.sale_id.price_per_unit }}</td>
+                                    <td>{{ loan.sale_id.should_paid }}</td>
+                                    {% if loan.status == 'پرداخت نه شده' %}
+                                        <td class="heading text-success">
+                                            {% if loan.sale_id %}
+                                                {{ loan.sale_id.paid_amount_for_every_record }}
+                                            {% else %}
+                                                {{ loan.amount }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="heading text-danger">{{ loan.sale_id.borrow_amount }}</td>
+                                        <td>{{ loan.total_amount }}</td>
+                                    {% elif loan.status == 'پرداخت شده' %}
+                                        <td class="heading text-success">{{ loan.amount }}</td>
+                                        <td class="heading text-danger">{{ loan.sale_id.borrow_amount }}</td>
+                                        <td>{{ loan.total_amount }}</td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+
+                                {% for loan in bot_ledger_entry %}
+                                <tr>
+                                    <td>{{ loan.id }}</td>
+                                    <td>
+                                        <a href="{% url 'Customer:both_partner_calculation' loan.customer.id %}" class="text-decoration-none text-primary">
+                                            {{ loan.customer.name }}
+                                        </a>
+                                    </td>
+                                    {% if loan.entry_type == 'sale' %}
+                                        <td>{{ loan.sale.notes }}</td>
+                                        <td>{{ loan.date }}</td>
+                                        <td>{{ loan.sale.product.meat_name }}</td>
+                                        <td>{{ loan.sale.quantity }}</td>
+                                        <td>{{ loan.sale.weight }}</td>
+                                        <td>{{ loan.sale.price_per_unit }}</td>
+                                        <td>{{ loan.sale.should_paid }}</td>
+                                        <td class="heading text-success">{{ loan.paid_amount }}</td>
+                                        <td class="heading text-danger">{{ loan.remain_amount }}</td>
+                                        <td>{{ loan.current_customer_balance }}</td>
+                                    {% else %}
+                                        <td>{{ loan.note }}</td>
+                                        <td>{{ loan.date }}</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>{{ loan.total_amount }}</td>
+                                        <td class="heading text-success">{{ loan.paid_amount }}</td>
+                                        <td class="heading text-danger">{{ loan.remain_amount }}</td>
+                                        <td>{{ loan.current_customer_balance }}</td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <script>
+                        document.getElementById('bothCustomerSearchInput').addEventListener('keyup', function() {
+                            var input = this.value.toLowerCase();
+                            var rows = document.querySelectorAll("#both_customer_table tbody tr");
+
+                            rows.forEach(function(row) {
+                                var rowText = row.textContent.toLowerCase();
+                                row.style.display = rowText.includes(input) ? "" : "none";
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
 
         <div class="col-md-12 mb-4" id="table-three">
             <div class="card text-left">

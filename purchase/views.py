@@ -11,7 +11,7 @@ from django.urls import reverse
 from Supplaier.forms import SupplaierForm
 from Customer.models import SLoan
 from django.db.models import Sum
-from django.contrib.admin.models import LogEntry, ADDITION
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_str
 from django.contrib.auth.decorators import login_required
@@ -23,11 +23,34 @@ from django.shortcuts import get_object_or_404
 import arabic_reshaper
 from bidi.algorithm import get_display
 
+
+MONEY_DECIMAL_PLACES = Decimal('0.01')
+
+
+def to_money(value):
+    return Decimal(str(value or 0)).quantize(MONEY_DECIMAL_PLACES)
+
+
+def calculate_purchase_total(status, quantity, weight, price_per_unit):
+    multiplier = weight if status == 'ضرب وزن' else quantity
+    return to_money(Decimal(str(multiplier or 0)) * Decimal(str(price_per_unit or 0)))
+
 def reshape_text(text):
     if not text:
         return ""
     reshaped_text = arabic_reshaper.reshape(str(text))
     return get_display(reshaped_text)
+
+
+def add_log_entry(request, obj, action_flag, change_message):
+    LogEntry.objects.log_action(
+        user_id=request.user.pk,
+        content_type_id=ContentType.objects.get_for_model(obj).pk,
+        object_id=obj.pk,
+        object_repr=force_str(obj),
+        action_flag=action_flag,
+        change_message=change_message
+    )
 
 def create_both_party_purchase_ledger(customer, purchase_instance, total_amount, paid_amount, remain_amount):
     last_row = BothPartyLedger.objects.filter(customer=customer).order_by('-id').first()
@@ -76,48 +99,34 @@ def Purchase(request):
             with transaction.atomic():
                 qauantiti = my_form.cleaned_data['quantity']
                 every_price = my_form.cleaned_data['price_per_unit']
-                pay = my_form.cleaned_data['paid_amount']
+                pay = to_money(my_form.cleaned_data['paid_amount'])
                 customer = my_form.cleaned_data.get('supplaier')
                 weightt = my_form.cleaned_data.get('wegiht')
                 satatus = my_form.cleaned_data.get('status')
-                
-                if satatus == 'ضرب وزن':
-                    totall = round(weightt * every_price)
-                    remainn = totall - pay
-                    if Decimal(pay) <= first_record:
-                        mines = first_record - Decimal(pay)
-                        system_all_money.total_money_in_system = mines
-                        system_all_money.save()
-                    else: 
-                        messages.warning(request, 'پول موجودی در سیستم کم است لطفا پول اضافه کرده دوباره تلاش نمایید')
-                        return redirect('purchase:purchase')  
-                else:
-                    totall = round(qauantiti * every_price) 
-                    remainn = totall - pay
-                    if Decimal(pay) < first_record: 
-                        mines = first_record - Decimal(pay)
-                        system_all_money.total_money_in_system = mines
-                        system_all_money.save()
-                    else: 
-                        messages.warning(request, 'پول موجودی در سیستم کم است لطفا پول اضافه کرده دوباره تلاش نمایید')
-                        return redirect('purchase:purchase')
+
+                totall = calculate_purchase_total(satatus, qauantiti, weightt, every_price)
+                remainn = to_money(totall - pay)
                 
                 Purchase_instance = my_form.save(commit=False)
                 Purchase_instance.remain_amount = remainn
                 Purchase_instance.total_unit = totall
+                Purchase_instance.paid_amount = pay
                 if pay > totall or pay < 0 or remainn > totall or remainn < 0 :
                     messages.success(request, '  مقدار پول پرداختی یا باقی مانده شما مناسب نیست ')
                     return redirect('purchase:purchase')
+                elif pay > Decimal(first_record or 0):
+                    messages.warning(request, 'پول موجودی در سیستم کم است لطفا پول اضافه کرده دوباره تلاش نمایید')
+                    return redirect('purchase:purchase')
                 else:
                     Purchase_instance.save() 
+                    system_all_money.total_money_in_system = Decimal(first_record or 0) - pay
+                    system_all_money.save()
 
-                    LogEntry.objects.log_action( 
-                        user_id=request.user.pk,
-                        content_type_id=ContentType.objects.get_for_model(Purchase_instance).pk,
-                        object_id=Purchase_instance.pk,
-                        object_repr=force_str(Purchase_instance),
-                        action_flag=ADDITION,
-                        change_message=f"خرید صورت گرفت. مچموعه: {totall}, پرداخت شده : {pay}, باقی: {remainn}"
+                    add_log_entry(
+                        request,
+                        Purchase_instance,
+                        ADDITION,
+                        f"خرید صورت گرفت. مچموعه: {totall}, پرداخت شده : {pay}, باقی: {remainn}"
                     )
 
                 product = Purchase_instance.product
@@ -141,7 +150,7 @@ def Purchase(request):
                         else:
                             find_total_amou = Decimal(latest_unpaid_loan.total_amount)
 
-                        find_total = float(find_total_amou) + Purchase_instance.remain_amount
+                        find_total = find_total_amou + Decimal(Purchase_instance.remain_amount or 0)
                         SLoan.objects.create(
                             customer=Purchase_instance.supplaier,  
                             sale_id=Purchase_instance,
@@ -245,6 +254,7 @@ def reciving_item(request,id):
         customer_instance.dealer = customer
         customer_instance.status = 'رسید'
         customer_instance.save()
+        add_log_entry(request, customer_instance, ADDITION, f"جنس رسید شد برای {customer}")
         new_record  = inventrories.objects.create(product_foerignkey=find_the_product,warehouse_foerignkey=warehouse_for,Quantity=num,weight_field=wegit,in_and_out='IN')
         messages.success(request, ' جنس با موفقیت رسید شد')
         return redirect('purchase:purhase_with_item', id=id)
@@ -271,6 +281,7 @@ def giving_item(request,id):
         customer_instance.dealer = customer
         customer_instance.status = 'برداشت'
         customer_instance.save()
+        add_log_entry(request, customer_instance, ADDITION, f"جنس برداشت شد برای {customer}")
         new_record  = inventrories.objects.create(product_foerignkey=find_the_product,warehouse_foerignkey=warehouse_for,Quantity=num,weight_field=wegit,in_and_out='OUT')
         messages.success(request, ' جنس با موفقیت برداشت شد')
         return redirect('purchase:purhase_with_item', id=id)
@@ -499,6 +510,7 @@ def delete_Purchase(request, id):
             ).delete()
 
             purchase.delete()
+            add_log_entry(request, purchase, DELETION, f"خرید حذف شد. مجموعه: {purchase.total_unit}, پرداخت شده: {purchase.paid_amount}, باقی: {purchase.remain_amount}")
 
             # recalculate ledger only for both-person
             if customer_obj.role == 'هردو':
@@ -535,7 +547,9 @@ def loan(request):
             else:
                 messages.warning(request,'مشکل موجود است')
                 return redirect('purchase:loan')
-            my_form.save()
+            loan_payment = my_form.save()
+            add_log_entry(request, record, CHANGE, f"پرداخت باقی قرض اجرا شد. مبلغ پرداختی: {second_pay}, باقی جدید: {record.remain_amount}")
+            add_log_entry(request, loan_payment, ADDITION, f"ریکارد پرداخت قرض ثبت شد. مبلغ: {second_pay}")
             messages.success(request, 'باقی قرض موفقانه اجرا شد ')
             return redirect('purchase:loan')
         else:
@@ -832,18 +846,15 @@ def edit_purchase(request, purchase_id):
 
                     quantity = Decimal(form.cleaned_data['quantity'] or 0)
                     price_per_unit = Decimal(form.cleaned_data['price_per_unit'] or 0)
-                    paid_amount = Decimal(form.cleaned_data['paid_amount'] or 0)
+                    paid_amount = to_money(form.cleaned_data['paid_amount'])
                     customer = form.cleaned_data.get('supplaier')
                     weight = Decimal(form.cleaned_data.get('wegiht') or 0)
                     status = form.cleaned_data.get('status')
 
                     # محاسبه total و remain
-                    if status == 'ضرب وزن':
-                        total = Decimal(round(weight * price_per_unit))
-                    else:
-                        total = Decimal(round(quantity * price_per_unit))
+                    total = calculate_purchase_total(status, quantity, weight, price_per_unit)
 
-                    remain = total - paid_amount
+                    remain = to_money(total - paid_amount)
 
                     # validation
                     if paid_amount > total or paid_amount < 0 or remain > total or remain < 0:
@@ -870,6 +881,7 @@ def edit_purchase(request, purchase_id):
                     purchase_instance = form.save(commit=False)
                     purchase_instance.remain_amount = remain
                     purchase_instance.total_unit = total
+                    purchase_instance.paid_amount = paid_amount
                     purchase_instance.save()
 
                     # ایجاد دوباره موجودی انبار
@@ -942,6 +954,12 @@ def edit_purchase(request, purchase_id):
                     if customer.role == 'هردو':
                         recalculate_both_party_ledger(customer)
 
+                    add_log_entry(
+                        request,
+                        purchase_instance,
+                        CHANGE,
+                        f"خرید ویرایش شد. مجموعه: {total}, پرداخت شده: {paid_amount}, باقی: {remain}"
+                    )
                     messages.success(request, 'خرید موفقانه ویرایش شد')
                     return redirect('purchase:purchase')
 
@@ -970,11 +988,13 @@ def delete_item_deal(request,id):
     if find_record.status == 'رسید':
         
         new_record = inventrories.objects.create(product_foerignkey=find_pro,warehouse_foerignkey=ware_id,Quantity=find_quantity,weight_field=find_eight,in_and_out='OUT')
+        add_log_entry(request, find_record, DELETION, f"ریکارد رسید حذف شد. محصول: {find_pro}, تعداد: {find_quantity}, وزن: {find_eight}")
         find_record.delete()
         messages.success(request, f'ریکارد رسید موفقانه حذف شد')
         return redirect(referer)
     else:
         new_record = inventrories.objects.create(product_foerignkey=find_pro,warehouse_foerignkey=ware_id,Quantity=find_quantity,weight_field=find_eight,in_and_out='IN')
+        add_log_entry(request, find_record, DELETION, f"ریکارد برداشت حذف شد. محصول: {find_pro}, تعداد: {find_quantity}, وزن: {find_eight}")
         find_record.delete()
         messages.success(request, f'ریکارد برداشت موفقانه حذف شد')
         return redirect(referer)

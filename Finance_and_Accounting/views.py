@@ -41,6 +41,7 @@ import os
 from Customer.models import Loan,SLoan
 from django.db import transaction
 from purchase.models import BothPartyLedger
+from decimal import Decimal
 
 
 
@@ -49,8 +50,10 @@ from purchase.models import BothPartyLedger
 def malle_wa_mahaseba(request):
    
     collaborators  = coolaborators.objects.all()
-    loans = Loan.objects.all().order_by('id')
-    bot_ledger_entry = BothPartyLedger.objects.filter(entry_type__in=['sale', 'receive_from_partner'])
+    all_customer_loans = Loan.objects.all().order_by('id')
+    loans = all_customer_loans.exclude(customer__role='هردو')
+    both_customer_loans = all_customer_loans.filter(customer__role='هردو')
+    bot_ledger_entry = BothPartyLedger.objects.filter(entry_type__in=['sale', 'receive_from_partner'], customer__role='هردو')
     purchase_both_ledger_entry = BothPartyLedger.objects.filter(entry_type__in=['purchase', 'pay_to_partner'])
     
 
@@ -86,7 +89,7 @@ def malle_wa_mahaseba(request):
 
         total_sale_amount_sup = Parchase.objects.filter(id__in=suppliar_id).aggregate(
             paid_amount_sum=Sum('paid_amount')
-        )['paid_amount_sum'] or 0 
+        )['paid_amount_sum'] or Decimal('0')
 
         customer_loan_sum_supp = SLoan.objects.filter(
             customer_id=supp_id,
@@ -98,6 +101,7 @@ def malle_wa_mahaseba(request):
         ).aggregate(
             total_amount_sum_sipp=Sum('amount')
         )['total_amount_sum_sipp'] or 0
+        customer_loan_sum_supp = Decimal(str(customer_loan_sum_supp))
         find_all_total_sale_amount_supp = round(total_sale_amount_sup + customer_loan_sum_supp)
         supp_totals[supp_id] = find_all_total_sale_amount_supp
 
@@ -426,6 +430,7 @@ def malle_wa_mahaseba(request):
             'income_sums':income_sums,
             'outcomesum':outcomesum,
             'loans':loans,
+            'both_customer_loans':both_customer_loans,
             'customer_totals': customer_totals,
             'sloans':sloans,
             'supp_totals':supp_totals,
@@ -1264,8 +1269,18 @@ def exchang_money(request):
     find_afghani_that_chagnes = exchagn_money_in_system.objects.filter(currency_that_you_want_tochage__curr_name='افغانی',currency_that_you_want_to_get_money__curr_name='دالر').aggregate(total_amount=Sum('currency_that_will_chage_amount'))
     total = find_afghani_that_chagnes['total_amount'] or 0
 
+    find_dollar_from_afghani_changes = exchagn_money_in_system.objects.filter(currency_that_you_want_tochage__curr_name='افغانی',currency_that_you_want_to_get_money__curr_name='دالر').aggregate(total_dollar_amount=Sum('currency_that_chage_amont'))
+    total_dollar_from_afghani_changes = find_dollar_from_afghani_changes['total_dollar_amount'] or 0
+
     find_dollar_that_chagnes = exchagn_money_in_system.objects.filter(currency_that_you_want_tochage__curr_name='دالر',currency_that_you_want_to_get_money__curr_name='افغانی').aggregate(total_dollar_amount=Sum('currency_that_chage_amont'))
     d_total = find_dollar_that_chagnes['total_dollar_amount'] or 0
+
+    find_dollar_sold_for_afghani = exchagn_money_in_system.objects.filter(currency_that_you_want_tochage__curr_name='دالر',currency_that_you_want_to_get_money__curr_name='افغانی').aggregate(total_dollar_sold=Sum('currency_that_will_chage_amount'))
+    total_dollar_sold_for_afghani = find_dollar_sold_for_afghani['total_dollar_sold'] or 0
+    dollar_profit_or_loss = d_total - total
+    dollar_profit_or_loss_absolute = abs(dollar_profit_or_loss)
+    exchanged_dollar_difference = total_dollar_from_afghani_changes - total_dollar_sold_for_afghani
+    exchanged_dollar_difference_absolute = abs(exchanged_dollar_difference)
 
     all_ex_records = exchagn_money_in_system.objects.all()
     my_data = total_balance.objects.first()
@@ -1336,6 +1351,12 @@ def exchang_money(request):
         'form':form,
         'all_ex_records':all_ex_records,
         'total':total,
+        'total_dollar_from_afghani_changes':total_dollar_from_afghani_changes,
         'd_total':d_total,
+        'total_dollar_sold_for_afghani':total_dollar_sold_for_afghani,
+        'dollar_profit_or_loss':dollar_profit_or_loss,
+        'dollar_profit_or_loss_absolute':dollar_profit_or_loss_absolute,
+        'exchanged_dollar_difference':exchanged_dollar_difference,
+        'exchanged_dollar_difference_absolute':exchanged_dollar_difference_absolute,
     }
     return render(request, 'finanace/exchange_money_from_system.html',context)

@@ -14,7 +14,7 @@ class Parchase(models.Model):
     product = models.ForeignKey(product, on_delete=models.CASCADE, blank=False)
     warehouse = models.ForeignKey('warehouse.warehouse_info', on_delete=models.CASCADE, blank=False)
     quantity = models.FloatField()
-    total_unit = models.IntegerField() 
+    total_unit = models.DecimalField(max_digits=14, decimal_places=2) 
     date = models.CharField(max_length=200)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')  # New choice field
 
@@ -22,8 +22,8 @@ class Parchase(models.Model):
     wegiht = models.FloatField() 
     details = models.TextField(null=True,blank=True) 
 
-    paid_amount = models.IntegerField(null=True,blank=True)
-    remain_amount = models.IntegerField(null=True,blank=True)
+    paid_amount = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    remain_amount = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
     reg_date = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد") 
 

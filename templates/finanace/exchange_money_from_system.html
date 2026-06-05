@@ -52,9 +52,68 @@
     font-weight: bold;
 }
 
+.exchange-values {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.exchange-values small {
+    font-size: 15px;
+    font-weight: 700;
+    opacity: 0.95;
+}
+
 .icon {
     font-size: 36px;
     opacity: 0.9;
+}
+
+.exchange-result-card {
+    max-width: 520px;
+    margin: 0 auto 28px;
+    border-radius: 8px;
+    padding: 16px 20px;
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+    text-align: center;
+}
+
+.exchange-result-card.profit {
+    background-color: #2f9e44;
+}
+
+.exchange-result-card.loss {
+    background-color: #c92a2a;
+}
+
+.exchange-result-card.equal {
+    background-color: #495057;
+}
+
+.exchange-result-card .result-label {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.exchange-result-card .result-value {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.exchange-result-card .result-status {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.exchange-result-card .result-sub-value {
+    margin: 6px 0 0;
+    font-size: 18px;
+    font-weight: 800;
 }
 </style>
 <div class="row g-3 mb-4">
@@ -65,7 +124,10 @@
             <div class="card-content">
                 <div>
                     <p class="label">مقدار پول افغانی که به دالر تبدیل شده است</p>
-                    <h4 class="value" style="color: azure;">{{total}}</h4>
+                    <div class="exchange-values">
+                        <h4 class="value" style="color: azure;">{{total}}</h4>
+                        <small>{{ total_dollar_from_afghani_changes }} دالر</small>
+                    </div>
                 </div>
                 <div class="icon">💰</div>
             </div>
@@ -77,8 +139,11 @@
         <div class="exchange-card " style="background-color: rgb(240, 143, 235);">
             <div class="card-content">
                 <div>
-                    <p class="label">مقدار پول افغانی که از فروش دالر بوجود آمده</p>
-                    <h4 class="value">{{d_total}}</h4>
+                    <p class="label">مقدار پول دالر که از به افغانی تبدیل شده است  </p>
+                    <div class="exchange-values">
+                        <h4 class="value">{{d_total}}</h4>
+                        <small>{{ total_dollar_sold_for_afghani }} دالر</small>
+                    </div>
                 </div>
                 <div class="icon">🔄</div>
             </div>
@@ -86,6 +151,29 @@
     </div>
 
 </div>
+
+{% if dollar_profit_or_loss > 0 %}
+<div class="exchange-result-card profit">
+    <p class="result-label">نتیجه خرید و فروش دالر</p>
+    <h4 class="result-value">{{ dollar_profit_or_loss_absolute|floatformat:2 }} افغانی</h4>
+    <p class="result-sub-value">{{ exchanged_dollar_difference_absolute|floatformat:2 }} دالر</p>
+    <p class="result-status">شما در مفاد هستید</p>
+</div>
+{% elif dollar_profit_or_loss < 0 %}
+<div class="exchange-result-card loss">
+    <p class="result-label">نتیجه خرید و فروش دالر</p>
+    <h4 class="result-value">{{ dollar_profit_or_loss_absolute|floatformat:2 }} افغانی</h4>
+    <p class="result-sub-value">{{ exchanged_dollar_difference_absolute|floatformat:2 }} دالر</p>
+    <p class="result-status">شما در ضرر هستید</p>
+</div>
+{% else %}
+<div class="exchange-result-card equal">
+    <p class="result-label">نتیجه خرید و فروش دالر</p>
+    <h4 class="result-value">{{ dollar_profit_or_loss|floatformat:2 }} افغانی</h4>
+    <p class="result-sub-value">{{ exchanged_dollar_difference_absolute|floatformat:2 }} دالر</p>
+    <p class="result-status">نه مفاد و نه ضرر</p>
+</div>
+{% endif %}
 <div class="container-fluid pt-4 mt-5">
 
     <!-- ====== TOP STAT BOXES ====== -->

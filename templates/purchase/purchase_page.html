@@ -477,9 +477,15 @@
                                     const paidVal = document.getElementById('paid_value');
                                     const remainVal = document.getElementById('remain_value');
                             
-                                    // Function to round a number to 2 decimal places
-                                    function roundTo(value, decimals ) {
-                                        return Number(value.toFixed(decimals));
+                                    function toMoney(value) {
+                                        return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+                                    }
+
+                                    function formatMoney(value) {
+                                        return toMoney(value).toLocaleString(undefined, {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 2
+                                        });
                                     }
                             
                                     function calculateTotal() {
@@ -491,18 +497,18 @@
                             
                                         // Perform calculations based on the selected status
                                         if (statusSelect.value === 'ضرب وزن') {
-                                            total = roundTo(weight * price);
+                                            total = toMoney(weight * price);
                                         } else if (statusSelect.value === 'ضرب تعداد') {
-                                            total = roundTo(quantity * price);
+                                            total = toMoney(quantity * price);
                                         }
                             
                                         // Calculate remaining amount and round all values
-                                        const remain = roundTo(total - paid);
+                                        const remain = toMoney(total - paid);
                             
                                         // Update the UI with rounded values
-                                        totalSpan.textContent = roundTo(total).toLocaleString();
-                                        paidVal.textContent = roundTo(paid).toLocaleString();
-                                        remainVal.textContent = roundTo(remain).toLocaleString();
+                                        totalSpan.textContent = formatMoney(total);
+                                        paidVal.textContent = formatMoney(paid);
+                                        remainVal.textContent = formatMoney(remain);
                                     }
                             
                                     // Add event listeners to trigger calculations
@@ -882,9 +888,15 @@
                                     const paidVal = document.getElementById('paid_value');
                                     const remainVal = document.getElementById('remain_value');
                             
-                                    // Function to round a number to 2 decimal places
-                                    function roundTo(value, decimals ) {
-                                        return Number(value.toFixed(decimals));
+                                    function toMoney(value) {
+                                        return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+                                    }
+
+                                    function formatMoney(value) {
+                                        return toMoney(value).toLocaleString(undefined, {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 2
+                                        });
                                     }
                             
                                     function calculateTotal() {
@@ -896,18 +908,18 @@
                             
                                         // Perform calculations based on the selected status
                                         if (statusSelect.value === 'ضرب وزن') {
-                                            total = roundTo(weight * price);
+                                            total = toMoney(weight * price);
                                         } else if (statusSelect.value === 'ضرب تعداد') {
-                                            total = roundTo(quantity * price);
+                                            total = toMoney(quantity * price);
                                         }
                             
                                         // Calculate remaining amount and round all values
-                                        const remain = roundTo(total - paid);
+                                        const remain = toMoney(total - paid);
                             
                                         // Update the UI with rounded values
-                                        totalSpan.textContent = roundTo(total).toLocaleString();
-                                        paidVal.textContent = roundTo(paid).toLocaleString();
-                                        remainVal.textContent = roundTo(remain).toLocaleString();
+                                        totalSpan.textContent = formatMoney(total);
+                                        paidVal.textContent = formatMoney(paid);
+                                        remainVal.textContent = formatMoney(remain);
                                     }
                             
                                     // Add event listeners to trigger calculations

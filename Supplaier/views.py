@@ -58,7 +58,11 @@ def supplaier(request):
         find_all_paid_from_bothpartyledger = BothPartyLedger.objects.filter(entry_type='pay_to_partner').aggregate(total_paid=Sum('paid_amount'))
         total_paid = find_all_paid_from_bothpartyledger['total_paid'] or 0
         
-        collect_all = (total_paid_amoun or 0) + (total_paid_amount or 0) + float(total_paid or 0)
+        collect_all = (
+            (total_paid_amoun or Decimal('0.00')) +
+            Decimal(str(total_paid_amount or 0)) +
+            (total_paid or Decimal('0.00'))
+        )
 
         # latest_loans = SLoan.objects.filter(customer_id=OuterRef('id')).order_by('-id')
 
@@ -182,7 +186,7 @@ def supplaer_info(request, id):
     sale_ids = customer_loan.values_list('sale_id', flat=True)
     total_sale_amount = Parchase.objects.filter(id__in=sale_ids).aggregate(
     paid_amount_sum=Sum('paid_amount')
-    )['paid_amount_sum'] or 0
+    )['paid_amount_sum'] or Decimal('0')
 
     customer_loan_sum = SLoan.objects.filter(
         customer_id=id,
@@ -196,9 +200,9 @@ def supplaer_info(request, id):
     )['total_amount_sum'] or 0
 
 
-    total_paid_amount = round(total_sale_amount + customer_loan_sum)
+    total_paid_amount = round(total_sale_amount + Decimal(str(customer_loan_sum)))
     total_borrow = SLoan.objects.filter(customer_id=id).last()
-    total_reamin = round(total_borrow.total_amount)
+    total_reamin = round(Decimal(str(total_borrow.total_amount))) if total_borrow else 0
 
     # total_paid_amount = Parchase.objects.filter(supplaier=id).aggregate(total_paid=Sum('paid_amount'))['total_paid']
     # total_reamin = Parchase.objects.filter(supplaier=id).aggregate(remain_amount=Sum('remain_amount'))['remain_amount']
@@ -261,7 +265,7 @@ def supp_loans(request, id):
    
     total_sale_amount = Parchase.objects.filter(id__in=sale_ids).aggregate(
     paid_amount_sum=Sum('paid_amount')
-    )['paid_amount_sum'] or 0
+    )['paid_amount_sum'] or Decimal('0')
 
     customer_loan_sum = SLoan.objects.filter(
         customer_id=id,
@@ -275,11 +279,11 @@ def supp_loans(request, id):
     )['total_amount_sum'] or 0
 
 
-    find_all_total_sale_amount = round(total_sale_amount + customer_loan_sum)
+    find_all_total_sale_amount = round(total_sale_amount + Decimal(str(customer_loan_sum)))
 
     latest_unpaid_loan = SLoan.objects.filter(customer_id=customer.id).order_by('-id').first()
     total_borrow = SLoan.objects.filter(customer_id=id).last()
-    total_borrow_amount = round(total_borrow.total_amount)
+    total_borrow_amount = round(Decimal(str(total_borrow.total_amount))) if total_borrow else 0
 
 
     latest_unpaid_loan = SLoan.objects.filter(customer_id=customer.id).order_by('-id').first()

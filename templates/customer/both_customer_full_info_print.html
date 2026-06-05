@@ -213,7 +213,13 @@
                         <td>{{ row.total_amount|floatformat:2 }}</td>
                         <td>{{ row.paid_amount|floatformat:2 }}</td>
                         <td>{{ row.remain_amount|floatformat:2 }}</td>
-                        <td>{{ row.current_supplier_balance|balance_difference:row.current_customer_balance|floatformat:2 }}</td>
+                        {% if row.current_supplier_balance > row.current_customer_balance %}
+                            <td style="background-color: #0dfd5d; color: white;">{{ row.current_supplier_balance|balance_difference:row.current_customer_balance|floatformat:2 }}</td>
+                        {% elif row.current_customer_balance > row.current_supplier_balance %}
+                            <td style="background-color: #fd150d; color: white;">{{ row.current_supplier_balance|balance_difference:row.current_customer_balance|floatformat:2 }}</td>
+                        {% else %}
+                            <td>{{ row.current_supplier_balance|balance_difference:row.current_customer_balance|floatformat:2 }}</td>
+                        {% endif %}
                         <td>{{ row.current_supplier_balance|floatformat:2 }}</td>
                         <td>{{ row.current_customer_balance|floatformat:2 }}</td>
 
