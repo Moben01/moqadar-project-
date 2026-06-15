@@ -154,6 +154,12 @@ class UserEditForm(forms.ModelForm):
 
 
 class EmployeePasswordChangeForm(forms.Form):
+    old_password = forms.CharField(
+        label='پسورد فعلی',
+        widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': 'پسورد فعلی'}
+        ),
+    )
     new_password1 = forms.CharField(
         label='پسورد جدید',
         widget=forms.PasswordInput(
@@ -170,6 +176,12 @@ class EmployeePasswordChangeForm(forms.Form):
     def __init__(self, employee, *args, **kwargs):
         self.employee = employee
         super().__init__(*args, **kwargs)
+
+    def clean_old_password(self):
+        old_password = self.cleaned_data.get('old_password')
+        if not self.employee.check_password(old_password):
+            raise forms.ValidationError('پسورد فعلی درست نیست.')
+        return old_password
 
     def clean_new_password1(self):
         new_password = self.cleaned_data.get('new_password1')
