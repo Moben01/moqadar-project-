@@ -264,6 +264,13 @@
                             .options-list .option:hover {
                                 background-color: #f0f0f0;
                             }
+                            .sale-item-form {
+                                padding: 12px 0;
+                                border-bottom: 1px solid #eeeeee;
+                            }
+                            .remove-sale-item {
+                                margin-top: 30px;
+                            }
                         </style>
                         <div class="form-row">
                             <div class="dropdown-container" style="position: relative; width: 100%;">
@@ -438,6 +445,9 @@
                     <label> باقی :-</label>
                     <p class="remaining-display" id="remaining-display-${currentIndex}">0</p>
                 </div>
+                <div class="col-md-2 mb-4">
+                    <button type="button" class="btn btn-danger remove-sale-item">حذف</button>
+                </div>
             </div>
         `;
 
@@ -485,6 +495,17 @@
             weightInput.addEventListener('input', calculateTotals);
             paidInput.addEventListener('input', calculateTotals);
             statusSelect.addEventListener('change', calculateTotals);
+        });
+
+        document.getElementById('saleItemContainer').addEventListener('click', function (event) {
+            if (!event.target.classList.contains('remove-sale-item')) {
+                return;
+            }
+
+            const saleItemForm = event.target.closest('.sale-item-form');
+            if (saleItemForm) {
+                saleItemForm.remove();
+            }
         });
     </script>
 
