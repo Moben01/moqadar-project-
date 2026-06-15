@@ -11,7 +11,7 @@
     {% endif %}
 
     <div class="breadcrumb">
-        <h1>تغییر پسورد</h1>
+        <h1>تغییرات اکانت</h1>
     </div>
     <div class="separator-breadcrumb border-top"></div>
 
@@ -19,7 +19,7 @@
         <div class="col-lg-6 col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="mb-3 text-center">تغییر پسورد {{ employee.name }}</h4>
+                    <h4 class="mb-3 text-center">ویرایش {{ employee.name }}</h4>
                     <p class="text-muted text-center mb-4">{{ employee.email }}</p>
 
                     <form method="post" novalidate>
@@ -32,17 +32,17 @@
                         {% endif %}
 
                         <div class="form-group">
-                            <label for="{{ form.new_password1.id_for_label }}">پسورد جدید</label>
-                            {{ form.new_password1 }}
-                            {% for error in form.new_password1.errors %}
+                            <label for="{{ form.name.id_for_label }}">نام یوزر</label>
+                            {{ form.name }}
+                            {% for error in form.name.errors %}
                             <small class="text-danger d-block">{{ error }}</small>
                             {% endfor %}
                         </div>
 
                         <div class="form-group">
-                            <label for="{{ form.new_password2.id_for_label }}">تکرار پسورد جدید</label>
-                            {{ form.new_password2 }}
-                            {% for error in form.new_password2.errors %}
+                            <label for="{{ form.email.id_for_label }}">ایمیل</label>
+                            {{ form.email }}
+                            {% for error in form.email.errors %}
                             <small class="text-danger d-block">{{ error }}</small>
                             {% endfor %}
                         </div>

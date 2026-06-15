@@ -156,7 +156,7 @@
                                                                 تغییر پسورد</a>
                                                               {% if perms.Account.change_approval_employeement_info %}
                                                             <a class="dropdown-item ul-widget__link--font"
-                                                                class="dropdown-item ul-widget__link--font" href="#"><i class="fas fa-edit"></i> 
+                                                                class="dropdown-item ul-widget__link--font" href="{% url 'account:edit_employee_account' i.id %}"><i class="fas fa-edit"></i>
                                                                 تغیرات</a>
                                                                 {% endif %}
                                                                 {% if perms.Account.delete_approval_employeement_info %}  
@@ -183,7 +183,7 @@
                                                                 href="{% url 'account:change_employee_password' i.id %}"><i class="fas fa-key"></i>
                                                                 تغییر پسورد</a>
                                                             <a class="dropdown-item ul-widget__link--font"
-                                                                class="dropdown-item ul-widget__link--font" href="#"><i
+                                                                class="dropdown-item ul-widget__link--font" href="{% url 'account:edit_employee_account' i.id %}"><i
                                                                     class="fas fa-edit"> </i> تغیرات</a>
                                                                 <a class="dropdown-item ul-widget__link--font"  data-toggle="modal"
                                                                 data-target="#confirmationModal{{ i.id }}"  href="#"><i

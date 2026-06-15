@@ -135,6 +135,34 @@ def change_employee_password(request, employee_id):
     return render(request, 'Account/change_employee_password.html', context)
 
 
+@login_required
+def edit_employee_account(request, employee_id):
+    employee = get_object_or_404(Employee, id=employee_id)
+
+    if request.method == 'POST':
+        form = UserEditForm(request.POST, instance=employee)
+        if form.is_valid():
+            updated_employee = form.save()
+            LogEntry.objects.log_action(
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Employee).pk,
+                object_id=updated_employee.pk,
+                object_repr=str(updated_employee),
+                action_flag=CHANGE,
+                change_message="نام و ایمیل کارمند تغییر شد"
+            )
+            messages.success(request, 'نام یوزر و ایمیل موفقانه تغییر شد.')
+            return redirect('account:employee_info')
+    else:
+        form = UserEditForm(instance=employee)
+
+    context = {
+        'form': form,
+        'employee': employee,
+    }
+    return render(request, 'Account/edit_employee_account.html', context)
+
+
 
 def emp_type(request):
     if request.method == "POST":

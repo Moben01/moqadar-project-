@@ -128,12 +128,12 @@ class RegistrationForm(forms.ModelForm):
 class UserEditForm(forms.ModelForm):
 
     email = forms.EmailField(
-        label='Account email (can not be changed)', max_length=200, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': 'email', 'id': 'form-email', 'readonly': 'readonly'}))
+        label='ایمیل', max_length=200, widget=forms.EmailInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'ایمیل', 'id': 'form-email'}))
 
     name = forms.CharField(
-        label='User Name', min_length=4, max_length=50, widget=forms.TextInput(
-            attrs={'class': 'form-control mb-3', 'placeholder': '', 'id': 'form-lastname'}))
+        label='نام یوزر', min_length=2, max_length=50, widget=forms.TextInput(
+            attrs={'class': 'form-control mb-3', 'placeholder': 'نام یوزر', 'id': 'form-lastname'}))
 
 
     class Meta:
@@ -145,14 +145,15 @@ class UserEditForm(forms.ModelForm):
         self.fields['name'].required = True
         self.fields['email'].required = True
 
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        existing_employee = Employee.objects.filter(email=email).exclude(pk=self.instance.pk)
+        if existing_employee.exists():
+            raise forms.ValidationError('این ایمیل قبلاً برای یک یوزر دیگر ثبت شده است.')
+        return email
+
 
 class EmployeePasswordChangeForm(forms.Form):
-    old_password = forms.CharField(
-        label='پسورد فعلی',
-        widget=forms.PasswordInput(
-            attrs={'class': 'form-control', 'placeholder': 'پسورد فعلی'}
-        ),
-    )
     new_password1 = forms.CharField(
         label='پسورد جدید',
         widget=forms.PasswordInput(
@@ -169,12 +170,6 @@ class EmployeePasswordChangeForm(forms.Form):
     def __init__(self, employee, *args, **kwargs):
         self.employee = employee
         super().__init__(*args, **kwargs)
-
-    def clean_old_password(self):
-        old_password = self.cleaned_data.get('old_password')
-        if not self.employee.check_password(old_password):
-            raise forms.ValidationError('پسورد فعلی درست نیست.')
-        return old_password
 
     def clean_new_password1(self):
         new_password = self.cleaned_data.get('new_password1')
