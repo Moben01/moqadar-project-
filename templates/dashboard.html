@@ -2,6 +2,13 @@
 {% load static %}
 {% block content%}
 
+<style>
+    .dashboard-record-table {
+        min-width: max-content;
+        white-space: nowrap;
+    }
+</style>
+
 <body class="text-left">
 
     
@@ -42,14 +49,13 @@
                                 شما تمام خریداری های امروزی را در اینجا میتوانید ببینید
                             </p>
                             <div class="table-responsive">
-                                <table class="display table table-striped table-bordered" id="scroll_vertical_table"
+                                <table class="display table table-striped table-bordered dashboard-record-table"
                                     style="width:100%">
                                     <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>تهیه کننده</th>
                                             <th>محصول</th>
-                                            <th>گدام</th>
                                             <th>مقدار</th>
                                             <th>وزن</th>
                                             <th>قیمت فی واحد</th>
@@ -69,7 +75,6 @@
                                                 <td>{{ purchase.id }}</td>
                                                 <td>{{ purchase.supplaier }}</td>
                                                 <td>{{ purchase.product }}</td>
-                                                <td>{{ purchase.warehouse }}</td>
                                                 <td>{{ purchase.quantity }}</td>
                                                 <td>{{ purchase.wegiht }}</td>
                                                 <td>{{ purchase.price_per_unit }}</td>
@@ -117,15 +122,14 @@
                         </form>
                         <p style="font-family: 'XW_Zar_Bd_0', sans-serif;"> شما تمام فروش های امروزی را در اینجا میتوانید ببینید</p>
                         <div class="table-responsive">
-                            <table class="display table table-striped table-bordered"
-                                id="scroll_vertical_dynamic_height_table" style="width:100%">
+                            <table class="display table table-striped table-bordered dashboard-record-table"
+                                style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>اسم مشتری</th>
                                         <th>تاریخ فروش</th>
                                         <th>نام محصول</th>
-                                        <th>گدام</th>
                                         <th>مقدار</th>
                                         <th>وزن</th>
                                         <th>قیمت فی واحد</th>
@@ -149,7 +153,6 @@
                                         <td> {{ sell.sell_forei.customer.name }}</td>
                                         <td>{{ sell.sell_forei.reg_date }}</td>
                                         <td>{{ sell.product.meat_name }}</td>
-                                        <td>{{ sell.warehouse }}</td>
                                         <td>{{ sell.quantity }}</td>
                                         <td>{{ sell.weight }}</td>
                                         <td>{{ sell.price_per_unit }}</td>
@@ -203,7 +206,7 @@
                                 شما تمام خریداری های امروزی را در اینجا میتوانید ببینید
                             </p>
                             <div class="table-responsive">
-                                <table class="display table table-striped table-bordered" id="scroll_vertical_table"
+                                <table class="display table table-striped table-bordered dashboard-record-table"
                                     style="width:100%">
                                     <thead>
                                         <tr>
@@ -264,8 +267,8 @@
                         </form>
                         <p style="font-family: 'XW_Zar_Bd_0', sans-serif;"> شما تمام فروش های امروزی را در اینجا میتوانید ببینید</p>
                         <div class="table-responsive">
-                            <table class="display table table-striped table-bordered"
-                                id="scroll_vertical_dynamic_height_table" style="width:100%">
+                            <table class="display table table-striped table-bordered dashboard-record-table"
+                                style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>#</th>
