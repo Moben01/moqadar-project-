@@ -18,10 +18,33 @@
             font-weight: 700;
         }
 
+        .toolbar {
+            width: 275mm;
+            margin: 18px auto 0;
+            text-align: left;
+        }
+
+        .print-button {
+            border: 0;
+            border-radius: 4px;
+            background: #7b633d;
+            color: #fff;
+            padding: 9px 18px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+        }
+
+        .print-button:hover {
+            background: #5f4c2e;
+        }
+
         .page {
             width: 275mm;
             min-height: 185mm;
-            margin: 18px auto;
+            margin: 8px auto 18px;
             padding: 12mm 14mm 10mm;
             background: #fff;
             border: 1px solid #d7d7d7;
@@ -73,20 +96,45 @@
 
         .rql-logo {
             direction: ltr;
-            display: inline-grid;
-            grid-template-columns: auto auto;
+            justify-self: start;
+            display: grid;
+            grid-template-columns: 62px auto;
             align-items: center;
-            gap: 10px;
-            margin-top: 6px;
+            gap: 8px;
+            margin-top: 2px;
             color: #7b633d;
+            min-width: 190px;
         }
 
         .rql-mark {
-            width: 34px;
-            height: 44px;
-            border-radius: 50% 50% 50% 6px;
-            background: linear-gradient(135deg, #b4975f, #6f5632);
-            transform: skewX(-12deg);
+            position: relative;
+            width: 60px;
+            height: 54px;
+        }
+
+        .rql-mark span {
+            position: absolute;
+            right: 2px;
+            width: 42px;
+            height: 15px;
+            border-radius: 20px 2px 20px 2px;
+            background: linear-gradient(135deg, #c2a062, #76572c);
+            transform-origin: right center;
+        }
+
+        .rql-mark span:nth-child(1) {
+            top: 6px;
+            transform: rotate(-28deg);
+        }
+
+        .rql-mark span:nth-child(2) {
+            top: 19px;
+            transform: rotate(-12deg);
+        }
+
+        .rql-mark span:nth-child(3) {
+            top: 32px;
+            transform: rotate(7deg);
         }
 
         .rql-text {
@@ -97,14 +145,16 @@
         .rql-main {
             display: block;
             font-family: Georgia, "Times New Roman", serif;
-            font-size: 44px;
+            font-size: 46px;
             font-weight: 700;
         }
 
         .rql-sub {
             display: block;
+            max-width: 112px;
             font-size: 12px;
-            letter-spacing: 1px;
+            letter-spacing: 0.6px;
+            line-height: 1.05;
         }
 
         .meta {
@@ -164,6 +214,14 @@
 
         .summary-label {
             background: #f1ece3 !important;
+        }
+
+        .balance-label {
+            background: #ece3d2 !important;
+        }
+
+        .balance-value {
+            font-weight: 800;
         }
 
         .footer {
@@ -235,10 +293,18 @@
             .print-hint {
                 display: none;
             }
+
+            .toolbar {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="toolbar">
+        <button class="print-button" type="button" onclick="window.print()">چاپ بل</button>
+    </div>
+
     <main class="page">
         <div class="brand-watermark">
             RQL
@@ -254,7 +320,11 @@
             </div>
 
             <div class="rql-logo" aria-label="RQL">
-                <span class="rql-mark"></span>
+                <span class="rql-mark">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
                 <span class="rql-text">
                     <span class="rql-main">RQL</span>
                     <span class="rql-sub">RUSTAM QALANDARI LIMITED</span>
@@ -323,6 +393,26 @@
                     <td colspan="4"></td>
                     <td class="summary-label">باقی</td>
                     <td>{{ total_min|floatformat:1 }}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td colspan="4">بیلانس قبلی مشتری قبل از این بل</td>
+                    <td class="balance-label">بقایا</td>
+                    <td class="balance-value">{{ previous_customer_balance|floatformat:1 }}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td colspan="4">مقدار باقی مربوط به همین بل</td>
+                    <td class="balance-label">جمله شد</td>
+                    <td class="balance-value">{{ current_bill_balance|floatformat:1 }}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td colspan="4">پول مجموعی همین بل</td>
+                    <td class="balance-label">پول مجموعی</td>
+                    <td class="balance-value">{{ total_due|floatformat:1 }}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td colspan="4">بیلانس نهایی مشتری بعد از ثبت این بل</td>
+                    <td class="balance-label">مجموع بیلانس</td>
+                    <td class="balance-value">{{ final_customer_balance|floatformat:1 }}</td>
                 </tr>
             </tbody>
         </table>

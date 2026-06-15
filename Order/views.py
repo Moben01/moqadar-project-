@@ -874,6 +874,12 @@ def bill_details(request, id):
     total_due = recent_records.aggregate(total=Sum('should_paid'))['total'] or 0
     total_sum = recent_records.aggregate(total=Sum('paid_amount_for_every_record'))['total'] or 0
     total_min = recent_records.aggregate(total=Sum('borrow_amount'))['total'] or 0
+    latest_customer_loan = Loan.objects.filter(customer=record.sell_forei.customer).order_by('-id').first()
+    final_customer_balance = Decimal(str(latest_customer_loan.total_amount)) if latest_customer_loan else Decimal(str(total_min or 0))
+    current_bill_balance = Decimal(str(total_min or 0))
+    previous_customer_balance = final_customer_balance - current_bill_balance
+    if previous_customer_balance < 0:
+        previous_customer_balance = Decimal('0')
 
     context = {
         'recent_records':recent_records,
@@ -881,6 +887,9 @@ def bill_details(request, id):
         'total_due':total_due,
         'total_sum':total_sum,
         'total_min':total_min,
+        'previous_customer_balance':previous_customer_balance,
+        'current_bill_balance':current_bill_balance,
+        'final_customer_balance':final_customer_balance,
 
     }
     return render(request, 'Order/bill.html',context)
