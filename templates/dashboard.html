@@ -66,7 +66,6 @@
                                             <th>تاریخ خرید</th>
                                             <th>تاریخ ثبت</th>
                                             <th>جزئیات</th>
-                                            <th>زمان ایجاد</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -85,7 +84,6 @@
                                                 <td>{{ purchase.date }}</td>
                                                 <td>{{ purchase.reg_date }}</td>
                                                 <td>{{ purchase.details }}</td>
-                                                <td>{{ purchase.created_at }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -142,8 +140,6 @@
                                         <th>باقی همین ریکارد</th>
                                         <th>مجموع پرداخت بل</th>
                                         <th>مجموع باقی بل</th>
-                                        <th>زمان ایجاد</th>
-                                        <th>آخرین تغییر</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
@@ -165,8 +161,6 @@
                                         <td>{{ sell.reamin_amount_according_to_sale_record }}</td>
                                         <td>{{ sell.sell_forei.total_paid_amount }}</td>
                                         <td>{{ sell.sell_forei.total_remain_amount }}</td>
-                                        <td>{{ sell.created_at }}</td>
-                                        <td>{{ sell.updated }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -217,7 +211,6 @@
                                             <th>مجموع مقدار</th>
                                             <th>باقی مقدار</th>
                                             <th>توضیحات</th>
-                                            <th>زمان ایجاد</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -230,7 +223,6 @@
                                                 <td>{{ purchase.total_amount }}</td>
                                                 <td>{{ purchase.reamin_amonts }}</td>
                                                 <td>{{ purchase.description }}</td>
-                                                <td>{{ purchase.created_at }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -282,8 +274,6 @@
                                         <th>نوع دریافت/پرداخت</th>
                                         <th> توضیحات</th>
                                         <th>حالت داخلی</th>
-                                        <th>زمان ایجاد</th>
-                                        <th>آخرین تغییر</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
@@ -300,8 +290,6 @@
                                         <td>{{ sell.is_income_or_outcome }}</td>
                                         <td>{{ sell.descriiption }}</td>
                                         <td>{{ sell.blooelean_field }}</td>
-                                        <td>{{ sell.created }}</td>
-                                        <td>{{ sell.updated }}</td>
                                       
                                     </tr>
                                 {% endfor %}
