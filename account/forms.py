@@ -2,6 +2,7 @@ from django import forms
 from.models import Employee, Employeement_type, Employeement_Info
 from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm, SetPasswordForm)
 from django.contrib.auth.models import User, Group,Permission
+from django.contrib.auth.password_validation import validate_password
 
 
 
@@ -143,6 +144,57 @@ class UserEditForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['name'].required = True
         self.fields['email'].required = True
+
+
+class EmployeePasswordChangeForm(forms.Form):
+    old_password = forms.CharField(
+        label='پسورد فعلی',
+        widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': 'پسورد فعلی'}
+        ),
+    )
+    new_password1 = forms.CharField(
+        label='پسورد جدید',
+        widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': 'پسورد جدید'}
+        ),
+    )
+    new_password2 = forms.CharField(
+        label='تکرار پسورد جدید',
+        widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': 'تکرار پسورد جدید'}
+        ),
+    )
+
+    def __init__(self, employee, *args, **kwargs):
+        self.employee = employee
+        super().__init__(*args, **kwargs)
+
+    def clean_old_password(self):
+        old_password = self.cleaned_data.get('old_password')
+        if not self.employee.check_password(old_password):
+            raise forms.ValidationError('پسورد فعلی درست نیست.')
+        return old_password
+
+    def clean_new_password1(self):
+        new_password = self.cleaned_data.get('new_password1')
+        validate_password(new_password, self.employee)
+        return new_password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password1 = cleaned_data.get('new_password1')
+        new_password2 = cleaned_data.get('new_password2')
+
+        if new_password1 and new_password2 and new_password1 != new_password2:
+            self.add_error('new_password2', 'پسورد جدید و تکرار آن یکسان نیست.')
+
+        return cleaned_data
+
+    def save(self):
+        self.employee.set_password(self.cleaned_data['new_password1'])
+        self.employee.save(update_fields=['password'])
+        return self.employee
 
 
 

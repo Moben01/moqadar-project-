@@ -151,6 +151,9 @@
                                                                
                                                                 class="dropdown-item ul-widget__link--font" href="{% url 'account:more_information' i.id %}"><i class="fas fa-edit"></i> 
                                                               معلومات مکمل</a>
+                                                              <a class="dropdown-item ul-widget__link--font"
+                                                                href="{% url 'account:change_employee_password' i.id %}"><i class="fas fa-key"></i>
+                                                                تغییر پسورد</a>
                                                               {% if perms.Account.change_approval_employeement_info %}
                                                             <a class="dropdown-item ul-widget__link--font"
                                                                 class="dropdown-item ul-widget__link--font" href="#"><i class="fas fa-edit"></i> 
@@ -176,6 +179,9 @@
                                                                     <a class="dropdown-item ul-widget__link--font"
                                                                 class="dropdown-item ul-widget__link--font" href="{% url 'account:more_information' i.id %}"><i class="fas fa-edit"></i> 
                                                                 مکمل معلومات</a>
+                                                            <a class="dropdown-item ul-widget__link--font"
+                                                                href="{% url 'account:change_employee_password' i.id %}"><i class="fas fa-key"></i>
+                                                                تغییر پسورد</a>
                                                             <a class="dropdown-item ul-widget__link--font"
                                                                 class="dropdown-item ul-widget__link--font" href="#"><i
                                                                     class="fas fa-edit"> </i> تغیرات</a>

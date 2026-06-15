@@ -105,6 +105,36 @@ def change_password(request):
     })
 
 
+@login_required
+def change_employee_password(request, employee_id):
+    employee = get_object_or_404(Employee, id=employee_id)
+
+    if request.method == 'POST':
+        form = EmployeePasswordChangeForm(employee, request.POST)
+        if form.is_valid():
+            changed_employee = form.save()
+            if changed_employee.pk == request.user.pk:
+                update_session_auth_hash(request, changed_employee)
+            LogEntry.objects.log_action(
+                user_id=request.user.id,
+                content_type_id=ContentType.objects.get_for_model(Employee).pk,
+                object_id=changed_employee.pk,
+                object_repr=str(changed_employee),
+                action_flag=CHANGE,
+                change_message="پسورد کارمند تغییر شد"
+            )
+            messages.success(request, 'پسورد کارمند موفقانه تغییر شد.')
+            return redirect('account:employee_info')
+    else:
+        form = EmployeePasswordChangeForm(employee)
+
+    context = {
+        'form': form,
+        'employee': employee,
+    }
+    return render(request, 'Account/change_employee_password.html', context)
+
+
 
 def emp_type(request):
     if request.method == "POST":
