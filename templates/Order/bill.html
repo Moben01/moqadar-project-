@@ -400,9 +400,9 @@
                     <td class="balance-value">{{ previous_customer_balance|floatformat:1 }}</td>
                 </tr>
                 <tr class="summary-row">
-                    <td colspan="4">مقدار باقی مربوط به همین بل</td>
+                    <td colspan="4">مجموع پول بالای مشتری از بقایا و باقی همین بل</td>
                     <td class="balance-label">جمله شد</td>
-                    <td class="balance-value">{{ current_bill_balance|floatformat:1 }}</td>
+                    <td class="balance-value">{{ final_customer_balance|floatformat:1 }}</td>
                 </tr>
             </tbody>
         </table>
