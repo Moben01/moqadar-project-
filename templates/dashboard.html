@@ -49,9 +49,18 @@
                                             <th>#</th>
                                             <th>تهیه کننده</th>
                                             <th>محصول</th>
+                                            <th>گدام</th>
                                             <th>مقدار</th>
-                                            <th>قیمت فی دانه</th>
-                                            <th>مجموعه پول پرداخت شده</th>
+                                            <th>وزن</th>
+                                            <th>قیمت فی واحد</th>
+                                            <th>مجموعه پول</th>
+                                            <th>پول پرداخت شده</th>
+                                            <th>پول باقی</th>
+                                            <th>نوع محاسبه</th>
+                                            <th>تاریخ خرید</th>
+                                            <th>تاریخ ثبت</th>
+                                            <th>جزئیات</th>
+                                            <th>زمان ایجاد</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -60,9 +69,18 @@
                                                 <td>{{ purchase.id }}</td>
                                                 <td>{{ purchase.supplaier }}</td>
                                                 <td>{{ purchase.product }}</td>
+                                                <td>{{ purchase.warehouse }}</td>
                                                 <td>{{ purchase.quantity }}</td>
+                                                <td>{{ purchase.wegiht }}</td>
                                                 <td>{{ purchase.price_per_unit }}</td>
                                                 <td>{{ purchase.total_unit }}</td>
+                                                <td>{{ purchase.paid_amount }}</td>
+                                                <td>{{ purchase.remain_amount }}</td>
+                                                <td>{{ purchase.status }}</td>
+                                                <td>{{ purchase.date }}</td>
+                                                <td>{{ purchase.reg_date }}</td>
+                                                <td>{{ purchase.details }}</td>
+                                                <td>{{ purchase.created_at }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -105,10 +123,23 @@
                                     <tr>
                                         <th>#</th>
                                         <th>اسم مشتری</th>
+                                        <th>تاریخ فروش</th>
                                         <th>نام محصول</th>
+                                        <th>گدام</th>
                                         <th>مقدار</th>
-                                        <th>مقدار کلی</th>
-                                        <th>مقدار فی واحد</th>
+                                        <th>وزن</th>
+                                        <th>قیمت فی واحد</th>
+                                        <th>جمله پول</th>
+                                        <th>پول پرداخت شده</th>
+                                        <th>باقی پول</th>
+                                        <th>نوع محاسبه</th>
+                                        <th>توضیحات</th>
+                                        <th>تایید پول</th>
+                                        <th>باقی همین ریکارد</th>
+                                        <th>مجموع پرداخت بل</th>
+                                        <th>مجموع باقی بل</th>
+                                        <th>زمان ایجاد</th>
+                                        <th>آخرین تغییر</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
@@ -116,10 +147,23 @@
                                     <tr>
                                         <td>{{ sell.id }}</td>
                                         <td> {{ sell.sell_forei.customer.name }}</td>
+                                        <td>{{ sell.sell_forei.reg_date }}</td>
                                         <td>{{ sell.product.meat_name }}</td>
+                                        <td>{{ sell.warehouse }}</td>
                                         <td>{{ sell.quantity }}</td>
-                                        <td>{{ sell.should_paid }}</td>
+                                        <td>{{ sell.weight }}</td>
                                         <td>{{ sell.price_per_unit }}</td>
+                                        <td>{{ sell.should_paid }}</td>
+                                        <td>{{ sell.paid_amount_for_every_record }}</td>
+                                        <td>{{ sell.borrow_amount }}</td>
+                                        <td>{{ sell.status }}</td>
+                                        <td>{{ sell.notes }}</td>
+                                        <td>{{ sell.is_money_approved|yesno:"تایید شده,تایید نشده" }}</td>
+                                        <td>{{ sell.reamin_amount_according_to_sale_record }}</td>
+                                        <td>{{ sell.sell_forei.total_paid_amount }}</td>
+                                        <td>{{ sell.sell_forei.total_remain_amount }}</td>
+                                        <td>{{ sell.created_at }}</td>
+                                        <td>{{ sell.updated }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -165,9 +209,12 @@
                                         <tr>
                                             <th>#</th>
                                             <th> اسم </th>
-                                            
                                             <th>مقدار</th>
-                                          
+                                            <th>تاریخ</th>
+                                            <th>مجموع مقدار</th>
+                                            <th>باقی مقدار</th>
+                                            <th>توضیحات</th>
+                                            <th>زمان ایجاد</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -176,7 +223,11 @@
                                                 <td>{{ purchase.id }}</td>
                                                 <td>{{ purchase.name }}</td>
                                                 <td>{{ purchase.amount }}</td>
-                                               
+                                                <td>{{ purchase.date }}</td>
+                                                <td>{{ purchase.total_amount }}</td>
+                                                <td>{{ purchase.reamin_amonts }}</td>
+                                                <td>{{ purchase.description }}</td>
+                                                <td>{{ purchase.created_at }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -219,8 +270,17 @@
                                     <tr>
                                         <th>#</th>
                                         <th>اسم دهنده پول</th>   
+                                        <th>تاریخ دریافت</th>
+                                        <th>واحد پولی</th>
+                                        <th>نرخ تبادله</th>
                                         <th>مقدار</th>
+                                        <th>مجموع با ریکارد قبلی</th>
+                                        <th>پول تبدیل شده</th>
+                                        <th>نوع دریافت/پرداخت</th>
                                         <th> توضیحات</th>
+                                        <th>حالت داخلی</th>
+                                        <th>زمان ایجاد</th>
+                                        <th>آخرین تغییر</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
@@ -228,8 +288,17 @@
                                     <tr>
                                         <td>{{ sell.id }}</td>
                                         <td>{{ sell.olabrate.name_opf }}</td>
+                                        <td>{{ sell.rec_date }}</td>
+                                        <td>{{ sell.curr }}</td>
+                                        <td>{{ sell.exchagne_rate }}</td>
                                         <td>{{ sell.income_amount }}</td>
+                                        <td>{{ sell.total_incme_with_last_record }}</td>
+                                        <td>{{ sell.exchanged_moneey }}</td>
+                                        <td>{{ sell.is_income_or_outcome }}</td>
                                         <td>{{ sell.descriiption }}</td>
+                                        <td>{{ sell.blooelean_field }}</td>
+                                        <td>{{ sell.created }}</td>
+                                        <td>{{ sell.updated }}</td>
                                       
                                     </tr>
                                 {% endfor %}
