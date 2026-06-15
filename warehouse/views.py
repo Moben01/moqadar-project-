@@ -10,6 +10,7 @@ from purchase.models import *
 from django.db.models import Count
 from django.db import transaction
 from Order.models import *
+from .services import get_product_stock, to_decimal
 # Create your views here.
 
 def warehouse_part(request):
@@ -29,10 +30,18 @@ def warehouse_part(request):
             messages.error(request, f'خطای سیستمی در ثبت گدام: {str(e)}')
             return redirect('warehouse:warehouse_part')
     else:
-        inventory_data = (
-        inventrories.objects.values('product_foerignkey__meat_name') 
-        .annotate(total_quantity=Sum('Quantity'))
-        .order_by('-total_quantity') 
+        inventory_data = []
+        for product_item in product.objects.all():
+            stock = get_product_stock(product_item)
+            if stock['available_quantity'] > 0 or stock['available_weight'] > 0:
+                inventory_data.append({
+                    'product_foerignkey__meat_name': product_item.meat_name,
+                    'total_quantity': stock['available_quantity'],
+                })
+        inventory_data = sorted(
+            inventory_data,
+            key=lambda item: item['total_quantity'],
+            reverse=True,
         )
         last_record = inventrories.objects.last()
         my_data = warehouse_info.objects.all()
@@ -212,8 +221,9 @@ def ware_data(request,id):
         )
         total_weight_in_item_deals_sold = sold_products_in_item_delas_weight['total_weight_sold_in_item_deals'] or 0
 
-        available_quantity = (purchase_qty + item_deals_qty) - (sale_qty + item_deals_qty_sold)
-        available_weight = (purchase_wigh + total_wight_in_item_delas_purchase) - (sold_wight + total_weight_in_item_deals_sold)
+        stock = get_product_stock(i, warejouse)
+        available_quantity = stock['available_quantity']
+        available_weight = stock['available_weight']
 
         results.append({
             'meat_name': i.meat_name,
@@ -260,13 +270,14 @@ def ware_data(request,id):
         sold_products_in_item_delas_weight = item_deals.objects.filter(item=product_id,status='برداشت').aggregate(total_weight_sold_in_item_deals=Sum('weighht'))
         total_weight_in_item_deals_sold = sold_products_in_item_delas_weight['total_weight_sold_in_item_deals'] or 0
                 
+        stock = get_product_stock(i, warejouse)
         products_data.append({
             'product_id':product_id,
             'product_name':i.meat_name,
-            'total_quantity_purchased': purchase_qty + item_deals_qty or 0,
-            'total_weight_purchased': purchase_wigh + total_wight_in_item_delas_purchase or 0,
-            'total_quantity_sold': sale_qty + item_deals_qty_sold or 0,
-            'total_wegiht_sold': sold_wight + total_weight_in_item_deals_sold or 0
+            'total_quantity_purchased': stock['total_quantity_in'],
+            'total_weight_purchased': stock['total_weight_in'],
+            'total_quantity_sold': stock['total_quantity_out'],
+            'total_wegiht_sold': stock['total_weight_out']
         }) 
 
     context = {
@@ -333,8 +344,8 @@ def transfer_pro_to_godams(request):
             find_pro = product.objects.get(id=p)
             
 
-            quantity = form.cleaned_data.get('quantity')
-            weight = form.cleaned_data.get('weight')
+            quantity = to_decimal(form.cleaned_data.get('quantity'))
+            weight = to_decimal(form.cleaned_data.get('weight'))
 
             find_pro_in = inventrories.objects.filter(warehouse_foerignkey=find_s_id,in_and_out='IN',product_foerignkey=product_id.id).aggregate(
                 total_weight_in_Purchase=Sum('weight_field'),
@@ -344,8 +355,13 @@ def transfer_pro_to_godams(request):
                 total_weight_in_sale=Sum('weight_field'),
                 total_quantity_in_sale=Sum('Quantity')
             )
-            find_exist_amount_weight = (find_pro_in['total_weight_in_Purchase'] or 0) - (find_pro_out['total_weight_in_sale'] or 0)
-            find_exist_amount_quantity = (find_pro_in['total_quantity_in_Purchase'] or 0) - (find_pro_out['total_quantity_in_sale'] or 0)
+            stock = get_product_stock(find_pro, find_s_ware)
+            find_exist_amount_weight = stock['available_weight']
+            find_exist_amount_quantity = stock['available_quantity']
+
+            if quantity < 0 or weight < 0:
+                messages.warning(request, 'مقدار تعداد یا وزن نمی‌تواند منفی باشد.')
+                return redirect(referer)
 
             if quantity > find_exist_amount_quantity or weight > find_exist_amount_weight:
                 messages.warning(request,'مقدار موجودی محصول که میخواهید به گدام دیگر ارسال کنید کمتز از موجودی گدام ارسال کننده است ')
@@ -371,12 +387,13 @@ def transfer_pro_to_godams(request):
                 
                 messages.success(request,'محصول موفقانه انتقال یافت ')
                 return redirect(referer)
-            
+        else:
+            messages.warning(request, 'معلومات وارد شده درست نیست.')
+            return redirect(referer)
     else:
         form = tranfer_productsForm()
-        context = {
-            'form':form,
-            'find_all_records':find_all_records,
-        }
+    context = {
+        'form':form,
+        'find_all_records':find_all_records,
+    }
     return render(request,"product_and_catago/trander_pro.html",context)
-    

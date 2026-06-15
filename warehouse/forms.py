@@ -1,6 +1,23 @@
 from .models import *
 from django import forms
 
+
+NON_NEGATIVE_MESSAGE = "مقدار نمی‌تواند منفی باشد."
+
+
+def set_non_negative_attrs(form, field_names):
+     for field_name in field_names:
+          form.fields[field_name].widget.attrs.update({"min": "0", "step": "any"})
+
+
+def validate_non_negative(cleaned_data, form, field_names):
+     for field_name in field_names:
+          value = cleaned_data.get(field_name)
+          if value is not None and value < 0:
+               form.add_error(field_name, NON_NEGATIVE_MESSAGE)
+     return cleaned_data
+
+
 class tranfer_productsForm(forms.ModelForm):
      class Meta:
           model = tranfer_products
@@ -30,7 +47,19 @@ class tranfer_productsForm(forms.ModelForm):
           self.fields["weight"].widget.attrs.update(
           {"class": "form-control", "placeholder": "وزن"}
           )
-     
+          set_non_negative_attrs(self, ["quantity", "weight"])
+
+     def clean(self):
+          cleaned_data = super().clean()
+          validate_non_negative(cleaned_data, self, ["quantity", "weight"])
+
+          source_warehouse = cleaned_data.get("source_warehouse")
+          to_warehouse = cleaned_data.get("to_warehouse")
+          if source_warehouse and to_warehouse and source_warehouse == to_warehouse:
+               self.add_error("to_warehouse", "گدام گیرنده باید از گدام ارسال کننده متفاوت باشد.")
+
+          return cleaned_data
+
 
 
 
@@ -55,9 +84,14 @@ class warehouse_infoForm(forms.ModelForm):
           {"class": "form-control", "placeholder": "ظرفیت گدام را به تعداد بنویسید"}
           )
          
+          set_non_negative_attrs(self, ["capacity", "capacity_by_num"])
+
           self.fields["description"].widget.attrs.update(
           {"class": "form-control", "placeholder": "توضیخات"}
           )
           self.fields["reg_date"].widget.attrs.update(
           {"class": "form-control", "placeholder": "تاریخ را وارد کنید"}
           )
+     def clean(self):
+          cleaned_data = super().clean()
+          return validate_non_negative(cleaned_data, self, ["capacity", "capacity_by_num"])

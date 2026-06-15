@@ -2,6 +2,22 @@ from.models import *
 from django import forms
 
 
+NON_NEGATIVE_MESSAGE = "مقدار نمی‌تواند منفی باشد."
+
+
+def set_non_negative_attrs(form, field_names):
+     for field_name in field_names:
+          form.fields[field_name].widget.attrs.update({"min": "0", "step": "any"})
+
+
+def validate_non_negative(cleaned_data, form, field_names):
+     for field_name in field_names:
+          value = cleaned_data.get(field_name)
+          if value is not None and value < 0:
+               form.add_error(field_name, NON_NEGATIVE_MESSAGE)
+     return cleaned_data
+
+
 class OrderForm(forms.ModelForm):
      class Meta:
           model = Order
@@ -51,6 +67,11 @@ class Order_ItemForm(forms.ModelForm):
           self.fields["total_price"].widget.attrs.update(
           {"class": "form-control", "placeholder": "مقدار تمام پول را وارد کنید"}
           )
+          set_non_negative_attrs(self, ["quantity", "price_per_unit", "total_price"])
+
+     def clean(self):
+          cleaned_data = super().clean()
+          return validate_non_negative(cleaned_data, self, ["quantity", "price_per_unit", "total_price"])
 
 
 from jalali_date.widgets import AdminJalaliDateWidget
@@ -104,6 +125,18 @@ class sale_itemForm(forms.ModelForm):
           self.fields["notes"].widget.attrs.update(
           {"class": "form-control", "placeholder": "توضیحات"}
           )
+          set_non_negative_attrs(
+          self,
+          ["quantity", "price_per_unit", "weight", "paid_amount_for_every_record"],
+          )
+
+     def clean(self):
+          cleaned_data = super().clean()
+          return validate_non_negative(
+          cleaned_data,
+          self,
+          ["quantity", "price_per_unit", "weight", "paid_amount_for_every_record"],
+          )
 
 
 
@@ -129,6 +162,11 @@ class ReturnForm(forms.ModelForm):
           self.fields["weight"].widget.attrs.update(
           {"class": "form-control", "placeholder": "تغداد یا وزن را وارد کنید"}
           )
+          set_non_negative_attrs(self, ["quantity", "price_per", "weight"])
+
+     def clean(self):
+          cleaned_data = super().clean()
+          return validate_non_negative(cleaned_data, self, ["quantity", "price_per", "weight"])
 
 
 

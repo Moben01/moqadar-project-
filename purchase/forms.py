@@ -4,6 +4,22 @@ from product_and_catagory.models import product
 from jalali_date.widgets import AdminJalaliDateWidget
 
 
+NON_NEGATIVE_MESSAGE = "مقدار نمی‌تواند منفی باشد."
+
+
+def set_non_negative_attrs(form, field_names):
+     for field_name in field_names:
+          form.fields[field_name].widget.attrs.update({"min": "0", "step": "any"})
+
+
+def validate_non_negative(cleaned_data, form, field_names):
+     for field_name in field_names:
+          value = cleaned_data.get(field_name)
+          if value is not None and value < 0:
+               form.add_error(field_name, NON_NEGATIVE_MESSAGE)
+     return cleaned_data
+
+
 # testsssss
 # kjlkasdfafasdf
 class ParchaseForm(forms.ModelForm):
@@ -47,7 +63,16 @@ class ParchaseForm(forms.ModelForm):
           {"class": "form-control", "placeholder": "مقدار که باید پرداخت شود"}
           )
 
+          set_non_negative_attrs(self, ["quantity", "price_per_unit", "paid_amount", "wegiht"])
           self.fields['supplaier'].queryset = Customer.objects.filter(role__in=['تامین کننده', 'هردو'])
+
+     def clean(self):
+          cleaned_data = super().clean()
+          return validate_non_negative(
+               cleaned_data,
+               self,
+               ["quantity", "price_per_unit", "paid_amount", "wegiht"],
+          )
 
 
 
@@ -79,6 +104,11 @@ class item_dealsForms(forms.ModelForm):
           self.fields["notes"].widget.attrs.update(
           {"class": "form-control", "placeholder": "مقدار پول پرداخت شده"}
           )
+          set_non_negative_attrs(self, ["number", "weighht"])
+
+     def clean(self):
+          cleaned_data = super().clean()
+          return validate_non_negative(cleaned_data, self, ["number", "weighht"])
         
 
 

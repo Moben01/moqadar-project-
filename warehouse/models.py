@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from product_and_catagory.models import *
 
 from django.db.models.signals import post_save
@@ -6,6 +7,15 @@ from django.dispatch import receiver
 from purchase.models import *
 # Create your models here.
 
+
+def validate_non_negative_fields(instance, field_names):
+    errors = {}
+    for field_name in field_names:
+        value = getattr(instance, field_name, None)
+        if value is not None and value < 0:
+            errors[field_name] = 'مقدار نمی‌تواند منفی باشد.'
+    if errors:
+        raise ValidationError(errors)
 
 
 class warehouse_info(models.Model):
@@ -20,6 +30,13 @@ class warehouse_info(models.Model):
     
     def __str__(self):
         return self.name
+
+    def clean(self):
+        validate_non_negative_fields(self, ['capacity', 'capacity_by_num', 'current_stock'])
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 
@@ -40,6 +57,13 @@ class inventrories(models.Model):
          
     )
 
+    def clean(self):
+        validate_non_negative_fields(self, ['Quantity', 'weight_field'])
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
 
 class tranfer_products(models.Model):
     date=models.CharField(max_length=200,blank=True,null=True)
@@ -48,6 +72,15 @@ class tranfer_products(models.Model):
     product_send = models.ForeignKey(product,on_delete=models.CASCADE, related_name="p")
     quantity = models.FloatField()
     weight = models.FloatField()
+
+    def clean(self):
+        validate_non_negative_fields(self, ['quantity', 'weight'])
+        if self.source_warehouse_id and self.to_warehouse_id and self.source_warehouse_id == self.to_warehouse_id:
+            raise ValidationError({'to_warehouse': 'گدام گیرنده باید از گدام ارسال کننده متفاوت باشد.'})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
     
 
 

@@ -14,6 +14,7 @@ from Customer.models import Loan
 from Customer.forms import CustomerForm
 from Order.models import Sale
 from warehouse.models import inventrories,warehouse_info
+from warehouse.services import get_product_stock
 
 from django.forms import modelform_factory, inlineformset_factory
 
@@ -870,12 +871,14 @@ def bill_details(request, id):
     fetch = record.sell_forei_id
 
     recent_records = sale_item_part.objects.filter(sell_forei_id=fetch) 
+    total_due = recent_records.aggregate(total=Sum('should_paid'))['total'] or 0
     total_sum = recent_records.aggregate(total=Sum('paid_amount_for_every_record'))['total'] or 0
     total_min = recent_records.aggregate(total=Sum('borrow_amount'))['total'] or 0
 
     context = {
         'recent_records':recent_records,
         'record':record,
+        'total_due':total_due,
         'total_sum':total_sum,
         'total_min':total_min,
 
@@ -1026,7 +1029,9 @@ def order_loans(request):
 
 
 
-def get_product_available_stock(product_instance):
+def get_product_available_stock(product_instance, warehouse_instance=None):
+    return get_product_stock(product_instance, warehouse_instance)
+
     product_id = product_instance.id
 
     # IN from purchases
@@ -1136,13 +1141,21 @@ def Direct_sale(request):
                         price_per_unit = Decimal(str(price_per_unit))
                         paid_amount_for_every_record = Decimal(str(paid_amount_for_every_record))
 
+                        if (
+                            quantity < 0
+                            or weight < 0
+                            or price_per_unit < 0
+                            or paid_amount_for_every_record < 0
+                        ):
+                            raise ValueError('مقدار تعداد، وزن، قیمت یا پرداخت نمی‌تواند منفی باشد.')
+
                         # Lock system balance row
                         system_all_money = total_balance.objects.select_for_update().first()
                         if not system_all_money:
                             raise ValueError('پول در سیستم موجود نیست')
 
                         # Calculate stock exactly like your existence page
-                        stock = get_product_available_stock(product_instance)
+                        stock = get_product_available_stock(product_instance, warehouse_instance)
                         available_quantity = stock['available_quantity']
                         available_weight = stock['available_weight']
 

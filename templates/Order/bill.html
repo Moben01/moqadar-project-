@@ -1,283 +1,350 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bill Layout</title>
+    <title>بل فروش</title>
     <style>
-        /* General Reset */
-        body, h5, table {
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
             margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            color: #111;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 700;
         }
 
-        /* Container Styles */
-        .main-content {
-            padding: 20px;
-            margin: 0 80px;
-        }
-
-        .container {
-            padding: 30px;
-        }
-
-        /* Card Styles */
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: #f8f9fa;
-        }
-
-        .card-header .container {
-            padding: 10px;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        /* Table Styles */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table th, .table td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-
-        .table thead {
-            background-color: #f8f9fa;
-        }
-
-        /* Alert Styles */
-        .alert {
-            background-color: #cce5ff;
-            color: #004085;
-            padding: 20px;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .alert h4 {
-            margin: 0;
-            font-size: 20px;
-        }
-
-        /* Text Alignment */
-        .text-end {
-            text-align: right;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        /* Footer */
-        .footer p {
-            font-size: 14px;
-        }
-
-        /* Dropdown Styles */
-        .dropdown {
+        .page {
+            width: 275mm;
+            min-height: 185mm;
+            margin: 18px auto;
+            padding: 12mm 14mm 10mm;
+            background: #fff;
+            border: 1px solid #d7d7d7;
             position: relative;
         }
 
-        .dropdown-menu {
-            display: none;
+        .brand-watermark {
             position: absolute;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            top: 100%;
-            right: 0;
-            z-index: 10;
+            inset: 72mm 0 auto;
+            text-align: center;
+            color: rgba(124, 96, 61, 0.18);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 44px;
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
         }
 
-        .dropdown:hover .dropdown-menu {
+        .header {
+            display: grid;
+            grid-template-columns: 1fr 2.1fr 1fr;
+            align-items: start;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .customer-line,
+        .date-line {
+            padding-top: 5px;
+            white-space: nowrap;
+        }
+
+        .center-title {
+            text-align: center;
+            line-height: 1.35;
+        }
+
+        .business-name {
+            font-size: 32px;
+            letter-spacing: 0;
+            margin-bottom: 2px;
+        }
+
+        .business-en {
+            direction: ltr;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .rql-logo {
+            direction: ltr;
+            display: inline-grid;
+            grid-template-columns: auto auto;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+            color: #7b633d;
+        }
+
+        .rql-mark {
+            width: 34px;
+            height: 44px;
+            border-radius: 50% 50% 50% 6px;
+            background: linear-gradient(135deg, #b4975f, #6f5632);
+            transform: skewX(-12deg);
+        }
+
+        .rql-text {
+            text-align: left;
+            line-height: 1.05;
+        }
+
+        .rql-main {
             display: block;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 44px;
+            font-weight: 700;
         }
 
-        .dropdown-item {
-            padding: 8px 16px;
-            cursor: pointer;
-            text-decoration: none;
+        .rql-sub {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 1px;
         }
 
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
+        .meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 8px 0 10px;
+            align-items: center;
         }
 
-        /* Icons */
-        .fa-eye-slash {
-            cursor: pointer;
+        .field-line {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px;
+            align-items: end;
         }
 
-        .ml-auto {
-            margin-left: auto;
+        .line {
+            border-bottom: 1px solid #333;
+            min-height: 20px;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .main-content {
-                margin: 0 20px;
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 3px 5px;
+            table-layout: fixed;
+            direction: rtl;
+        }
+
+        th,
+        td {
+            height: 34px;
+            border: 2px solid #7c6f5c;
+            border-radius: 5px;
+            text-align: center;
+            vertical-align: middle;
+            padding: 4px 7px;
+        }
+
+        th {
+            background: #f1ece3;
+            font-size: 15px;
+        }
+
+        .col-no { width: 52px; }
+        .col-item { width: 32%; }
+        .col-weight { width: 15%; }
+        .col-qty { width: 15%; }
+        .col-price { width: 17%; }
+        .col-money { width: 17%; }
+
+        .summary-row td {
+            height: 32px;
+            background: #fff;
+        }
+
+        .summary-label {
+            background: #f1ece3 !important;
+        }
+
+        .footer {
+            display: grid;
+            grid-template-columns: 1.1fr 1.2fr 1.1fr;
+            gap: 18px;
+            align-items: end;
+            margin-top: 10px;
+        }
+
+        .signature {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: end;
+            gap: 8px;
+        }
+
+        .notes {
+            text-align: center;
+            line-height: 1.65;
+        }
+
+        .contacts {
+            direction: ltr;
+            text-align: left;
+            line-height: 1.7;
+            color: #4a3f2b;
+            font-size: 14px;
+        }
+
+        .contact-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+            border-radius: 3px;
+            background: #4f8fc9;
+            color: #fff;
+            text-align: center;
+            line-height: 16px;
+            font-size: 11px;
+        }
+
+        .print-hint {
+            text-align: center;
+            margin: 12px auto 20px;
+            color: #555;
+            font-weight: 400;
+        }
+
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 8mm;
             }
 
-            .table th, .table td {
-                padding: 8px;
+            body {
+                background: #fff;
+            }
+
+            .page {
+                width: auto;
+                min-height: auto;
+                margin: 0;
+                padding: 6mm;
+                border: none;
+            }
+
+            .print-hint {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <div class="main-content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card o-hidden mb-4 border-dark">
-                
-                    <div class="card-header">
-                            <div class="col-6 text-end">
-                                <h5>تاریخ:  {{ record.sell_forei.reg_date }}</h5>
-                            </div>
-                    
-                        <div style="text-align: center;">
-                            <h3> امیری</h3>
-                            <h4>   بل فروش</h4>
-                            <h4> ساعت: <span id="clock"></span></h4>
-                        </div>
-                        <div class="col-6 card-title m-0">
-                                <h5>اسم مشتری:  {{ record.sell_forei.customer.name }}</h5>
-                            </div>
-                        
-                    </div>
-                    <script>
-                        function updateClock() {
-                            let now = new Date();
-                            let hours = now.getHours();
-                            let minutes = now.getMinutes();
-                            let seconds = now.getSeconds();
-                            let ampm = hours >= 12 ? 'PM' : 'AM';
-                    
-                            hours = hours % 12 || 12; // Convert to 12-hour format
-                            minutes = minutes < 10 ? '0' + minutes : minutes;
-                            seconds = seconds < 10 ? '0' + seconds : seconds;
-                    
-                            let timeString = hours + ":" + minutes + ":" + seconds + " " + ampm;
-                            document.getElementById('clock').innerText = timeString;
-                        }
-                    
-                        setInterval(updateClock, 1000); // Update every second
-                        updateClock(); // Initial call to prevent delay
-                    </script>
-                    <div class="card-header">
-                            <div class="col-6 text-end">
-                                <h5></h5>
-                            </div>
-                            {% if record.status == 'ضرب وزن' %}
-                                <div class="col-6 card-title m-0">
-                                    <h5>جنس مذکور به کیلوگرام فروخته شده است</h5>
-                                </div>
-                            {% else %}
-                                <div class="col-6 card-title m-0">
-                                    <h5>جنس مذکور به تعداد فروخته شده است</h5>
-                                </div>
-                            {% endif %}
-                            
-                    </div>
-                
-                    <div class="card-body">
-                        <div style="overflow-x: auto;">
-                            <table class="table" style="min-width: 800px;">
-                                <thead>
-                                    <tr>
-                                        <th>پول باقی</th>
-                                        <th>پول پرداخت شده </th>
-                                        <th>پول پرداختی </th>
-                                        <th>قیمت فی واحد</th>
-                                        <th>مقدار</th>
-                                        <th>اسم جنس</th>
-                                        <th>شماره</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for customer in recent_records %}
-                                    <tr>
-                                        <td>{{ customer.borrow_amount }}</td>
-                                        <td>{{ customer.paid_amount_for_every_record }}</td>
-                                        <td>{{ customer.should_paid }}</td>
-                                        <td>{{ customer.price_per_unit }}</td>
-                                        {% if customer.status == 'ضرب وزن' %}
-                                            <td>{{ customer.weight }} کیلوگرام </td>
-                                        {% else %}
-                                            <td>{{ customer.quantity }} دانه </td>
-                                        {% endif %}
-                                        <td>{{ customer.product.meat_name }}</td>
-                                        <td>{{ customer.id }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    <tr><td colspan="7"></td></tr>
-                                    <tr>
-                                        <td>{{ total_sum }}</td>
-                                        <td colspan="6">مجموع پول پرداختی</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{{ total_min }}</td>
-                                        <td colspan="6">مجموع پول باقی</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    
-                        <div class="row mt-4">
-                            <div class="col-6">
-                                <p>نوت: جنس فروخته شده واپس نمی‌شود</p>
-                            </div>
-                            <div class="col-6 text-end">
-                                <p>امضاء: ___________________</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <main class="page">
+        <div class="brand-watermark">
+            RQL
+            <div style="font-size: 14px;">RUSTAM QALANDARI LIMITED</div>
         </div>
-    </div>
 
+        <header class="header">
+            <div class="date-line">تاریخ: {{ record.sell_forei.reg_date }}</div>
 
-<div class="container py-5">
-    <div class="alert alert-info text-center" id="printAlert">
-        <h4 class="display-6">
-        را وارد کنید  Ctrl + p برای پرنت و دانلود این بِل لطفا 
-        </h4>
-    </div>
-    <i id="iconToggle" class="fas fa-eye-slash" style="cursor: pointer;" title="Hide Alert"></i>
-</div>
+            <div class="center-title">
+                <div class="business-name">کشتارگاه گوشت مرغ تازه رستم قلندری</div>
+                <div class="business-en">Rostam Qalandari Fresh Chicken Meat Staughter House</div>
+            </div>
 
-<script>
-    document.getElementById('iconToggle').addEventListener('click', function () {
-        const alertDiv = document.getElementById('printAlert');
-        const icon = document.getElementById('iconToggle');
-    
-        // Hide the alert and the icon
-        alertDiv.style.display = 'none';
-        icon.style.display = 'none';
-    });
-</script>
+            <div class="rql-logo" aria-label="RQL">
+                <span class="rql-mark"></span>
+                <span class="rql-text">
+                    <span class="rql-main">RQL</span>
+                    <span class="rql-sub">RUSTAM QALANDARI LIMITED</span>
+                </span>
+            </div>
+        </header>
 
+        <section class="meta">
+            <div class="field-line">
+                <span>اسم مشتری</span>
+                <span class="line">{{ record.sell_forei.customer.name }}</span>
+            </div>
+            <div class="field-line">
+                <span>تاریخ</span>
+                <span class="line">{{ record.sell_forei.reg_date }}</span>
+            </div>
+        </section>
+
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-no">شماره</th>
+                    <th class="col-item">جنس</th>
+                    <th class="col-weight">وزن</th>
+                    <th class="col-qty">تعداد</th>
+                    <th class="col-price">قیمت</th>
+                    <th class="col-money">پول</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in recent_records %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.product.meat_name }}</td>
+                    <td>{{ item.weight|floatformat:1 }}</td>
+                    <td>{{ item.quantity|floatformat:1 }}</td>
+                    <td>{{ item.price_per_unit|floatformat:1 }}</td>
+                    <td>{{ item.should_paid|floatformat:1 }}</td>
+                </tr>
+                {% endfor %}
+
+                {% for row in "123456" %}
+                    {% if forloop.counter > recent_records|length %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+
+                <tr class="summary-row">
+                    <td colspan="4"></td>
+                    <td class="summary-label">جمله کل</td>
+                    <td>{{ total_due|floatformat:1 }}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td colspan="4"></td>
+                    <td class="summary-label">رسید</td>
+                    <td>{{ total_sum|floatformat:1 }}</td>
+                </tr>
+                <tr class="summary-row">
+                    <td colspan="4"></td>
+                    <td class="summary-label">باقی</td>
+                    <td>{{ total_min|floatformat:1 }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <footer class="footer">
+            <div class="contacts">
+                <div><span class="contact-icon">☎</span> 0780008810</div>
+                <div><span class="contact-icon">☎</span> 0788342007</div>
+            </div>
+
+            <div class="notes">
+                <div>نوت: جنس فروخته شده واپس گرفته نمیشود.</div>
+                <div>آدرس: بعد چهارراهی سرک باغ داود، کارته سخی، کابل</div>
+            </div>
+
+            <div class="signature">
+                <span>امضاء</span>
+                <span class="line"></span>
+            </div>
+        </footer>
+    </main>
+
+    <div class="print-hint">برای چاپ یا دانلود بل، Ctrl + P را فشار دهید.</div>
 </body>
 </html>

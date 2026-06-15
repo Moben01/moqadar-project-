@@ -22,6 +22,7 @@ from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 import arabic_reshaper
 from bidi.algorithm import get_display
+from warehouse.services import get_product_stock, to_decimal
 
 
 MONEY_DECIMAL_PLACES = Decimal('0.01')
@@ -280,6 +281,10 @@ def giving_item(request,id):
         wegit = customer_instance.weighht
         customer_instance.dealer = customer
         customer_instance.status = 'برداشت'
+        stock = get_product_stock(find_the_product, warehouse_for)
+        if to_decimal(num) > stock['available_quantity'] or to_decimal(wegit) > stock['available_weight']:
+            messages.warning(request, 'موجودی کافی در گدام موجود نیست.')
+            return redirect('purchase:purhase_with_item', id=id)
         customer_instance.save()
         add_log_entry(request, customer_instance, ADDITION, f"جنس برداشت شد برای {customer}")
         new_record  = inventrories.objects.create(product_foerignkey=find_the_product,warehouse_foerignkey=warehouse_for,Quantity=num,weight_field=wegit,in_and_out='OUT')
@@ -500,6 +505,13 @@ def delete_Purchase(request, id):
                     purchase=purchase,
                     entry_type='purchase'
                 ).delete()
+
+            stock = get_product_stock(purchase.product, purchase.warehouse)
+            if (
+                stock['raw_available_quantity'] - to_decimal(purchase.quantity) < 0
+                or stock['raw_available_weight'] - to_decimal(purchase.wegiht) < 0
+            ):
+                raise ValueError('این خرید قابل حذف نیست، چون حذف آن موجودی گدام را منفی می‌کند.')
 
             inventrories.objects.filter(
                 pucrchase_foerignkey=purchase.id,
@@ -882,6 +894,17 @@ def edit_purchase(request, purchase_id):
                     purchase_instance.remain_amount = remain
                     purchase_instance.total_unit = total
                     purchase_instance.paid_amount = paid_amount
+
+                    original_stock_after_remove = get_product_stock(orginal_product, original_warehouse)
+                    projected_quantity = original_stock_after_remove['raw_available_quantity']
+                    projected_weight = original_stock_after_remove['raw_available_weight']
+                    if purchase_instance.product_id == orginal_product.id and purchase_instance.warehouse_id == original_warehouse.id:
+                        projected_quantity += quantity
+                        projected_weight += weight
+
+                    if projected_quantity < 0 or projected_weight < 0:
+                        raise ValueError('این تغییر قابل ذخیره نیست، چون موجودی گدام را منفی می‌کند.')
+
                     purchase_instance.save()
 
                     # ایجاد دوباره موجودی انبار
@@ -987,6 +1010,11 @@ def delete_item_deal(request,id):
     ware_id = warehouse_info.objects.get(id=ware_ids)
     if find_record.status == 'رسید':
         
+        stock = get_product_stock(find_pro, ware_id)
+        if to_decimal(find_quantity) > stock['available_quantity'] or to_decimal(find_eight) > stock['available_weight']:
+            messages.warning(request, 'این ریکارد قابل حذف نیست، چون حذف آن موجودی گدام را منفی می‌کند.')
+            return redirect(referer)
+
         new_record = inventrories.objects.create(product_foerignkey=find_pro,warehouse_foerignkey=ware_id,Quantity=find_quantity,weight_field=find_eight,in_and_out='OUT')
         add_log_entry(request, find_record, DELETION, f"ریکارد رسید حذف شد. محصول: {find_pro}, تعداد: {find_quantity}, وزن: {find_eight}")
         find_record.delete()
