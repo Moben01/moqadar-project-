@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.utils.timezone import now
 from datetime import datetime, timedelta
 from purchase.models import *
@@ -15,6 +16,13 @@ from django.views.decorators.csrf import csrf_exempt
 # from dbbackup.management.commands.dbbackup import Command
 # Create your views here.
 
+
+DASHBOARD_PAGE_SIZE = 10
+
+
+def paginate_dashboard_records(request, queryset, page_param):
+    paginator = Paginator(queryset, DASHBOARD_PAGE_SIZE)
+    return paginator.get_page(request.GET.get(page_param))
 
 
 def index(request):
@@ -55,13 +63,19 @@ def dashboard (request):
         awayed = awayed.filter(created__range=(start_time, end_time))
 
 
+    purchases_page = paginate_dashboard_records(request, Purchases, 'purchases_page')
+    sells_page = paginate_dashboard_records(request, sells, 'sells_page')
+    receipts_page = paginate_dashboard_records(request, receipts, 'receipts_page')
+    masarefat_page = paginate_dashboard_records(request, masarefat, 'masarefat_page')
+    awayed_page = paginate_dashboard_records(request, awayed, 'awayed_page')
+
     context = {
-        'sells':sells,
-        'masarefat':masarefat,
-        'Purchases': Purchases,
-        'purchases': Purchases,
-        'awayed':awayed,
-        'receipts': receipts,
+        'sells': sells_page,
+        'masarefat': masarefat_page,
+        'Purchases': purchases_page,
+        'purchases': purchases_page,
+        'awayed': awayed_page,
+        'receipts': receipts_page,
         'selected_month': selected_month,
     }
     

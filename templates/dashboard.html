@@ -14,6 +14,16 @@
         z-index: 2;
         background: #fff;
     }
+
+    .dashboard-pagination {
+        direction: rtl;
+        font-family: 'XW_Zar_Bd_0', sans-serif;
+    }
+
+    .dashboard-pagination .page-link {
+        min-width: 38px;
+        text-align: center;
+    }
 </style>
 
 <body class="text-left">
@@ -96,6 +106,43 @@
                                     </tbody>
                                 </table>
                             </div>
+                            {% if purchases.paginator.num_pages > 1 %}
+                                <nav class="dashboard-pagination" aria-label="صفحه بندی خرید ها">
+                                    <ul class="pagination justify-content-center flex-wrap mt-3 mb-0">
+                                        <li class="page-item {% if not purchases.has_previous %}disabled{% endif %}">
+                                            {% if purchases.has_previous %}
+                                                <a class="page-link" href="{% querystring purchases_page=1 %}">اول</a>
+                                            {% else %}
+                                                <span class="page-link">اول</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="page-item {% if not purchases.has_previous %}disabled{% endif %}">
+                                            {% if purchases.has_previous %}
+                                                <a class="page-link" href="{% querystring purchases_page=purchases.previous_page_number %}">قبلی</a>
+                                            {% else %}
+                                                <span class="page-link">قبلی</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ purchases.number }} / {{ purchases.paginator.num_pages }}</span>
+                                        </li>
+                                        <li class="page-item {% if not purchases.has_next %}disabled{% endif %}">
+                                            {% if purchases.has_next %}
+                                                <a class="page-link" href="{% querystring purchases_page=purchases.next_page_number %}">بعدی</a>
+                                            {% else %}
+                                                <span class="page-link">بعدی</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="page-item {% if not purchases.has_next %}disabled{% endif %}">
+                                            {% if purchases.has_next %}
+                                                <a class="page-link" href="{% querystring purchases_page=purchases.paginator.num_pages %}">آخر</a>
+                                            {% else %}
+                                                <span class="page-link">آخر</span>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                </nav>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -173,6 +220,43 @@
                                 </tbody>
                             </table>
                         </div>
+                        {% if sells.paginator.num_pages > 1 %}
+                            <nav class="dashboard-pagination" aria-label="صفحه بندی فروش ها">
+                                <ul class="pagination justify-content-center flex-wrap mt-3 mb-0">
+                                    <li class="page-item {% if not sells.has_previous %}disabled{% endif %}">
+                                        {% if sells.has_previous %}
+                                            <a class="page-link" href="{% querystring sells_page=1 %}">اول</a>
+                                        {% else %}
+                                            <span class="page-link">اول</span>
+                                        {% endif %}
+                                    </li>
+                                    <li class="page-item {% if not sells.has_previous %}disabled{% endif %}">
+                                        {% if sells.has_previous %}
+                                            <a class="page-link" href="{% querystring sells_page=sells.previous_page_number %}">قبلی</a>
+                                        {% else %}
+                                            <span class="page-link">قبلی</span>
+                                        {% endif %}
+                                    </li>
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ sells.number }} / {{ sells.paginator.num_pages }}</span>
+                                    </li>
+                                    <li class="page-item {% if not sells.has_next %}disabled{% endif %}">
+                                        {% if sells.has_next %}
+                                            <a class="page-link" href="{% querystring sells_page=sells.next_page_number %}">بعدی</a>
+                                        {% else %}
+                                            <span class="page-link">بعدی</span>
+                                        {% endif %}
+                                    </li>
+                                    <li class="page-item {% if not sells.has_next %}disabled{% endif %}">
+                                        {% if sells.has_next %}
+                                            <a class="page-link" href="{% querystring sells_page=sells.paginator.num_pages %}">آخر</a>
+                                        {% else %}
+                                            <span class="page-link">آخر</span>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </nav>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -224,6 +308,43 @@
                                     </tbody>
                                 </table>
                             </div>
+                            {% if receipts.paginator.num_pages > 1 %}
+                                <nav class="dashboard-pagination" aria-label="صفحه بندی رسید ها">
+                                    <ul class="pagination justify-content-center flex-wrap mt-3 mb-0">
+                                        <li class="page-item {% if not receipts.has_previous %}disabled{% endif %}">
+                                            {% if receipts.has_previous %}
+                                                <a class="page-link" href="{% querystring receipts_page=1 %}">اول</a>
+                                            {% else %}
+                                                <span class="page-link">اول</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="page-item {% if not receipts.has_previous %}disabled{% endif %}">
+                                            {% if receipts.has_previous %}
+                                                <a class="page-link" href="{% querystring receipts_page=receipts.previous_page_number %}">قبلی</a>
+                                            {% else %}
+                                                <span class="page-link">قبلی</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ receipts.number }} / {{ receipts.paginator.num_pages }}</span>
+                                        </li>
+                                        <li class="page-item {% if not receipts.has_next %}disabled{% endif %}">
+                                            {% if receipts.has_next %}
+                                                <a class="page-link" href="{% querystring receipts_page=receipts.next_page_number %}">بعدی</a>
+                                            {% else %}
+                                                <span class="page-link">بعدی</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="page-item {% if not receipts.has_next %}disabled{% endif %}">
+                                            {% if receipts.has_next %}
+                                                <a class="page-link" href="{% querystring receipts_page=receipts.paginator.num_pages %}">آخر</a>
+                                            {% else %}
+                                                <span class="page-link">آخر</span>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                </nav>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -286,6 +407,43 @@
                                     </tbody>
                                 </table>
                             </div>
+                            {% if masarefat.paginator.num_pages > 1 %}
+                                <nav class="dashboard-pagination" aria-label="صفحه بندی مصارف ها">
+                                    <ul class="pagination justify-content-center flex-wrap mt-3 mb-0">
+                                        <li class="page-item {% if not masarefat.has_previous %}disabled{% endif %}">
+                                            {% if masarefat.has_previous %}
+                                                <a class="page-link" href="{% querystring masarefat_page=1 %}">اول</a>
+                                            {% else %}
+                                                <span class="page-link">اول</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="page-item {% if not masarefat.has_previous %}disabled{% endif %}">
+                                            {% if masarefat.has_previous %}
+                                                <a class="page-link" href="{% querystring masarefat_page=masarefat.previous_page_number %}">قبلی</a>
+                                            {% else %}
+                                                <span class="page-link">قبلی</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ masarefat.number }} / {{ masarefat.paginator.num_pages }}</span>
+                                        </li>
+                                        <li class="page-item {% if not masarefat.has_next %}disabled{% endif %}">
+                                            {% if masarefat.has_next %}
+                                                <a class="page-link" href="{% querystring masarefat_page=masarefat.next_page_number %}">بعدی</a>
+                                            {% else %}
+                                                <span class="page-link">بعدی</span>
+                                            {% endif %}
+                                        </li>
+                                        <li class="page-item {% if not masarefat.has_next %}disabled{% endif %}">
+                                            {% if masarefat.has_next %}
+                                                <a class="page-link" href="{% querystring masarefat_page=masarefat.paginator.num_pages %}">آخر</a>
+                                            {% else %}
+                                                <span class="page-link">آخر</span>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                </nav>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -354,6 +512,43 @@
                                 </tbody>
                             </table>
                         </div>
+                        {% if awayed.paginator.num_pages > 1 %}
+                            <nav class="dashboard-pagination" aria-label="صفحه بندی عواید">
+                                <ul class="pagination justify-content-center flex-wrap mt-3 mb-0">
+                                    <li class="page-item {% if not awayed.has_previous %}disabled{% endif %}">
+                                        {% if awayed.has_previous %}
+                                            <a class="page-link" href="{% querystring awayed_page=1 %}">اول</a>
+                                        {% else %}
+                                            <span class="page-link">اول</span>
+                                        {% endif %}
+                                    </li>
+                                    <li class="page-item {% if not awayed.has_previous %}disabled{% endif %}">
+                                        {% if awayed.has_previous %}
+                                            <a class="page-link" href="{% querystring awayed_page=awayed.previous_page_number %}">قبلی</a>
+                                        {% else %}
+                                            <span class="page-link">قبلی</span>
+                                        {% endif %}
+                                    </li>
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ awayed.number }} / {{ awayed.paginator.num_pages }}</span>
+                                    </li>
+                                    <li class="page-item {% if not awayed.has_next %}disabled{% endif %}">
+                                        {% if awayed.has_next %}
+                                            <a class="page-link" href="{% querystring awayed_page=awayed.next_page_number %}">بعدی</a>
+                                        {% else %}
+                                            <span class="page-link">بعدی</span>
+                                        {% endif %}
+                                    </li>
+                                    <li class="page-item {% if not awayed.has_next %}disabled{% endif %}">
+                                        {% if awayed.has_next %}
+                                            <a class="page-link" href="{% querystring awayed_page=awayed.paginator.num_pages %}">آخر</a>
+                                        {% else %}
+                                            <span class="page-link">آخر</span>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </nav>
+                        {% endif %}
                     </div>
                 </div>
             </div>
