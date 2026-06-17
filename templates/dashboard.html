@@ -180,6 +180,57 @@
 
 
             <div class="row mb-4">
+                <div class="col-md-12 mb-4">
+                    <div class="card text-left">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3" style="font-family: 'XW_Zar_Bd_0', sans-serif;">راپور تمام رسید ها</h4>
+                            <p style="font-family: 'XW_Zar_Bd_0', sans-serif;">
+                                شما تمام رسید های ثبت شده را در اینجا میتوانید ببینید
+                            </p>
+                            <div class="table-responsive">
+                                <table class="display table table-striped table-bordered dashboard-record-table"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>شخص</th>
+                                            <th>محصول</th>
+                                            <th>گدام</th>
+                                            <th>تاریخ رسید</th>
+                                            <th>تعداد</th>
+                                            <th>وزن</th>
+                                            <th>حالت</th>
+                                            <th>توضیحات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for receipt in receipts %}
+                                            <tr>
+                                                <td>{{ receipt.id }}</td>
+                                                <td>{{ receipt.dealer }}</td>
+                                                <td>{{ receipt.item }}</td>
+                                                <td>{{ receipt.godam }}</td>
+                                                <td>{{ receipt.date_day }}</td>
+                                                <td>{{ receipt.number }}</td>
+                                                <td>{{ receipt.weighht }}</td>
+                                                <td>{{ receipt.status }}</td>
+                                                <td>{{ receipt.notes }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="9" class="text-center">هیچ رسیدی ثبت نشده است</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row mb-4">
                 <div class="col-md-6 mb-4">
                     <div class="card text-left">
                         <div class="card-body">

@@ -28,6 +28,7 @@ def dashboard (request):
     sells = sale_item_part.objects.select_related('sell_forei__customer', 'product').all().order_by('-id')
     masarefat = FixedExpense.objects.all().order_by('-id')
     awayed = income.objects.select_related('olabrate', 'curr').all().order_by('-id')
+    receipts = item_deals.objects.select_related('dealer', 'item', 'godam').filter(status='رسید').order_by('-id')
 
     if selected_month == 'روزانه':  
         start_time = end_time - timedelta(hours=23)
@@ -60,6 +61,7 @@ def dashboard (request):
         'Purchases': Purchases,
         'purchases': Purchases,
         'awayed':awayed,
+        'receipts': receipts,
         'selected_month': selected_month,
     }
     
