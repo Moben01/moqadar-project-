@@ -17,9 +17,9 @@
         <div class="card mb-4">
             <div class="card-body">
 
-    <div class="row finance-top-summary">
+    <div class="row">
         <div class="col-lg-4 col-md-12 mb-4">
-            <div class="summary-total-card rounded d-flex align-items-center bg-primary text-white"><i
+            <div class="p-4 rounded d-flex align-items-center bg-primary text-white"><i
                     class="i-Money-2 text-32 mr-3"></i>
                 <div>
                     <h4 class="text-18 mb-1 text-white">مقدار مجموعی خرید</h4><span>مجموعه: {{ total_parchase_paid|default:0|floatformat:3 }} </span>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="col-lg-4 col-md-12 mb-4">
-            <div class="summary-total-card rounded d-flex align-items-center bg-primary text-white"><i
+            <div class="p-4 rounded d-flex align-items-center bg-primary text-white"><i
                     class="i-Money-2 text-32 mr-3"></i>
                 <div>
                     <h4 class="text-18 mb-1 text-white">مقدار مجموعی فروش</h4><span>مجموعه: {{ total_should_paid|default:0|floatformat:3 }}
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="col-lg-4 col-md-12 mb-4">
-            <div class="summary-total-card rounded d-flex align-items-center bg-primary text-white"><i
+            <div class="p-4 rounded d-flex align-items-center bg-primary text-white"><i
                     class="i-Money-2 text-32 mr-3"></i>
                 <div>
                     <h4 class="text-18 mb-1 text-white">مقدار مجموعی مصارفات</h4><span>مجموعه: {{ total_expenses_paid|default:0|floatformat:3 }}
@@ -86,9 +86,9 @@
     </div>
     <br>
 
-    <div class="finance-card-grid">
-        <div class="finance-card-item">
-            <div class="card card-icon-bg card-icon-bg-primary o-hidden finance-stat-card">
+    <div class="row">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
                 <div class="card-body text-center"><i class="i-Add-User"></i>
                     <div class="content">
                         <p class="text-muted mt-2 mb-0">تعداد تمام شرکا</p>
@@ -99,12 +99,12 @@
         </div>
 
 
-        <div class="finance-card-item">
-            <div class="card card-icon-bg card-icon-bg-primary o-hidden finance-stat-card">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
                 <div class="card-body text-center">
                     <i class="i-Money-2"></i>
-                    <div class="content">
-                        <p class="text-muted mt-2 mb-0">مجموعه پول های دریافتی</p>
+                    <div class="content" style="min-width: 300px;">
+                        <p class="text-muted mt-2 mb-0" style="white-space: nowrap;">مجموعه پول های دریافتی</p>
                         {% for record in income_sums %}
                         <p class="text-primary text-18 line-height-1 mb-2">{{ record.total_income|default:0|floatformat:3 }} {{ record.curr__curr_name }} </p>
                         {% endfor %}
@@ -114,12 +114,12 @@
         </div>
 
 
-        <div class="finance-card-item">
-            <div class="card card-icon-bg card-icon-bg-primary o-hidden finance-stat-card">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
                 <div class="card-body text-center">
                     <i class="i-Money-2"></i>
-                    <div class="content">
-                        <p class="text-muted mt-2 mb-0">مجموعه پول های پرداختی</p>
+                    <div class="content" style="min-width: 300px;">
+                        <p class="text-muted mt-2 mb-0" style="white-space: nowrap;">مجموعه پول های پرداختی</p>
                         {% for record in outcomesum %}
                         <p class="text-primary text-18 line-height-1 mb-2">{{ record.total_outcome|default:0|floatformat:3 }} {{ record.curr__curr_name }} </p>
                         {% endfor %}
@@ -128,8 +128,8 @@
             </div>
         </div>
        
-        <div class="finance-card-item">
-            <div class="card card-icon-bg card-icon-bg-primary o-hidden finance-stat-card">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
                 <div class="card-body text-center"><i class="i-Money-2"></i>
                     <div class="content">
                         <p class="text-muted mt-2 mb-0">مجموعه تمام پول افغانی</p>
@@ -139,8 +139,8 @@
             </div>
         </div>
         {% for i in find_all_currency %}
-        <div class="finance-card-item">
-            <div class="card card-icon-bg card-icon-bg-primary o-hidden finance-stat-card">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card card-icon-bg card-icon-bg-primary o-hidden">
                 <div class="card-body text-center"><i class="i-Money-2"></i>
                     <div class="content">
                         <p class="text-muted mt-2 mb-0">مجموعه تمام پول {{i.curr_name}} </p>
@@ -152,74 +152,6 @@
         {% endfor %}
     </div>
     <style>
-    .summary-total-card {
-        min-height: 92px;
-        padding: 18px 22px;
-    }
-
-    .summary-total-card span {
-        display: block;
-        direction: ltr;
-        text-align: right;
-        unicode-bidi: plaintext;
-        word-break: break-word;
-    }
-
-    .finance-card-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-        gap: 14px;
-        margin-bottom: 24px;
-    }
-
-    .finance-stat-card {
-        height: 100%;
-        min-height: 118px;
-        margin-bottom: 0;
-    }
-
-    .finance-stat-card .card-body {
-        min-height: 118px;
-        padding: 14px 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .finance-stat-card .content {
-        min-width: 0;
-        width: 100%;
-        max-width: none;
-        align-items: center;
-    }
-
-    .finance-stat-card [class^="i-"] {
-        font-size: 46px;
-        line-height: 1;
-    }
-
-    .finance-stat-card .text-muted {
-        font-size: 14px;
-        line-height: 1.5;
-        white-space: normal;
-    }
-
-    .finance-stat-card .text-primary {
-        font-size: 18px;
-        line-height: 1.35;
-        direction: ltr;
-        text-align: center;
-        unicode-bidi: plaintext;
-        word-break: break-word;
-        overflow-wrap: anywhere;
-    }
-
-    @media (min-width: 1200px) {
-        .finance-card-grid {
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-        }
-    }
-
     /* ===== STATIC LEFT TABLE NAV BUTTONS ===== */
     #table-nav {
         position: fixed;
