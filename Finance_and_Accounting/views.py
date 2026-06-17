@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect,HttpResponse
+from django.shortcuts import render,redirect,HttpResponse,get_object_or_404
 from.forms import *
 from django.contrib import messages
 from itertools import chain
@@ -1265,6 +1265,57 @@ def edit_financial_record(request, record_id):
     })
 
 from django.db.models import Sum
+
+
+def get_system_balance_for_update():
+    system_balance = total_balance.objects.select_for_update().first()
+    if not system_balance:
+        system_balance = total_balance.objects.create(total_money_in_system=0)
+    return system_balance
+
+
+def change_exchange_balance(currency, amount, direction):
+    amount = Decimal(str(amount or 0))
+    if amount < 0:
+        raise ValueError('مقدار پول نمی‌تواند منفی باشد')
+
+    if currency.curr_name == 'افغانی':
+        system_balance = get_system_balance_for_update()
+        new_balance = Decimal(str(system_balance.total_money_in_system or 0)) + (amount * direction)
+        if new_balance < 0:
+            raise ValueError('موجودی افغانی در سیستم کافی نیست')
+        system_balance.total_money_in_system = new_balance
+        system_balance.save()
+        return
+
+    currency_balance = cuurency.objects.select_for_update().get(id=currency.id)
+    new_balance = Decimal(str(currency_balance.balance or 0)) + (amount * direction)
+    if new_balance < 0:
+        raise ValueError(f'موجودی {currency_balance.curr_name} در سیستم کافی نیست')
+    currency_balance.balance = float(new_balance)
+    currency_balance.save()
+
+
+def apply_exchange_record_balance(source_currency, target_currency, source_amount, target_amount):
+    if source_currency == target_currency:
+        raise ValueError('واحد پولی تبدیل شده و بدست آمده نمی‌تواند یکسان باشد')
+    change_exchange_balance(source_currency, source_amount, Decimal('-1'))
+    change_exchange_balance(target_currency, target_amount, Decimal('1'))
+
+
+def reverse_exchange_record_balance(record):
+    change_exchange_balance(
+        record.currency_that_you_want_tochage,
+        record.currency_that_will_chage_amount,
+        Decimal('1')
+    )
+    change_exchange_balance(
+        record.currency_that_you_want_to_get_money,
+        record.currency_that_chage_amont,
+        Decimal('-1')
+    )
+
+
 def exchang_money(request):
     find_afghani_that_chagnes = exchagn_money_in_system.objects.filter(currency_that_you_want_tochage__curr_name='افغانی',currency_that_you_want_to_get_money__curr_name='دالر').aggregate(total_amount=Sum('currency_that_will_chage_amount'))
     total = find_afghani_that_chagnes['total_amount'] or 0
@@ -1282,58 +1333,37 @@ def exchang_money(request):
     exchanged_dollar_difference = total_dollar_from_afghani_changes - total_dollar_sold_for_afghani
     exchanged_dollar_difference_absolute = abs(exchanged_dollar_difference)
 
-    all_ex_records = exchagn_money_in_system.objects.all()
+    all_ex_records = exchagn_money_in_system.objects.select_related(
+        'currency_that_you_want_tochage',
+        'currency_that_you_want_to_get_money'
+    ).all().order_by('-id')
     my_data = total_balance.objects.first()
-    all_money = my_data.total_money_in_system
     if not my_data:
         my_data = total_balance.objects.create(total_money_in_system=0)
     find_all_currency = cuurency.objects.exclude(curr_name="افغانی")
     if request.method == 'POST':
         form = exchagn_money_in_systemForm(request.POST)
         if form.is_valid():
-            form_instance = form.save(commit=False)
-            find_the_curency_that_want_to_change = form.cleaned_data.get('currency_that_you_want_tochage')
-            find_curr_id = find_the_curency_that_want_to_change.id
-            find_cuur_name = cuurency.objects.get(id=find_curr_id).curr_name
-            amount_that_will_change = form.cleaned_data.get('amount')
+            try:
+                with transaction.atomic():
+                    form_instance = form.save(commit=False)
+                    source_currency = form.cleaned_data.get('currency_that_you_want_tochage')
+                    target_currency = form.cleaned_data.get('currency_that_you_want_to_get_money')
+                    source_amount = form.cleaned_data.get('amount')
+                    target_amount = form.cleaned_data.get('want_amount')
 
-
-
-            find_the_currency_will_bring = form.cleaned_data.get('currency_that_you_want_to_get_money')
-            bring_curr_id = find_the_currency_will_bring.id
-            find_bring_curr_name = cuurency.objects.get(id=bring_curr_id)
-            find_b_curr_name = find_bring_curr_name.curr_name
-            bring_amount = form.cleaned_data.get('want_amount')
-            if find_cuur_name == 'افغانی':
-                if amount_that_will_change > all_money:  
-                    messages.warning(request,'پول افغانی که میخواهد تبدیل نمایید بیشتر از مجموعه پول شما در سیستم است')
-                    return redirect('Finance_and_Accounting:exchang_money')
-                else:
-                    my_data.total_money_in_system = float(my_data.total_money_in_system) - amount_that_will_change
-                    my_data.save()
-                    form_instance.currency_that_will_chage_amount = amount_that_will_change
-                    form_instance.currency_that_chage_amont = bring_amount
+                    apply_exchange_record_balance(
+                        source_currency,
+                        target_currency,
+                        source_amount,
+                        target_amount
+                    )
+                    form_instance.currency_that_will_chage_amount = source_amount
+                    form_instance.currency_that_chage_amont = target_amount
                     form_instance.save()
-                    find_curr = cuurency.objects.get(id=bring_curr_id)
-                    find_curr.balance = (find_curr.balance or 0) + bring_amount
-                    find_curr.save()
-            else:
-                find_curr_balance = cuurency.objects.get(id=find_curr_id)
-                if amount_that_will_change > find_curr_balance.balance:
-                    messages.warning(request,f"مقدار پول { find_curr_balance.curr_name } که میخواهید تبدیل کنید بیشتر از مجموعه موجودی پول در سیستم است") 
-                    return redirect('Finance_and_Accounting:exchang_money')
-                else:
-                    find_curr_balance.balance = find_curr_balance.balance - amount_that_will_change
-                    find_curr_balance.save()
-                    form_instance.currency_that_will_chage_amount = amount_that_will_change
-                    form_instance.currency_that_chage_amont = bring_amount
-                    form_instance.save()
-                    if find_b_curr_name == 'افغانی':
-                        my_data.total_money_in_system = float(my_data.total_money_in_system) + bring_amount
-                        my_data.save()
-                    else:
-                        find_bring_curr_name.balance = find_bring_curr_name.balance + bring_amount
-                        find_bring_curr_name.save()
+                    messages.success(request, 'تبادله جدید موفقانه ثبت شد')
+            except ValueError as e:
+                messages.warning(request, str(e))
             return redirect('Finance_and_Accounting:exchang_money')
 
 
@@ -1343,7 +1373,7 @@ def exchang_money(request):
         else:
             return HttpResponse(form.errors)
     else:
-        form = exchagn_money_in_systemForm(request.POST)
+        form = exchagn_money_in_systemForm()
 
     context = {
         'my_data':my_data,
@@ -1360,3 +1390,60 @@ def exchang_money(request):
         'exchanged_dollar_difference_absolute':exchanged_dollar_difference_absolute,
     }
     return render(request, 'finanace/exchange_money_from_system.html',context)
+
+
+def edit_exchange_money(request, record_id):
+    exchange_record = get_object_or_404(exchagn_money_in_system, id=record_id)
+
+    if request.method == 'POST':
+        form = exchagn_money_in_systemForm(request.POST, instance=exchange_record)
+        if form.is_valid():
+            try:
+                with transaction.atomic():
+                    exchange_record = exchagn_money_in_system.objects.select_for_update().get(id=record_id)
+                    source_currency = form.cleaned_data.get('currency_that_you_want_tochage')
+                    target_currency = form.cleaned_data.get('currency_that_you_want_to_get_money')
+                    source_amount = form.cleaned_data.get('amount')
+                    target_amount = form.cleaned_data.get('want_amount')
+
+                    reverse_exchange_record_balance(exchange_record)
+                    apply_exchange_record_balance(
+                        source_currency,
+                        target_currency,
+                        source_amount,
+                        target_amount
+                    )
+
+                    form_instance = form.save(commit=False)
+                    form_instance.currency_that_will_chage_amount = source_amount
+                    form_instance.currency_that_chage_amont = target_amount
+                    form_instance.save()
+
+                messages.success(request, 'تبادله موفقانه ویرایش شد')
+                return redirect('Finance_and_Accounting:exchang_money')
+            except ValueError as e:
+                messages.warning(request, str(e))
+        else:
+            messages.warning(request, 'فرم نادرست است')
+    else:
+        form = exchagn_money_in_systemForm(instance=exchange_record)
+
+    return render(request, 'finanace/edit_exchange_money.html', {
+        'form': form,
+        'exchange_record': exchange_record,
+    })
+
+
+def delete_exchange_money(request, record_id):
+    try:
+        with transaction.atomic():
+            exchange_record = exchagn_money_in_system.objects.select_for_update().get(id=record_id)
+            reverse_exchange_record_balance(exchange_record)
+            exchange_record.delete()
+        messages.success(request, 'تبادله موفقانه حذف شد')
+    except exchagn_money_in_system.DoesNotExist:
+        messages.warning(request, 'ریکارد تبادله پیدا نشد')
+    except ValueError as e:
+        messages.warning(request, str(e))
+
+    return redirect('Finance_and_Accounting:exchang_money')

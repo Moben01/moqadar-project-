@@ -125,8 +125,8 @@
                 <div>
                     <p class="label">مقدار پول افغانی که به دالر تبدیل شده است</p>
                     <div class="exchange-values">
-                        <h4 class="value" style="color: azure;">{{total}}</h4>
-                        <small>{{ total_dollar_from_afghani_changes }} دالر</small>
+                        <h4 class="value" style="color: azure;">{{ total|floatformat:3 }}</h4>
+                        <small>{{ total_dollar_from_afghani_changes|floatformat:3 }} دالر</small>
                     </div>
                 </div>
                 <div class="icon">💰</div>
@@ -141,8 +141,8 @@
                 <div>
                     <p class="label">مقدار پول دالر که از به افغانی تبدیل شده است  </p>
                     <div class="exchange-values">
-                        <h4 class="value">{{d_total}}</h4>
-                        <small>{{ total_dollar_sold_for_afghani }} دالر</small>
+                        <h4 class="value">{{ d_total|floatformat:3 }}</h4>
+                        <small>{{ total_dollar_sold_for_afghani|floatformat:3 }} دالر</small>
                     </div>
                 </div>
                 <div class="icon">🔄</div>
@@ -155,22 +155,22 @@
 {% if dollar_profit_or_loss > 0 %}
 <div class="exchange-result-card profit">
     <p class="result-label">نتیجه خرید و فروش دالر</p>
-    <h4 class="result-value">{{ dollar_profit_or_loss_absolute|floatformat:2 }} افغانی</h4>
-    <p class="result-sub-value">{{ exchanged_dollar_difference_absolute|floatformat:2 }} دالر</p>
+    <h4 class="result-value">{{ dollar_profit_or_loss_absolute|floatformat:3 }} افغانی</h4>
+    <p class="result-sub-value">{{ exchanged_dollar_difference_absolute|floatformat:3 }} دالر</p>
     <p class="result-status">شما در مفاد هستید</p>
 </div>
 {% elif dollar_profit_or_loss < 0 %}
 <div class="exchange-result-card loss">
     <p class="result-label">نتیجه خرید و فروش دالر</p>
-    <h4 class="result-value">{{ dollar_profit_or_loss_absolute|floatformat:2 }} افغانی</h4>
-    <p class="result-sub-value">{{ exchanged_dollar_difference_absolute|floatformat:2 }} دالر</p>
+    <h4 class="result-value">{{ dollar_profit_or_loss_absolute|floatformat:3 }} افغانی</h4>
+    <p class="result-sub-value">{{ exchanged_dollar_difference_absolute|floatformat:3 }} دالر</p>
     <p class="result-status">شما در ضرر هستید</p>
 </div>
 {% else %}
 <div class="exchange-result-card equal">
     <p class="result-label">نتیجه خرید و فروش دالر</p>
-    <h4 class="result-value">{{ dollar_profit_or_loss|floatformat:2 }} افغانی</h4>
-    <p class="result-sub-value">{{ exchanged_dollar_difference_absolute|floatformat:2 }} دالر</p>
+    <h4 class="result-value">{{ dollar_profit_or_loss|floatformat:3 }} افغانی</h4>
+    <p class="result-sub-value">{{ exchanged_dollar_difference_absolute|floatformat:3 }} دالر</p>
     <p class="result-status">نه مفاد و نه ضرر</p>
 </div>
 {% endif %}
@@ -182,14 +182,14 @@
         <div class="col-md-3 col-sm-6">
             <div class="card shadow-sm border-0 text-center p-3 bg-primary text-white">
                 <h6 class="mb-1">پول افغانی</h6>
-                <h3 class="fw-bold">{{ my_data }}</h3>
+                <h3 class="fw-bold">{{ my_data.total_money_in_system|floatformat:3 }}</h3>
             </div>
         </div>
         {% for i in find_all_currency %}
         <div class="col-md-3 col-sm-6">
             <div class="card shadow-sm border-0 text-center p-3 bg-success text-white">
                 <h6 class="mb-1">  پول {{i.curr_name}} </h6>
-                <h3 class="fw-bold">{{ i.balance }}</h3>
+                <h3 class="fw-bold">{{ i.balance|floatformat:3 }}</h3>
             </div>
         </div>
         {% endfor %}
@@ -238,6 +238,8 @@
                         <th>واحد پولی  بدست آمده</th>
                         <th>مقدار تبدیل شده</th>
                         <th>مقدار  بدست آمده</th>
+                        <th>نرخ تبادله</th>
+                        <th>عملیات</th>
                     </tr>
                 </thead>
 
@@ -248,21 +250,45 @@
                         <td>{{ rec.id }}</td>
                         <td>{{ rec.currency_that_you_want_tochage.curr_name }}</td>
                         <td>{{ rec.currency_that_you_want_to_get_money.curr_name }}</td>
-                        <td>{{ rec.amount }}</td>
-                        <td>{{ rec.want_amount }}</td>
+                        <td>{{ rec.amount|floatformat:3 }}</td>
+                        <td>{{ rec.want_amount|floatformat:3 }}</td>
+                        <td>{{ rec.exchabge_rate|floatformat:3 }}</td>
+                        <td>
+                            <a class="btn btn-sm btn-light"
+                                href="{% url 'Finance_and_Accounting:edit_exchange_money' rec.id %}">
+                                تغییرات
+                            </a>
+                            <a class="btn btn-sm btn-danger"
+                                href="{% url 'Finance_and_Accounting:delete_exchange_money' rec.id %}"
+                                onclick="return confirmDelete(this);">
+                                حذف
+                            </a>
+                        </td>
                     </tr>
                     {% else %}
                     <tr style="background-color: rgb(78, 78, 78);  color: aliceblue;">
                         <td>{{ rec.id }}</td>
                         <td>{{ rec.currency_that_you_want_tochage.curr_name }}</td>
                         <td>{{ rec.currency_that_you_want_to_get_money.curr_name }}</td>
-                        <td>{{ rec.amount }}</td>
-                        <td>{{ rec.want_amount }}</td>
+                        <td>{{ rec.amount|floatformat:3 }}</td>
+                        <td>{{ rec.want_amount|floatformat:3 }}</td>
+                        <td>{{ rec.exchabge_rate|floatformat:3 }}</td>
+                        <td>
+                            <a class="btn btn-sm btn-light"
+                                href="{% url 'Finance_and_Accounting:edit_exchange_money' rec.id %}">
+                                تغییرات
+                            </a>
+                            <a class="btn btn-sm btn-danger"
+                                href="{% url 'Finance_and_Accounting:delete_exchange_money' rec.id %}"
+                                onclick="return confirmDelete(this);">
+                                حذف
+                            </a>
+                        </td>
                     </tr>
                     {% endif %}
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="text-muted">رکوردی وجود ندارد</td>
+                        <td colspan="7" class="text-muted">رکوردی وجود ندارد</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -409,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function () {
             result = amount / rate;
         }
 
-        resultInput.value = result.toFixed(2);
+        resultInput.value = result.toFixed(3);
     }
 
     amountInput.addEventListener('input', calculate);
@@ -427,6 +453,12 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         </div>
     </div>
+
+    <script>
+        function confirmDelete(link) {
+            return confirm("آیا مطمئن هستید که می‌خواهید این ریکارد تبادله را حذف کنید؟");
+        }
+    </script>
 
 
 {% endblock %}

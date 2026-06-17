@@ -1,0 +1,118 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content%}
+
+<div class="container-fluid pt-4" style="font-family: XW_Zar_Bd_0;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light">
+            <h4 class="mb-0">ویرایش تبادله شماره {{ exchange_record.id }}</h4>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} text-center h4" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form action="{% url 'Finance_and_Accounting:edit_exchange_money' exchange_record.id %}" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label>واحد پولی که میخواهید تبدیل کنید</label>
+                        {{ form.currency_that_you_want_tochage }}
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                        <label>واحد پولی که میخواهید دریافت کنید</label>
+                        {{ form.currency_that_you_want_to_get_money }}
+                    </div>
+                    <div class="col-md-4 form-group mb-3">
+                        <label>مقدار تبدیل شده</label>
+                        {{ form.amount }}
+                    </div>
+                    <div class="col-md-4 form-group mb-3">
+                        <label>نرخ تبادله</label>
+                        {{ form.exchabge_rate }}
+                    </div>
+                    <div class="col-md-4 form-group mb-3">
+                        <label>مقدار بدست آمده</label>
+                        {{ form.want_amount }}
+                    </div>
+
+                    <div class="col-md-12 form-group mb-3">
+                        <label class="d-block fw-bold mb-2">نحوه محاسبه</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="calc_type" id="calc_multiply" value="multiply" checked>
+                            <label class="form-check-label" for="calc_multiply">ضرب ( × )</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="calc_type" id="calc_divide" value="divide">
+                            <label class="form-check-label" for="calc_divide">تقسیم ( ÷ )</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 form-group mb-3">
+                        <label>نوت</label>
+                        {{ form.note }}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a class="btn btn-secondary ml-2" href="{% url 'Finance_and_Accounting:exchang_money' %}">بازگشت</a>
+                    <button class="btn btn-primary" type="submit">ذخیره تغییرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const firstSelect = document.getElementById("id_currency_that_you_want_tochage");
+    const secondSelect = document.getElementById("id_currency_that_you_want_to_get_money");
+    const amountInput = document.getElementById("id_amount");
+    const rateInput = document.getElementById("id_exchabge_rate");
+    const resultInput = document.getElementById("id_want_amount");
+    const radios = document.querySelectorAll('input[name="calc_type"]');
+
+    function preventSameCurrency() {
+        const selectedValue = firstSelect.value;
+        for (let i = 0; i < secondSelect.options.length; i++) {
+            const option = secondSelect.options[i];
+            if (option.value === selectedValue) {
+                option.disabled = true;
+                if (secondSelect.value === selectedValue) {
+                    secondSelect.value = "";
+                }
+            } else {
+                option.disabled = false;
+            }
+        }
+    }
+
+    function calculate() {
+        const amount = parseFloat(amountInput.value);
+        const rate = parseFloat(rateInput.value);
+
+        if (isNaN(amount) || isNaN(rate) || rate === 0) {
+            resultInput.value = "";
+            return;
+        }
+
+        const selected = document.querySelector('input[name="calc_type"]:checked').value;
+        const result = selected === "multiply" ? amount * rate : amount / rate;
+        resultInput.value = result.toFixed(3);
+    }
+
+    firstSelect.addEventListener("change", preventSameCurrency);
+    amountInput.addEventListener("input", calculate);
+    rateInput.addEventListener("input", calculate);
+    radios.forEach(radio => radio.addEventListener("change", calculate));
+    preventSameCurrency();
+});
+</script>
+
+{% endblock %}

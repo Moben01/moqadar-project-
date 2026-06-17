@@ -24,6 +24,8 @@ urlpatterns = [
     path('all_records/<int:id>/', views.all_records, name='all_records'),
     path('edit_financial_record/<int:record_id>/', views.edit_financial_record, name='edit_financial_record'),
     path('exchang_money/',views.exchang_money,name='exchang_money'),
+    path('edit_exchange_money/<int:record_id>/', views.edit_exchange_money, name='edit_exchange_money'),
+    path('delete_exchange_money/<int:record_id>/', views.delete_exchange_money, name='delete_exchange_money'),
 
 
 

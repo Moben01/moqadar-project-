@@ -102,16 +102,16 @@ class exchagn_money_in_systemForm(forms.ModelForm):
           {"class": "form-control", "placeholder": "تاریخ ثبت"}
           )
           self.fields["amount"].widget.attrs.update(
-          {"class": "form-control", "placeholder": ""}
+          {"class": "form-control", "placeholder": "", "step": "0.001"}
           )
           self.fields["currency_that_you_want_to_get_money"].widget.attrs.update(
           {"class": "form-control", "placeholder": ""}
           )
           self.fields["want_amount"].widget.attrs.update(
-          {"class": "form-control", "placeholder": ""}
+          {"class": "form-control", "placeholder": "", "step": "0.001"}
           )
           self.fields["exchabge_rate"].widget.attrs.update(
-          {"class": "form-control", "placeholder": ""}
+          {"class": "form-control", "placeholder": "", "step": "0.001"}
           )
           self.fields["note"].widget.attrs.update(
           {"class": "form-control", "placeholder": ""}
