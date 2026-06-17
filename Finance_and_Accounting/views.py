@@ -49,12 +49,12 @@ from decimal import Decimal
 
 def malle_wa_mahaseba(request):
    
-    collaborators  = coolaborators.objects.all()
-    all_customer_loans = Loan.objects.all().order_by('id')
+    collaborators  = coolaborators.objects.all().order_by('-id')
+    all_customer_loans = Loan.objects.all().order_by('-id')
     loans = all_customer_loans.exclude(customer__role='هردو')
     both_customer_loans = all_customer_loans.filter(customer__role='هردو')
-    bot_ledger_entry = BothPartyLedger.objects.filter(entry_type__in=['sale', 'receive_from_partner'], customer__role='هردو')
-    purchase_both_ledger_entry = BothPartyLedger.objects.filter(entry_type__in=['purchase', 'pay_to_partner'])
+    bot_ledger_entry = BothPartyLedger.objects.filter(entry_type__in=['sale', 'receive_from_partner'], customer__role='هردو').order_by('-id')
+    purchase_both_ledger_entry = BothPartyLedger.objects.filter(entry_type__in=['purchase', 'pay_to_partner']).order_by('-id')
     
 
     customer_ids = loans.values_list('customer_id', flat=True).distinct()
@@ -80,7 +80,7 @@ def malle_wa_mahaseba(request):
         customer_totals[customer_id] = find_all_total_sale_amount
 
 
-    sloans = SLoan.objects.all().order_by('id')
+    sloans = SLoan.objects.all().order_by('-id')
     supp_ids = sloans.values_list('customer_id', flat=True).distinct()
     supp_totals = {}
     for supp_id in supp_ids:
@@ -385,8 +385,8 @@ def malle_wa_mahaseba(request):
 
 
         find_all_currency = cuurency.objects.exclude(curr_name="افغانی")
-        all_incoming_money = income.objects.all()
-        total_income = income.objects.filter(is_income_or_outcome='دریافت')
+        all_incoming_money = income.objects.all().order_by('-id')
+        total_income = income.objects.filter(is_income_or_outcome='دریافت').order_by('-id')
 
          
         income_sums = (
@@ -396,7 +396,7 @@ def malle_wa_mahaseba(request):
         )
 
         outcomesum = (income.objects.filter(is_income_or_outcome='پرداخت').values('curr','curr__curr_name').annotate(total_outcome=Sum('income_amount')))
-        all_outgoing_money = outcome.objects.all()
+        all_outgoing_money = outcome.objects.all().order_by('-id')
         total_out_come = outcome.objects.aggregate(total=Sum('out_come_amount'))['total'] or 0
 
         find_all_sale_money = FixedExpense.objects.aggregate(total_expenses_paid=Sum('total_amount'))
@@ -404,14 +404,18 @@ def malle_wa_mahaseba(request):
         all_incoming_money = all_incoming_money.annotate(transaction_type=models.Value('income', output_field=models.CharField()))
         all_outgoing_money = all_outgoing_money.annotate(transaction_type=models.Value('outcome', output_field=models.CharField()))
 
-        all_transactions = chain(all_incoming_money, all_outgoing_money)
+        all_transactions = sorted(
+            chain(all_incoming_money, all_outgoing_money),
+            key=lambda transaction_record: transaction_record.created,
+            reverse=True
+        )
 
         all_collaborator = coolaborators.objects.all().count()
         my_data = total_balance.objects.first()
         if not my_data:
             my_data = total_balance.objects.create(total_money_in_system=0)
         my_form = incomeForm() 
-        all_datas = income.objects.all().order_by('id')
+        all_datas = income.objects.all().order_by('-id')
         
         out_come_form = out_comeForm() 
         context = { 

@@ -453,7 +453,7 @@
             <div class="col-md-6 mb-4">
                 <div class="card text-left">
                     <div class="card-body">
-                        <h4 class="card-title mb-3" style="font-family: 'XW_Zar_Bd_0', sans-serif;">راپور روزانه تمام عواید  </h4>
+                        <h4 class="card-title mb-3" style="font-family: 'XW_Zar_Bd_0', sans-serif;">راپور روزانه تمام گرفت ها</h4>
                         <form method="GET" action="{% url 'Home:dashboard' %}">
                             <div class="row">
                                 <div class="col-md-12">
@@ -473,7 +473,7 @@
                                     </div>
                                 </div>
                         </form>
-                        <p style="font-family: 'XW_Zar_Bd_0', sans-serif;"> شما تمام فروش های امروزی را در اینجا میتوانید ببینید</p>
+                        <p style="font-family: 'XW_Zar_Bd_0', sans-serif;"> شما تمام گرفت های امروزی را در اینجا میتوانید ببینید</p>
                         <div class="table-responsive">
                             <table class="display table table-striped table-bordered dashboard-record-table"
                                 style="width:100%">
@@ -513,7 +513,7 @@
                             </table>
                         </div>
                         {% if awayed.paginator.num_pages > 1 %}
-                            <nav class="dashboard-pagination" aria-label="صفحه بندی عواید">
+                            <nav class="dashboard-pagination" aria-label="صفحه بندی گرفت ها">
                                 <ul class="pagination justify-content-center flex-wrap mt-3 mb-0">
                                     <li class="page-item {% if not awayed.has_previous %}disabled{% endif %}">
                                         {% if awayed.has_previous %}
