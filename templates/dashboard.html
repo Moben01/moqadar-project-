@@ -71,35 +71,39 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>تهیه کننده</th>
-                                            <th>محصول</th>
-                                            <th>مقدار</th>
-                                            <th>وزن</th>
+                                            <th>تاریخ</th>
+                                            <th>تهیه کننده محصول</th>
+                                            <th>اسم محصول</th>
+                                            <th>گدام</th>
+                                            <th>تعداد</th>
+                                            <th> وزن </th>
                                             <th>قیمت فی واحد</th>
-                                            <th>مجموعه پول</th>
-                                            <th>پول پرداخت شده</th>
-                                            <th>پول باقی</th>
-                                            <th>نوع محاسبه</th>
-                                            <th>تاریخ خرید</th>
-                                            <th>تاریخ ثبت</th>
-                                            <th>جزئیات</th>
+                                            <th>پول پرداختی</th>
+                                            <th>قیمت مجموعی</th>
+                                            <th> توضیحات</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for purchase in purchases %}
                                             <tr>
                                                 <td>{{ purchase.id }}</td>
+                                                <td>{{ purchase.date }}</td>
                                                 <td>{{ purchase.supplaier }}</td>
                                                 <td>{{ purchase.product }}</td>
-                                                <td>{{ purchase.quantity }}</td>
-                                                <td>{{ purchase.wegiht }}</td>
+                                                <td>{{ purchase.warehouse }}</td>
+                                                {% if purchase.status == 'ضرب تعداد' %}
+                                                    <td style="color: blue;">{{ purchase.quantity }}</td>
+                                                {% else %}
+                                                    <td>{{ purchase.quantity }}</td>
+                                                {% endif %}
+                                                {% if purchase.status == 'ضرب وزن' %}
+                                                    <td style="color: blue;">{{ purchase.wegiht }}</td>
+                                                {% else %}
+                                                    <td>{{ purchase.wegiht }}</td>
+                                                {% endif %}
                                                 <td>{{ purchase.price_per_unit }}</td>
-                                                <td>{{ purchase.total_unit }}</td>
                                                 <td>{{ purchase.paid_amount }}</td>
-                                                <td>{{ purchase.remain_amount }}</td>
-                                                <td>{{ purchase.status }}</td>
-                                                <td>{{ purchase.date }}</td>
-                                                <td>{{ purchase.reg_date }}</td>
+                                                <td>{{ purchase.total_unit }}</td>
                                                 <td>{{ purchase.details }}</td>
                                             </tr>
                                         {% endfor %}
@@ -179,42 +183,46 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>اسم مشتری</th>
-                                        <th>تاریخ فروش</th>
-                                        <th>نام محصول</th>
-                                        <th>مقدار</th>
+                                        <th>تاریخ</th>
+                                        <th>مشتری</th>
+                                        <th>محصول</th>
+                                        <th>تعداد</th>
                                         <th>وزن</th>
-                                        <th>قیمت فی واحد</th>
-                                        <th>جمله پول</th>
-                                        <th>پول پرداخت شده</th>
-                                        <th>باقی پول</th>
-                                        <th>نوع محاسبه</th>
-                                        <th>توضیحات</th>
-                                        <th>تایید پول</th>
-                                        <th>باقی همین ریکارد</th>
-                                        <th>مجموع پرداخت بل</th>
-                                        <th>مجموع باقی بل</th>
+                                        <th>قیمت</th>
+                                        <th>مجموعه</th>
+                                        <th>پرداخت شده</th>
+                                        <th> مقدار باقی مانده</th>
+                                        <th> توضیحات</th>
+                                        <th> بل</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
                                     {% for sell in sells %}
-                                    <tr>
+                                    <tr {% if sell.is_money_approved %}style="background-color: #5bf09b;"{% endif %}>
                                         <td>{{ sell.id }}</td>
-                                        <td> {{ sell.sell_forei.customer.name }}</td>
                                         <td>{{ sell.sell_forei.reg_date }}</td>
-                                        <td>{{ sell.product.meat_name }}</td>
-                                        <td>{{ sell.quantity }}</td>
-                                        <td>{{ sell.weight }}</td>
+                                        <td>{{ sell.sell_forei.customer.name }}</td>
+                                        <td>{{ sell.product }}</td>
+                                        {% if sell.status == 'ضرب تعداد' %}
+                                            <td style="color: blue;">{{ sell.quantity }}</td>
+                                        {% else %}
+                                            <td>{{ sell.quantity }}</td>
+                                        {% endif %}
+                                        {% if sell.status == 'ضرب وزن' %}
+                                            <td style="color: blue;">{{ sell.weight }}</td>
+                                        {% else %}
+                                            <td>{{ sell.weight }}</td>
+                                        {% endif %}
                                         <td>{{ sell.price_per_unit }}</td>
                                         <td>{{ sell.should_paid }}</td>
                                         <td>{{ sell.paid_amount_for_every_record }}</td>
                                         <td>{{ sell.borrow_amount }}</td>
-                                        <td>{{ sell.status }}</td>
                                         <td>{{ sell.notes }}</td>
-                                        <td>{{ sell.is_money_approved|yesno:"تایید شده,تایید نشده" }}</td>
-                                        <td>{{ sell.reamin_amount_according_to_sale_record }}</td>
-                                        <td>{{ sell.sell_forei.total_paid_amount }}</td>
-                                        <td>{{ sell.sell_forei.total_remain_amount }}</td>
+                                        <td>
+                                            <a href="{% url 'Order:bill_details' sell.id %}" class="btn btn-secondary">
+                                                بل
+                                            </a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -276,14 +284,11 @@
                                     style="width:100%">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>شخص</th>
+                                            <th>شماره</th>
+                                            <th style="font-family: XW_Zar_Bd_0;">تاریخ</th>
                                             <th>محصول</th>
-                                            <th>گدام</th>
-                                            <th>تاریخ رسید</th>
                                             <th>تعداد</th>
                                             <th>وزن</th>
-                                            <th>حالت</th>
                                             <th>توضیحات</th>
                                         </tr>
                                     </thead>
@@ -291,18 +296,15 @@
                                         {% for receipt in receipts %}
                                             <tr>
                                                 <td>{{ receipt.id }}</td>
-                                                <td>{{ receipt.dealer }}</td>
-                                                <td>{{ receipt.item }}</td>
-                                                <td>{{ receipt.godam }}</td>
                                                 <td>{{ receipt.date_day }}</td>
+                                                <td>{{ receipt.item }}</td>
                                                 <td>{{ receipt.number }}</td>
                                                 <td>{{ receipt.weighht }}</td>
-                                                <td>{{ receipt.status }}</td>
                                                 <td>{{ receipt.notes }}</td>
                                             </tr>
                                         {% empty %}
                                             <tr>
-                                                <td colspan="9" class="text-center">هیچ رسیدی ثبت نشده است</td>
+                                                <td colspan="6" class="text-center">هیچ رسیدی ثبت نشده است</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -386,9 +388,8 @@
                                             <th>#</th>
                                             <th> اسم </th>
                                             <th>مقدار</th>
-                                            <th>تاریخ</th>
-                                            <th>مجموع مقدار</th>
                                             <th>باقی مقدار</th>
+                                            <th>تاریخ</th>
                                             <th>توضیحات</th>
                                         </tr>
                                     </thead>
@@ -398,9 +399,8 @@
                                                 <td>{{ purchase.id }}</td>
                                                 <td>{{ purchase.name }}</td>
                                                 <td>{{ purchase.amount }}</td>
-                                                <td>{{ purchase.date }}</td>
-                                                <td>{{ purchase.total_amount }}</td>
                                                 <td>{{ purchase.reamin_amonts }}</td>
+                                                <td>{{ purchase.date }}</td>
                                                 <td>{{ purchase.description }}</td>
                                             </tr>
                                         {% endfor %}
@@ -479,33 +479,29 @@
                                 style="width:100%">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>اسم دهنده پول</th>   
-                                        <th>تاریخ دریافت</th>
-                                        <th>واحد پولی</th>
-                                        <th>نرخ تبادله</th>
-                                        <th>مقدار</th>
-                                        <th>مجموع با ریکارد قبلی</th>
-                                        <th>پول تبدیل شده</th>
-                                        <th>نوع دریافت/پرداخت</th>
-                                        <th> توضیحات</th>
-                                        <th>حالت داخلی</th>
+                                        <th scope="col">#</th>
+                                        <th scope="col">نوعیت</th>
+                                        <th scope="col">نام</th>
+                                        <th scope="col">توضیحات</th>
+                                        <th scope="col">تاریخ</th>
+                                        <th scope="col">مقدار</th>
+                                        <th scope="col">واحد پولی</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
                                     {% for sell in awayed %}
-                                    <tr>
+                                    <tr class="{% if sell.is_income_or_outcome == 'دریافت' %}bg-success text-white{% else %}bg-danger text-white{% endif %}">
                                         <td>{{ sell.id }}</td>
-                                        <td>{{ sell.olabrate.name_opf }}</td>
-                                        <td>{{ sell.rec_date }}</td>
-                                        <td>{{ sell.curr }}</td>
-                                        <td>{{ sell.exchagne_rate }}</td>
-                                        <td>{{ sell.income_amount }}</td>
-                                        <td>{{ sell.total_incme_with_last_record }}</td>
-                                        <td>{{ sell.exchanged_moneey }}</td>
-                                        <td>{{ sell.is_income_or_outcome }}</td>
+                                        {% if sell.is_income_or_outcome == 'دریافت' %}
+                                            <td><span class="badge">رسید</span></td>
+                                        {% else %}
+                                            <td><span class="badge">برداشت</span></td>
+                                        {% endif %}
+                                        <td>{{ sell.olabrate }}</td>
                                         <td>{{ sell.descriiption }}</td>
-                                        <td>{{ sell.blooelean_field }}</td>
+                                        <td>{{ sell.rec_date }}</td>
+                                        <td>{{ sell.income_amount }}</td>
+                                        <td>{{ sell.curr.curr_name }}</td>
                                       
                                     </tr>
                                 {% endfor %}

@@ -32,7 +32,7 @@ def index(request):
 def dashboard (request):
     selected_month = request.GET.get('month') or request.GET.get('day') or ''
     end_time = now()
-    Purchases = Parchase.objects.select_related('supplaier', 'product').all().order_by('-id')
+    Purchases = Parchase.objects.select_related('supplaier', 'product', 'warehouse').all().order_by('-id')
     sells = sale_item_part.objects.select_related('sell_forei__customer', 'product').all().order_by('-id')
     masarefat = FixedExpense.objects.all().order_by('-id')
     awayed = income.objects.select_related('olabrate', 'curr').all().order_by('-id')
